@@ -1,0 +1,224 @@
+{
+    "author": "Antoni Boucher",
+    "dependencies": ["toolbarbutton", "userstyles", "xulkey", "vold-utils", "addon-sdk"],
+    "description": "Sort bookmarks alphabetically",
+    "fullName": "Auto-Sort Bookmarks",
+    "license": "GNU GPL v3",
+    "id": "sortbookmarks@bouanto",
+    "icon": "data/icon-48.png",
+    "name": "autosortbookmarks",
+    "translators": ["Antoni Boucher"],
+    "version": "2.3",
+    "preferences": [
+        {
+            "name": "mainOptions",
+            "title": "Main Options",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "auto_sort",
+            "title": "Auto-sort",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "delay",
+            "title": "Delay",
+            "type": "integer",
+            "value": 0
+        },
+        {
+            "name": "folder_delay",
+            "title": "Delay for Folders",
+            "type": "integer",
+            "value": 30
+        },
+        {
+            "name": "rootFoldersExclusion",
+            "title": "Root Folders Exclusion",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "sort_menu",
+            "title": "Sort Bookmarks Menu",
+            "type": "bool",
+            "value": true
+        },
+        {
+            "name": "sort_toolbar",
+            "title": "Sort Bookmarks Toolbar",
+            "type": "bool",
+            "value": true
+        },
+        {
+            "name": "sort_unsorted",
+            "title": "Sort Unsorted Bookmarks",
+            "type": "bool",
+            "value": true
+        },
+        {
+            "name": "sortCriteria",
+            "title": "Sort Criteria",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "sort_by",
+            "title": "Sort By",
+            "type": "menulist",
+            "value": 0,
+            "options": [
+                {
+                    "value": "0",
+                    "label": "Name"
+                },
+                {
+                    "value": "1",
+                    "label": "URL"
+                },
+                {
+                    "value": "2",
+                    "label": "Description"
+                },
+                {
+                    "value": "3",
+                    "label": "Keyword"
+                },
+                {
+                    "value": "4",
+                    "label": "Date Added"
+                },
+                {
+                    "value": "5",
+                    "label": "Last Modified"
+                },
+                {
+                    "value": "6",
+                    "label": "Last visited"
+                },
+                {
+                    "value": "7",
+                    "label": "Visited count"
+                }
+            ]
+        },
+        {
+            "name": "inverse",
+            "title": "Inverse Order",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "then_sort_by",
+            "title": "Then Sort By",
+            "type": "menulist",
+            "value": -1,
+            "options": [
+                {
+                    "value": "-1",
+                    "label": "None"
+                },
+                {
+                    "value": "0",
+                    "label": "Name"
+                },
+                {
+                    "value": "1",
+                    "label": "URL"
+                },
+                {
+                    "value": "2",
+                    "label": "Description"
+                },
+                {
+                    "value": "3",
+                    "label": "Keyword"
+                },
+                {
+                    "value": "4",
+                    "label": "Date Added"
+                },
+                {
+                    "value": "5",
+                    "label": "Last Modified"
+                },
+                {
+                    "value": "6",
+                    "label": "Last visited"
+                },
+                {
+                    "value": "7",
+                    "label": "Visited count"
+                }
+            ]
+        },
+        {
+            "name": "then_inverse",
+            "title": "Inverse Second Order",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "sortOrder",
+            "title": "Sort Order",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "folder_sort_order",
+            "title": "Folder Sort Order",
+            "type": "integer",
+            "value": 1
+        },
+        {
+            "name": "livemark_sort_order",
+            "title": "Livemark Sort Order",
+            "type": "integer",
+            "value": 2
+        },
+        {
+            "name": "smart_bookmark_sort_order",
+            "title": "Smart Bookmark Sort Order",
+            "type": "integer",
+            "value": 3
+        },
+        {
+            "name": "bookmark_sort_order",
+            "title": "Bookmark Sort Order",
+            "type": "integer",
+            "value": 4
+        },
+        {
+            "name": "displayOptions",
+            "title": "Display Options",
+            "type": "bool",
+            "value": false
+        },
+        {
+            "name": "show_tools_menu_item",
+            "title": "Show the menu item in the tools menu",
+            "type": "bool",
+            "value": true
+        },
+        {
+            "name": "show_bookmarks_menu_item",
+            "title": "Show the menu item in the bookmarks menu",
+            "type": "bool",
+            "value": true
+        },
+        {
+            "name": "show_bookmarks_toolbar_menu_item",
+            "title": "Show the menu item in the toolbar bookmarks button",
+            "type": "bool",
+            "value": true
+        },
+        {
+            "name": "show_bookmarks_manager_menu_item",
+            "title": "Show the menu item in the organize menu of the bookmarks manager",
+            "type": "bool",
+            "value": true
+        }
+    ]
+}
