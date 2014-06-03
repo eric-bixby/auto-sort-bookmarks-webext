@@ -22,10 +22,12 @@ This extension provides a few options categorized within these categories:
 * Display Options
 
 These options work like this:
+
 **Main Options:**
+
 * **Auto-sort :** if this option is enabled, the bookmarks will be sorted when Firefox is opened, when this option is activated and when bookmarks are added, changed, moved or deleted.
 This means you cannot move any bookmarks in the same folder, unless it is moved over a separator.
-* **Delay: **allow to define a delay (in seconds) before automatically sorting bookmarks.
+* **Delay:** allow to define a delay (in seconds) before automatically sorting bookmarks.
 * **Delay for Folders: **allow to define a delay (in seconds) before automatically sorting folders. This is to avoid that a new folder is sorted before you can choose it when adding a new bookmark.
 **Exclude Root Folders:**
 * **Sort Bookmarks Menu:** if this option is enabled, the bookmark menu will be sorted, otherwise, it will be ignored when sorting.
