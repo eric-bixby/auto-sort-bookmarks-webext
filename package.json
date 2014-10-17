@@ -1,6 +1,6 @@
 {
     "author": "Antoni Boucher",
-    "dependencies": ["toolbarbutton", "userstyles", "xulkey", "vold-utils", "addon-sdk"],
+    "dependencies": ["toolbarbutton", "xulkey", "vold-utils", "addon-sdk"],
     "description": "Sort bookmarks alphabetically",
     "fullName": "Auto-Sort Bookmarks",
     "license": "GNU GPL v3",
@@ -8,7 +8,7 @@
     "icon": "data/icon-48.png",
     "name": "autosortbookmarks",
     "translators": ["Antoni Boucher"],
-    "version": "2.3",
+    "version": "2.4",
     "preferences": [
         {
             "name": "auto_sort",
