@@ -11,12 +11,6 @@
     "version": "2.3",
     "preferences": [
         {
-            "name": "mainOptions",
-            "title": "Main Options",
-            "type": "bool",
-            "value": false
-        },
-        {
             "name": "auto_sort",
             "title": "Auto-sort",
             "type": "bool",
@@ -35,12 +29,6 @@
             "value": 30
         },
         {
-            "name": "rootFoldersExclusion",
-            "title": "Root Folders Exclusion",
-            "type": "bool",
-            "value": false
-        },
-        {
             "name": "sort_menu",
             "title": "Sort Bookmarks Menu",
             "type": "bool",
@@ -57,12 +45,6 @@
             "title": "Sort Unsorted Bookmarks",
             "type": "bool",
             "value": true
-        },
-        {
-            "name": "sortCriteria",
-            "title": "Sort Criteria",
-            "type": "bool",
-            "value": false
         },
         {
             "name": "sort_by",
@@ -161,12 +143,6 @@
             "value": false
         },
         {
-            "name": "sortOrder",
-            "title": "Sort Order",
-            "type": "bool",
-            "value": false
-        },
-        {
             "name": "folder_sort_order",
             "title": "Folder Sort Order",
             "type": "integer",
@@ -189,12 +165,6 @@
             "title": "Bookmark Sort Order",
             "type": "integer",
             "value": 4
-        },
-        {
-            "name": "displayOptions",
-            "title": "Display Options",
-            "type": "bool",
-            "value": false
         },
         {
             "name": "show_tools_menu_item",
