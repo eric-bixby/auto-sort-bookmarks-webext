@@ -2,35 +2,23 @@
 <html>
     <head>
         <meta charset="utf-8"/>
+        <title>Auto-Sort Bookmarks</title>
         
         <style>
+        body {
+            margin: auto;
+            width: 480px;
+        }
+
         img {
             float: left;
             margin-right: 10px;
         }
-        
-        a#close-button {
-            background-repeat: no-repeat;
-            background-image: url('chrome://global/skin/icons/close.png');
-            background-position: left top;
-            display: block;
-            float: right;
-            height: 16px;
-            width: 16px
-        }
-        
-        a#close-button:hover {
-            background-position: -16px top;
-        }
-        
-        a#close-button:active {
-            background-position: -32px top;
-            outline: none;
-        }
         </style>
+
     </head>
     <body>
-        <a id="close-button" href="#"></a>
+        <h1>Auto-Sort Bookmarks</h1>
         <p id="question" data-l10n-id="Do you want to enable the autosort?"></p>
         <button id="button-yes" data-l10n-id="Yes"></button>
         <button id="button-no" data-l10n-id="No"></button>

@@ -35,13 +35,4 @@ self.port.on('show', function(iconURL) {
         image.src = iconURL;
         document.body.insertBefore(image, document.querySelector('#question'));
     }
-    
-    let closeButton = document.querySelector('#close-button');
-    
-    closeButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        
-        self.port.emit('button-clicked', event.target.id);
-        destroy();
-    }, false);
 });
