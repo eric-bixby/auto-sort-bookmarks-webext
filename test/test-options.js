@@ -24,7 +24,7 @@ const { get, has, reset, set } = require('sdk/preferences/service'),
     self = require('sdk/self'),
     simplePrefs = require('sdk/simple-prefs'),
     prefs = simplePrefs.prefs,
-    { migrateObjectPreference, migratePreference, setPreferenceMaximum, setPreferenceMinimum } = require('options'),
+    { setPreferenceMaximum, setPreferenceMinimum } = require('options'),
     { getOptionName } = require('./utils');
 
 /**
@@ -45,79 +45,6 @@ function setOption(name, value) {
     set(getOptionName(name), value);
 }
 
-/**
- * Test the migrateObjectPreference() function.
- */
-exports.testMigrateObjectPreference = function(assert) {
-    set('extensions.oldextension.arrayName', JSON.stringify(['1', '2', '3']));
-    migrateObjectPreference('extensions.oldextension.arrayName', ['newName1', 'newName2', 'newName3'], ['4', '6', '5']);
-    
-    assert.strictEqual(prefs.newName1, 1);
-    assert.strictEqual(prefs.newName2, 2);
-    assert.strictEqual(prefs.newName3, 3);
-    
-    assert.strictEqual(has('extensions.oldextension.arrayName'), true);
-    
-    set('extensions.oldextension.objectName', JSON.stringify({
-        name1: '1',
-        name2: '2',
-        name3: '3'
-    }));
-    migrateObjectPreference('extensions.oldextension.objectName', {'name1': 'newObject1', 'name2': 'newObject2', 'name3': 'newObject3'}, {'name1': 'newObject6', 'name2': 'newObject4', 'name3': 'newObject5'});
-    
-    assert.strictEqual(prefs.newObject1, 1);
-    assert.strictEqual(prefs.newObject2, 2);
-    assert.strictEqual(prefs.newObject3, 3);
-    
-    assert.strictEqual(has('extensions.oldextension.objectName'), true);
-    
-    reset('extensions.oldextension.arrayName');
-    
-    migrateObjectPreference('extensions.oldextension.arrayName', ['newName1', 'newName2', 'newName3'], ['4', '6', '5']);
-    
-    assert.strictEqual(prefs.newName1, 4);
-    assert.strictEqual(prefs.newName2, 6);
-    assert.strictEqual(prefs.newName3, 5);
-    
-    reset('extensions.oldextension.objectName');
-    
-    migrateObjectPreference('extensions.oldextension.objectName', {'name1': 'newObject1', 'name2': 'newObject2', 'name3': 'newObject3'}, {name1: '6', name2: '4', name3: '5'});
-    
-    assert.strictEqual(prefs.newObject1, 6);
-    assert.strictEqual(prefs.newObject2, 4);
-    assert.strictEqual(prefs.newObject3, 5);
-    
-    reset(getOptionName('newName1'));
-    reset(getOptionName('newName2'));
-    reset(getOptionName('newName3'));
-    
-    reset(getOptionName('newObject1'));
-    reset(getOptionName('newObject2'));
-    reset(getOptionName('newObject3'));
-};
-
-/**
- * Test the migratePreference() function.
- */
-exports.testMigratePreference = function(assert) {
-    set('extensions.oldextension.name', 'Value');
-    migratePreference('extensions.oldextension.name', 'newName', 'Default Value');
-    
-    assert.strictEqual(prefs.newName, 'Value');
-    
-    assert.strictEqual(has('extensions.oldextension.name'), true);
-    
-    reset('extensions.oldextension.name');
-    
-    migratePreference('extensions.oldextension.name', 'newName', 'Default Value');
-    
-    assert.strictEqual(prefs.newName, 'Default Value');
-    
-    assert.strictEqual(has('extensions.oldextension.name'), false);
-    
-    reset(getOptionName('newName'));
-    reset('extensions.oldextension.name');
-};
 
 /**
  * Test the setPreferenceMaximum() function.
