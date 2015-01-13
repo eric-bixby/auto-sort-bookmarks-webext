@@ -1,6 +1,8 @@
 [Auto-Sort Bookmarks](https://addons.mozilla.org/en-US/firefox/addon/auto-sort-bookmarks/)
 ==========================================================================================
 
+**This project is looking for a maintener.**
+
 Firefox Plugin to Sort Bookmarks by Multiple Criteria
 
 Description
