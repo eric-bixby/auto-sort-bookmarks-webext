@@ -50,7 +50,7 @@ exports.testHideMenuItems = function(assert, done) {
         assert.strictEqual(bookmarksMenuItem.style.display, 'none');
         assert.strictEqual(bookmarksAppMenuItem.style.display, 'none');
         
-        let toolbarMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-toolbar-menu');
+        toolbarMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-toolbar-menu');
         
         assert.strictEqual(toolbarMenuItem.style.display, 'none');
         
@@ -62,17 +62,17 @@ exports.testHideMenuItems = function(assert, done) {
         
         yield openWindow();
         
-        let toolMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-tools-menu');
+        toolMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-tools-menu');
         
         assert.strictEqual(toolMenuItem.style.display, 'none');
         
-        let bookmarksMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-menu');
-        let bookmarksAppMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-app-menu');
+        bookmarksMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-menu');
+        bookmarksAppMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-app-menu');
         
         assert.strictEqual(bookmarksMenuItem.style.display, 'none');
         assert.strictEqual(bookmarksAppMenuItem.style.display, 'none');
         
-        let toolbarMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-toolbar-menu');
+        toolbarMenuItem = windowUtils.getMostRecentBrowserWindow().document.getElementById('auto-sort-bookmarks-sort-all-bookmarks-toolbar-menu');
         
         assert.strictEqual(toolbarMenuItem.style.display, 'none');
         
