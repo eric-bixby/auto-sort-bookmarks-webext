@@ -83,6 +83,10 @@
                 {
                     "value": "7",
                     "label": "Visited count"
+                },
+                {
+                    "value": "8",
+                    "label": "Reversed URL"
                 }
             ]
         },
