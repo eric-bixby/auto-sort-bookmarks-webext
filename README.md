@@ -38,7 +38,7 @@ This means you cannot move any bookmarks in the same folder, unless it is moved 
 
 **Sort Criteria:**
 
-* **Sort By:** allow to specify the first sort criteria, that is to say, the order that will be used to sort the bookmarks The choices are : name, url, description, keyword, date added, last modified, last visited and visited count.
+* **Sort By:** allow to specify the first sort criteria, that is to say, the order that will be used to sort the bookmarks The choices are : name, url, description, keyword, date added, last modified, last visited, visited count and reversed base-URL.
 * **Inverse Order:** if this option is enabled, the order specified in "Sort By" will be reversed. So the order will be descending.
 * **Then Sort By:** allow to specify a second sort criteria (optional). For instance, if the first sort criteria is the name, it is possible to choose a second sort criteria to sort bookmarks with the same name.
 * **Inverse Second Order:** if this option is enabled, the order specified in "Then Sort By" will be reversed.
