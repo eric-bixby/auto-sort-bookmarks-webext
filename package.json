@@ -8,7 +8,7 @@
     "icon": "data/icon-48.png",
     "name": "autosortbookmarks",
     "translators": ["Antoni Boucher"],
-    "version": "2.7",
+    "version": "2.7a",
     "preferences": [
         {
             "name": "auto_sort",
@@ -83,6 +83,10 @@
                 {
                     "value": "7",
                     "label": "Visited count"
+                },
+                {
+                    "value": "8",
+                    "label": "Reversed URL"
                 }
             ]
         },
@@ -133,6 +137,10 @@
                 {
                     "value": "7",
                     "label": "Visited count"
+                },
+                {
+                    "value": "8",
+                    "label": "Reversed URL"
                 }
             ]
         },

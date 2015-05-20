@@ -1770,4 +1770,59 @@ exports.testSortByURL = function(assert, done) {
     });
 };
 
+exports.testSortByRevURL = function(assert, done) {
+    spawn(function() {
+        deleteAllBookmarks();
+        
+        let bookmarkSorter = new BookmarkSorter();
+        bookmarkSorter.setCriteria('revurl', false, undefined, false);
+        
+        let folder = createFolder('Folder', menuFolder);
+        
+        let bookmark1 = createBookmark('Title', 'http://dev.title.com/', folder);
+        let bookmark2 = createBookmark('Test', 'http://www.test.com/', folder);
+        let bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+        
+        yield bookmarkSorter.sortFolders(folder);
+        assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
+        assert.strictEqual(folder.getChildren().length, 1);
+        
+        let bookmark4 = createBookmark('Nice test', 'http://nice.com/', folder);
+        
+        yield bookmarkSorter.sortFolders(folder);
+        assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark4, bookmark2, bookmark1]);
+        assert.strictEqual(folder.getChildren().length, 1);
+        
+        let bookmark5 = createBookmark('Nice example', 'http://www.example.com/', folder);
+        
+        yield bookmarkSorter.sortFolders(folder);
+        assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
+        assert.strictEqual(folder.getChildren().length, 1);
+        
+        createSeparator(folder);
+        let bookmark6 = createBookmark('Testing', 'http://testing.com/', folder);
+        
+        yield bookmarkSorter.sortFolders(folder);
+        assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
+        assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6]);
+        assert.strictEqual(folder.getChildren().length, 2);
+        
+        let bookmark7 = createBookmark('Nice test', 'http://www.nice.com/', folder);
+        
+        createSeparator(folder);
+        let bookmark8 = createBookmark('Test', 'http://test.com/', folder);
+        let bookmark9 = createBookmark('Abc', 'http://www.abc.com/', folder);
+        
+        yield bookmarkSorter.sortFolders(folder);
+        assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
+        assertBookmarksArray(assert, folder.getChildren()[1], [bookmark7, bookmark6]);
+        assertBookmarksArray(assert, folder.getChildren()[2], [bookmark9, bookmark8]);
+        assert.strictEqual(folder.getChildren().length, 3);
+        
+        resetPreferences();
+        
+        done();
+    });
+};
+
 require('sdk/test').run(exports);
