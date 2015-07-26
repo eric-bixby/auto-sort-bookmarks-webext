@@ -151,6 +151,40 @@
             "value": false
         },
         {
+            "name": "folder_sort_by",
+            "title": "Sort Folder By",
+            "type": "menulist",
+            "value": 0,
+            "options": [
+                {
+                    "value": "-1",
+                    "label": "None"
+                },
+                {
+                    "value": "0",
+                    "label": "Name"
+                },
+                {
+                    "value": "2",
+                    "label": "Description"
+                },
+                {
+                    "value": "4",
+                    "label": "Date Added"
+                },
+                {
+                    "value": "5",
+                    "label": "Last Modified"
+                }
+            ]
+        },
+        {
+            "name": "folder_inverse",
+            "title": "Inverse Folder Order",
+            "type": "bool",
+            "value": false
+        },
+        {
             "name": "folder_sort_order",
             "title": "Folder Sort Order",
             "type": "integer",
