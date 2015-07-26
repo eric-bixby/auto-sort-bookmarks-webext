@@ -1,0 +1,23 @@
+{
+    "bitwise": true,
+    "browser": true,
+    "curly": true,
+    "eqeqeq": true,
+    "forin": true,
+    "freeze": true,
+    "futurehostile": true,
+    "latedef": true,
+    "moz": true,
+    "newcap": false,
+    "noarg": true,
+    "nocomma": true,
+    "node": true,
+    "nonbsp": true,
+    "predef": ["XPCOMUtils"],
+    "singleGroups": true,
+    "strict": true,
+    "undef": true,
+    "unused": true,
+    "varstmt": true,
+    "worker": true
+}
