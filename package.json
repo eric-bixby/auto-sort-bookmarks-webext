@@ -29,22 +29,10 @@
             "value": 30
         },
         {
-            "name": "sort_menu",
-            "title": "Sort Bookmarks Menu",
-            "type": "bool",
-            "value": true
-        },
-        {
-            "name": "sort_toolbar",
-            "title": "Sort Bookmarks Toolbar",
-            "type": "bool",
-            "value": true
-        },
-        {
-            "name": "sort_unsorted",
-            "title": "Sort Unsorted Bookmarks",
-            "type": "bool",
-            "value": true
+            "label": "Configure...",
+            "name": "exclude_folders",
+            "title": "Exclude Folders",
+            "type": "control"
         },
         {
             "name": "sort_by",
