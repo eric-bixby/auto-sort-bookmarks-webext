@@ -15,17 +15,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let rootFolders = document.querySelector('#rootFolders');
-
 function sendValue(folderID) {
     return function (event) {
         self.port.emit('checkbox-change', folderID, event.target.checked);
     };
 }
 
-self.port.on('folders', function(folders, foldersToExclude) {
+function toggleChildren(parentID, plusIcon, minusIcon) {
+    return function (event) {
+        let image = event.target;
+        let children = image.nextSibling.nextSibling.nextSibling;
+        if(image.getAttribute('data-state') === 'add') {
+            image.src = minusIcon;
+            image.setAttribute('data-state', 'remove');
+
+            if(!children) {
+                children = document.createElement('ul');
+                image.parentNode.appendChild(children);
+            }
+            else {
+                children.style.display = 'block';
+            }
+        }
+        else {
+            image.src = plusIcon;
+            image.setAttribute('data-state', 'add');
+
+            if(children) {
+                children.style.display = 'none';
+            }
+        }
+    };
+}
+
+self.port.on('init', function(folders, foldersToExclude, plusIcon, minusIcon) {
+    let rootFolders = document.querySelector('#rootFolders');
+    if(rootFolders === null) {
+        rootFolders = document.createElement('ul');
+        rootFolders.id = 'rootFolders';
+        document.body.appendChild(rootFolders);
+    }
+
     for(let folder of folders) {
         let listItem = document.createElement('li');
+
+        let icon = document.createElement('img');
+        icon.alt = 'plus-minus';
+        icon.src = plusIcon;
+        icon.setAttribute('data-state', 'add');
+        icon.addEventListener('click', toggleChildren(folder.id, plusIcon, minusIcon), false);
+        listItem.appendChild(icon);
 
         let label = document.createElement('label');
         label.htmlFor = 'folder-' + folder.id;
