@@ -42,6 +42,7 @@
     "requireSemicolons": true,
     "requireSpaceAfterBinaryOperators": true,
     "requireSpaceAfterKeywords": ["case", "do", "else", "return", "typeof"],
+    "requireSpaceAfterLineComment": true,
     "requireSpaceBeforeBinaryOperators": true,
     "requireSpaceBeforeBlockStatements": true,
     "requireSpaceBeforeObjectValues": true,

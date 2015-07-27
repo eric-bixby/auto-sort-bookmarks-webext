@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  Boucher, Antoni <bouanto@gmail.com>
+ * Copyright (C) 2015  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,36 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * TODO: if I delete a folder, remove it from the preference.
- * TODO: add a recursive option.
- * TODO: update the migration to use the recursive option.
- */
-
 'use strict';
 
 let addIcon;
+let foldersToExclude;
+let messageText = '';
+let recursiveText = '';
 let removeIcon;
 
-function sendValue(folderID) {
-    return function(event) {
-        self.port.emit('checkbox-change', folderID, event.target.checked);
+function sendValue(folderID, checkbox, recursiveCheckbox) {
+    return function() {
+        self.port.emit('checkbox-change', folderID, checkbox.checked, recursiveCheckbox.checked);
     };
 }
 
-function toggleChildren(parentID) {
-    return function(event) {
-        let image = event.target;
-        let children = image.nextSibling.nextSibling.nextSibling;
+function toggleChildren(parentID, image, children, recursiveCheckbox) {
+    return function() {
         if(image.getAttribute('data-state') === 'add') {
             image.src = removeIcon;
             image.setAttribute('data-state', 'remove');
 
-            if(!children) {
-                children = document.createElement('ul');
-                image.parentNode.appendChild(children);
+            while(children.firstChild) {
+                children.removeChild(children.firstChild);
             }
-            else {
+
+            self.port.emit('query-children', parentID);
+
+            if(!recursiveCheckbox.checked) {
                 children.style.display = 'block';
             }
         }
@@ -59,9 +56,96 @@ function toggleChildren(parentID) {
     };
 }
 
-self.port.on('init', function(folders, foldersToExclude, plusIcon, minusIcon) {
+function findById(array, id) {
+    for(let item of array) {
+        if(item.id === id) {
+            return item;
+        }
+    }
+
+    return null;
+}
+
+function appendFolder(folder, list) {
+    let listItem = document.createElement('li');
+
+    let recursiveCheckbox = document.createElement('input');
+    let recursiveLabel = document.createElement('label');
+
+    let children = document.createElement('ul');
+    children.id = 'folder-' + folder.id;
+
+    let icon = document.createElement('img');
+    icon.alt = 'plus-minus';
+    icon.src = addIcon;
+    icon.setAttribute('data-state', 'add');
+    icon.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
+    listItem.appendChild(icon);
+
+    let label = document.createElement('label');
+    label.textContent = folder.title;
+    label.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
+    listItem.appendChild(label);
+
+    let excludedFolder = findById(foldersToExclude, folder.id);
+
+    let checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = excludedFolder === null;
+    checkbox.addEventListener('change', sendValue(folder.id, checkbox, recursiveCheckbox), false);
+    checkbox.addEventListener('change', function() {
+        recursiveCheckbox.disabled = checkbox.checked;
+        recursiveLabel.disabled = checkbox.checked;
+    }, false);
+
+    listItem.appendChild(checkbox);
+
+    recursiveLabel.textContent = recursiveText;
+    recursiveLabel.htmlFor = 'recursive-' + folder.id;
+    recursiveLabel.className = 'recursive';
+    recursiveLabel.disabled = checkbox.checked;
+    listItem.appendChild(recursiveLabel);
+
+    let message = document.createElement('p');
+
+    recursiveCheckbox.type = 'checkbox';
+    recursiveCheckbox.id = 'recursive-' + folder.id;
+    recursiveCheckbox.checked = excludedFolder !== null && excludedFolder.recursive === true;
+    recursiveCheckbox.disabled = checkbox.checked;
+    recursiveCheckbox.className = 'recursive-checkbox';
+    recursiveCheckbox.addEventListener('change', sendValue(folder.id, checkbox, recursiveCheckbox), false);
+    listItem.appendChild(recursiveCheckbox);
+
+    message.textContent = messageText;
+    listItem.appendChild(message);
+
+    listItem.appendChild(children);
+
+    list.appendChild(listItem);
+}
+
+function appendFolders(folders, list) {
+    for(let folder of folders) {
+        appendFolder(folder, list);
+    }
+}
+
+self.port.on('children', function(parentID, children) {
+    let list = document.querySelector('#folder-' + parentID);
+    appendFolders(children, list);
+});
+
+self.port.on('update-excluded-folders', function(excludedFolders) {
+    foldersToExclude = excludedFolders;
+});
+
+self.port.on('init', function(folders, excludedFolders, plusIcon, minusIcon) {
+    recursiveText = document.querySelector('#recursive-text').textContent;
+    messageText = document.querySelector('#message-text').textContent;
     addIcon = plusIcon;
     removeIcon = minusIcon;
+    foldersToExclude = excludedFolders;
+
     let rootFolders = document.querySelector('#rootFolders');
     if(rootFolders === null) {
         rootFolders = document.createElement('ul');
@@ -70,27 +154,8 @@ self.port.on('init', function(folders, foldersToExclude, plusIcon, minusIcon) {
     }
 
     for(let folder of folders) {
-        let listItem = document.createElement('li');
-
-        let icon = document.createElement('img');
-        icon.alt = 'plus-minus';
-        icon.src = plusIcon;
-        icon.setAttribute('data-state', 'add');
-        icon.addEventListener('click', toggleChildren(folder.id), false);
-        listItem.appendChild(icon);
-
-        let label = document.createElement('label');
-        label.htmlFor = 'folder-' + folder.id;
-        label.textContent = folder.title;
-        listItem.appendChild(label);
-
-        let checkbox = document.createElement('input');
-        checkbox.id = 'folder-' + folder.id;
-        checkbox.type = 'checkbox';
-        checkbox.checked = foldersToExclude.indexOf(folder.id) < 0;
-        checkbox.addEventListener('change', sendValue(folder.id), false);
-        listItem.appendChild(checkbox);
-
-        rootFolders.appendChild(listItem);
+        folder.title = document.querySelector('#' + folder.title).textContent;
     }
+
+    appendFolders(folders, rootFolders);
 });
