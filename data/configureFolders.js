@@ -18,14 +18,13 @@
 'use strict';
 
 let addIcon;
-let foldersToExclude;
 let messageText = '';
 let recursiveText = '';
 let removeIcon;
 
-function sendValue(folderID, checkbox, recursiveCheckbox) {
+function sendValue(type, folderID, checkbox) {
     return function() {
-        self.port.emit('checkbox-change', folderID, checkbox.checked, recursiveCheckbox.checked);
+        self.port.emit(type + '-checkbox-change', folderID, checkbox.checked);
     };
 }
 
@@ -56,16 +55,6 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
     };
 }
 
-function findById(array, id) {
-    for(let item of array) {
-        if(item.id === id) {
-            return item;
-        }
-    }
-
-    return null;
-}
-
 function appendFolder(folder, list) {
     let listItem = document.createElement('li');
 
@@ -87,12 +76,10 @@ function appendFolder(folder, list) {
     label.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
     listItem.appendChild(label);
 
-    let excludedFolder = findById(foldersToExclude, folder.id);
-
     let checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.checked = excludedFolder === null;
-    checkbox.addEventListener('change', sendValue(folder.id, checkbox, recursiveCheckbox), false);
+    checkbox.checked = !folder.excluded;
+    checkbox.addEventListener('change', sendValue('sort', folder.id, checkbox), false);
     checkbox.addEventListener('change', function() {
         recursiveCheckbox.disabled = checkbox.checked;
         recursiveLabel.disabled = checkbox.checked;
@@ -110,10 +97,10 @@ function appendFolder(folder, list) {
 
     recursiveCheckbox.type = 'checkbox';
     recursiveCheckbox.id = 'recursive-' + folder.id;
-    recursiveCheckbox.checked = excludedFolder !== null && excludedFolder.recursive === true;
+    recursiveCheckbox.checked = folder.recursivelyExcluded;
     recursiveCheckbox.disabled = checkbox.checked;
     recursiveCheckbox.className = 'recursive-checkbox';
-    recursiveCheckbox.addEventListener('change', sendValue(folder.id, checkbox, recursiveCheckbox), false);
+    recursiveCheckbox.addEventListener('change', sendValue('recursive', folder.id, recursiveCheckbox), false);
     listItem.appendChild(recursiveCheckbox);
 
     message.textContent = messageText;
@@ -130,21 +117,24 @@ function appendFolders(folders, list) {
     }
 }
 
+self.port.on('remove-folder', function(folderID) {
+    let folder = document.querySelector('#folder-' + folderID);
+    if(folder) {
+        let parent = folder.parentNode;
+        parent.parentNode.removeChild(parent);
+    }
+});
+
 self.port.on('children', function(parentID, children) {
     let list = document.querySelector('#folder-' + parentID);
     appendFolders(children, list);
 });
 
-self.port.on('update-excluded-folders', function(excludedFolders) {
-    foldersToExclude = excludedFolders;
-});
-
-self.port.on('init', function(folders, excludedFolders, plusIcon, minusIcon) {
+self.port.on('init', function(folders, plusIcon, minusIcon) {
     recursiveText = document.querySelector('#recursive-text').textContent;
     messageText = document.querySelector('#message-text').textContent;
     addIcon = plusIcon;
     removeIcon = minusIcon;
-    foldersToExclude = excludedFolders;
 
     let rootFolders = document.querySelector('#rootFolders');
     if(rootFolders === null) {
