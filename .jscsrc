@@ -29,7 +29,6 @@
     "requireCommaBeforeLineBreak": true,
     "requireCurlyBraces": ["catch", "do", "else", "for", "if", "try", "while"],
     "requireDotNotation": true,
-    "requireFunctionDeclarations": true,
     "requireKeywordsOnNewLine": ["else"],
     "requireLineBreakAfterVariableAssignment": true,
     "requireLineFeedAtFileEnd": true,
