@@ -13,7 +13,7 @@
     "nocomma": true,
     "node": true,
     "nonbsp": true,
-    "predef": ["XPCOMUtils"],
+    "predef": ["PlacesUtils", "XPCOMUtils"],
     "singleGroups": true,
     "strict": true,
     "undef": true,

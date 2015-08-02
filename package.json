@@ -29,6 +29,12 @@
             "value": 30
         },
         {
+            "name": "case_insensitive",
+            "title": "Case Insensitive",
+            "type": "bool",
+            "value": false
+        },
+        {
             "label": "Configure...",
             "name": "exclude_folders",
             "title": "Folders to Sort",
