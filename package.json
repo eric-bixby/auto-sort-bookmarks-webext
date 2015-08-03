@@ -1,6 +1,6 @@
 {
     "author": "Antoni Boucher",
-    "dependencies": ["toolbarbutton", "xulkey", "vold-utils", "addon-sdk"],
+    "dependencies": ["addon-sdk"],
     "description": "Sort bookmarks alphabetically",
     "fullName": "Auto-Sort Bookmarks",
     "license": "GNU GPL v3",
@@ -201,30 +201,6 @@
             "title": "Bookmark Sort Order",
             "type": "integer",
             "value": 4
-        },
-        {
-            "name": "show_tools_menu_item",
-            "title": "Show the menu item in the tools menu",
-            "type": "bool",
-            "value": true
-        },
-        {
-            "name": "show_bookmarks_menu_item",
-            "title": "Show the menu item in the bookmarks menu",
-            "type": "bool",
-            "value": true
-        },
-        {
-            "name": "show_bookmarks_toolbar_menu_item",
-            "title": "Show the menu item in the toolbar bookmarks button",
-            "type": "bool",
-            "value": true
-        },
-        {
-            "name": "show_bookmarks_manager_menu_item",
-            "title": "Show the menu item in the organize menu of the bookmarks manager",
-            "type": "bool",
-            "value": true
         }
     ]
 }
