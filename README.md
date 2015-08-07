@@ -9,7 +9,7 @@ Description
 Provide a way to sort all bookmarks and automatically sort bookmarks.
 
 This extension considers separators, so that it sorts bookmarks between separators.
-This extension adds an icon to sort all bookmarks that is added to a toolbar. To remove it, you must choose the Customize option  in the context menu on the Firefox user interface.
+This extension adds an icon to sort all bookmarks to the toolbar. To remove it, you must choose the Customize option  in the context menu on the Firefox user interface.
 
 **Please backup your current bookmarks in case you do not like the new bookmarks order. Thus, you could restore them.**
 
@@ -40,7 +40,7 @@ If you want to exclude a folder recursively from being sorted, check the recursi
 * **Inverse Order:** if this option is enabled, the order specified in "Sort By" will be reversed. So the order will be descending.
 * **Then Sort By:** allow to specify a second sort criteria (optional). For instance, if the first sort criteria is the name, it is possible to choose a second sort criteria to sort bookmarks with the same name.
 * **Inverse Second Order:** if this option is enabled, the order specified in "Then Sort By" will be reversed.
-* **Sort Folder By:** allow to specify a different sort criteria for folders. For instance, you might want to sort folders by names and other kinds of bookmarks by last visited.
+* **Sort Folder By:** allow to specify a different sort criteria for folders. For instance, you might want to sort folders by name and other kinds of bookmarks by last visited.
 * **Inverse Folder Order:** if this option is enabled, the order speficied in "Sort Folder By" will be reversed.
 
 **Sort Order:**
