@@ -1,41 +1,57 @@
-/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true, undef:true, unused:true, curly:true, moz:true, indent:4, maxerr:50, globalstrict: true */
-/*global console: false, require: false, exports: false */
-
 /*
- * Copyright (C) 2014  Boucher, Antoni <bouanto@zoho.com>
- * 
+ * Copyright (C) 2014-2015  Boucher, Antoni <bouanto@zoho.com>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 'use strict';
 
-const { Cc, Ci, Cu } = require('chrome'),
-    { defer } = require('sdk/core/promise'),
-    { reset } = require('sdk/preferences/service'),
-    self = require('sdk/self'),
-    windows = require("sdk/windows").browserWindows,
-    windowUtils = require('sdk/window/utils'),
-    annotationService = Cc['@mozilla.org/browser/annotation-service;1'].getService(Ci.nsIAnnotationService),
-    asyncHistory = Cc['@mozilla.org/browser/history;1'].getService(Ci.mozIAsyncHistory),
-    bookmarkService = Cc['@mozilla.org/browser/nav-bookmarks-service;1'].getService(Ci.nsINavBookmarksService),
-    ioService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService),
-    { Bookmark, Folder, Livemark, menuFolder, Separator, SmartBookmark, toolbarFolder, unsortedFolder } = require('bookmarks'),
-    descriptionAnnotation = 'bookmarkProperties/description',
-    livemarkFeedAnnotation = 'livemark/feedURI',
-    livemarkReadOnlyAnnotation = 'placesInternal/READ_ONLY',
-    livemarkSiteAnnotation = 'livemark/siteURI',
-    smartBookmarkAnnotation = 'Places/SmartBookmark';
+const { Cc, Ci, Cu } = require('chrome');
+const { defer } = require('sdk/core/promise');
+const { MENU, TOOLBAR, UNSORTED } = require('sdk/places/bookmarks');
+const { reset } = require('sdk/preferences/service');
+const self = require('sdk/self');
+const windows = require('sdk/windows').browserWindows;
+const windowUtils = require('sdk/window/utils');
+const annotationService = Cc['@mozilla.org/browser/annotation-service;1'].getService(Ci.nsIAnnotationService);
+const asyncHistory = Cc['@mozilla.org/browser/history;1'].getService(Ci.mozIAsyncHistory);
+const bookmarkService = Cc['@mozilla.org/browser/nav-bookmarks-service;1'].getService(Ci.nsINavBookmarksService);
+const ioService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
+const { Bookmark, Folder, Livemark, menuFolder, Separator, SmartBookmark, toolbarFolder, unsortedFolder } = require('bookmarks');
+const descriptionAnnotation = 'bookmarkProperties/description';
+const livemarkFeedAnnotation = 'livemark/feedURI';
+const livemarkReadOnlyAnnotation = 'placesInternal/READ_ONLY';
+const livemarkSiteAnnotation = 'livemark/siteURI';
+const smartBookmarkAnnotation = 'Places/SmartBookmark';
+const { removeDoNotSortAnnotation, removeRecursiveAnnotation, setDoNotSortAnnotation, setRecursiveAnnotation } = require('annotations');
+
+Cu.import('resource://gre/modules/XPCOMUtils.jsm');
+XPCOMUtils.defineLazyModuleGetter(this, 'PlacesUtils', 'resource://gre/modules/PlacesUtils.jsm');
+
+function ignore(folder) {
+    setDoNotSortAnnotation(folder.id);
+    setRecursiveAnnotation(folder.id);
+}
+
+function sort(folder) {
+    removeDoNotSortAnnotation(folder.id);
+    removeRecursiveAnnotation(folder.id);
+}
+
+function bookmarkToString(bookmark) {
+    return bookmark.id + '. ' + bookmark.title;
+}
 
 /**
  * Assert the equality of the bookmarks array/generator.
@@ -47,10 +63,12 @@ function assertBookmarksArray(assert, bookmarks1, bookmarks2) {
     for(let value of bookmarks1) {
         generatedBookmarks1.push(value);
     }
+
     let generatedBookmarks2 = [];
     for(let value of bookmarks2) {
         generatedBookmarks2.push(value);
     }
+
     let equality = true;
     if(generatedBookmarks1.length === generatedBookmarks2.length) {
         for(let i = 0 ; i < generatedBookmarks1.length ; ++i) {
@@ -60,7 +78,10 @@ function assertBookmarksArray(assert, bookmarks1, bookmarks2) {
     else {
         equality = false;
     }
-    assert.ok(equality, (generatedBookmarks1.length > 0 ? generatedBookmarks1 : '[]') + ' !== ' + (generatedBookmarks2.length > 0 ? generatedBookmarks2 : '[]'));
+
+    let bookmarks1String = JSON.stringify(generatedBookmarks1.map(bookmarkToString));
+    let bookmarks2String = JSON.stringify(generatedBookmarks2.map(bookmarkToString));
+    assert.ok(equality, '\nResult:   ' + (generatedBookmarks1.length > 0 ? bookmarks1String : '[]') + '\n !==\nExpected: ' + (generatedBookmarks2.length > 0 ? bookmarks2String : '[]'));
 }
 
 /**
@@ -136,6 +157,37 @@ function createSmartBookmark(title, smartBookmarkValue, url, parent, index) {
 }
 
 /**
+ * Delete `item`.
+ * @param {Item} item The item to delete.
+ */
+function deleteItem(item) {
+    bookmarkService.removeItem(item.id);
+}
+
+/**
+ * Get all the folders as a flat list.
+ * @return {Array.<Folder>} The folders.
+ */
+function getAllFolders() {
+    let folders = [];
+
+    folders.push(menuFolder);
+    yield menuFolder;
+
+    folders.push(toolbarFolder);
+    yield toolbarFolder;
+
+    folders.push(unsortedFolder);
+    yield unsortedFolder;
+
+    for(let i = 0, length = folders.length ; i < length ; ++i) {
+        for(let folder of folders[i].getFolders()) {
+            yield folder;
+        }
+    }
+}
+
+/**
  * Delete all bookmarks.
  */
 function deleteAllBookmarks() {
@@ -151,37 +203,10 @@ function deleteAllBookmarks() {
             }
         }
     }
-}
 
-/**
- * Delete `item`.
- * @param {Item} item The item to delete.
- */
-function deleteItem(item) {
-    bookmarkService.removeItem(item.id);
-}
-
-/**
- * Get all the folders as a flat list.
- * @return {Array.<Folder>} The folders.
- */
-function getAllFolders() {
-    let folders = [];
-    
-    folders.push(menuFolder);
-    yield menuFolder;
-
-    folders.push(toolbarFolder);
-    yield toolbarFolder;
-
-    folders.push(unsortedFolder);
-    yield unsortedFolder;
-    
-    for(let i = 0, length = folders.length ; i < length ; ++i) {
-        for(let folder in folders[i].getFolders()) {
-            yield folder;
-        }
-    }
+    sort(MENU);
+    sort(TOOLBAR);
+    sort(UNSORTED);
 }
 
 /**
@@ -203,6 +228,7 @@ function move(item, newIndex, parent) {
     if(parent !== undefined) {
         item.parentID = parent.id;
     }
+
     bookmarkService.moveItem(item.id, item.parentID, newIndex);
 }
 
@@ -211,14 +237,15 @@ function move(item, newIndex, parent) {
  */
 function openWindow() {
     let deferred = defer();
-    
+
     windows.open({
-        onOpen: function(window) {
+        onOpen: function() {
             deferred.resolve();
         },
-        url: ''
+
+        url: '',
     });
-    
+
     return deferred.promise;
 }
 
@@ -242,6 +269,7 @@ function range(count) {
     for(let i = 0 ; i < count ; ++i) {
         array.push(i);
     }
+
     return array;
 }
 
@@ -294,7 +322,10 @@ function setDescription(item, description) {
  * @param {string} keyword The new keyword.
  */
 function setKeyword(item, keyword) {
-    bookmarkService.setKeywordForBookmark(item.id, keyword);
+    return PlacesUtils.keywords.insert({
+        keyword: keyword,
+        url: item.url,
+    });
 }
 
 /**
@@ -313,43 +344,45 @@ function setLastModified(item, lastModified) {
  */
 function setVisits(item, visits) {
     let deferred = defer();
-    
+
     if(visits.length === undefined) {
         visits = [visits];
     }
-    let length = visits.length;
-    
+
     for(let index in visits) {
-        visits[index] = {
-            referrerURI: undefined,
-            transitionType: Ci.nsINavHistoryService.TRANSITION_LINK,
-            visitDate: visits[index] * 1000
-        };
+        if(visits.hasOwnProperty(index)) {
+            visits[index] = {
+                referrerURI: undefined,
+                transitionType: Ci.nsINavHistoryService.TRANSITION_LINK,
+                visitDate: visits[index] * 1000,
+            };
+        }
     }
-    
-    let result = asyncHistory.updatePlaces({
+
+    asyncHistory.updatePlaces({
         title: item.title,
         uri: ioService.newURI(item.url, null, null),
-        visits: visits
+        visits: visits,
     }, {
         handleCompletion: function() {
             deferred.resolve();
         },
+
         handleResult: function() {
-        }
+        },
     });
-    
+
     return deferred.promise;
 }
 
 function showBookmarksManager() {
     let deferred = defer();
-    
+
     let window = windowUtils.getMostRecentWindow();
     let bookmarksManager = windowUtils.getMostRecentWindow('Places:Organizer');
     if(bookmarksManager === null) {
         bookmarksManager = window.openDialog('chrome://browser/content/places/places.xul', '', 'chrome,toolbar=yes,dialog=no,resizable', 'AllBookmarks');
-        
+
         bookmarksManager.addEventListener('load', function() {
             deferred.resolve(bookmarksManager);
         }, false);
@@ -357,10 +390,10 @@ function showBookmarksManager() {
     else {
         bookmarksManager.PlacesOrganizer.selectLeftPaneQuery('AllBookmarks');
         bookmarksManager.focus();
-        
+
         deferred.resolve(bookmarksManager);
     }
-    
+
     return deferred.promise;
 }
 
@@ -373,6 +406,7 @@ exports.createSmartBookmark = createSmartBookmark;
 exports.deleteAllBookmarks = deleteAllBookmarks;
 exports.deleteItem = deleteItem;
 exports.getOptionName = getOptionName;
+exports.ignore = ignore;
 exports.move = move;
 exports.openWindow = openWindow;
 exports.printFolder = printFolder;
@@ -385,3 +419,4 @@ exports.setKeyword = setKeyword;
 exports.setLastModified = setLastModified;
 exports.setVisits = setVisits;
 exports.showBookmarksManager = showBookmarksManager;
+exports.sort = sort;
