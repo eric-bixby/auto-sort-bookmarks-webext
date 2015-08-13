@@ -130,9 +130,9 @@ self.port.on('children', function(parentID, children) {
     appendFolders(children, list);
 });
 
-self.port.on('init', function(folders, plusIcon, minusIcon) {
-    recursiveText = document.querySelector('#recursive-text').textContent;
-    messageText = document.querySelector('#message-text').textContent;
+self.port.on('init', function(folders, plusIcon, minusIcon, texts) {
+    recursiveText = texts.recursiveText;
+    messageText = texts.messageText;
     addIcon = plusIcon;
     removeIcon = minusIcon;
 
@@ -144,7 +144,7 @@ self.port.on('init', function(folders, plusIcon, minusIcon) {
     }
 
     for(let folder of folders) {
-        folder.title = document.querySelector('#' + folder.title).textContent;
+        folder.title = texts[folder.title];
     }
 
     appendFolders(folders, rootFolders);
