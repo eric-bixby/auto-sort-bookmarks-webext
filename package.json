@@ -8,7 +8,7 @@
     "icon": "data/icon-48.png",
     "name": "autosortbookmarks",
     "translators": ["Antoni Boucher"],
-    "version": "2.8",
+    "version": "2.9",
     "preferences": [
         {
             "name": "auto_sort",
