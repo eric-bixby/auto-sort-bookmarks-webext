@@ -18,38 +18,46 @@
 'use strict';
 
 let addIcon;
+let loadingText = '';
 let messageText = '';
 let recursiveText = '';
 let removeIcon;
+let fetching = new Set();
 
-function sendValue(type, folderID, checkbox) {
+function sendValue(type, folderID, checkbox, image) {
     return function() {
+        if(type === 'recursive' && image.getAttribute('data-state') === 'remove') {
+            let children = document.querySelector('#folder-' + folderID);
+            children.style.display = 'block';
+        }
         self.port.emit(type + '-checkbox-change', folderID, checkbox.checked);
     };
 }
 
 function toggleChildren(parentID, image, children, recursiveCheckbox) {
     return function() {
-        if(image.getAttribute('data-state') === 'add') {
-            image.src = removeIcon;
-            image.setAttribute('data-state', 'remove');
+        if(!fetching.has(parentID)) {
+            if(image.getAttribute('data-state') === 'add') {
+                image.src = removeIcon;
+                image.setAttribute('data-state', 'remove');
 
-            while(children.firstChild) {
-                children.removeChild(children.firstChild);
+                if(!recursiveCheckbox.checked) {
+                    children.style.display = 'block';
+                    children.textContent = loadingText;
+                }
+
+                fetching.add(parentID);
+                setTimeout(function() {
+                    self.port.emit('query-children', parentID);
+                }, 100);
             }
+            else {
+                image.src = addIcon;
+                image.setAttribute('data-state', 'add');
 
-            self.port.emit('query-children', parentID);
-
-            if(!recursiveCheckbox.checked) {
-                children.style.display = 'block';
-            }
-        }
-        else {
-            image.src = addIcon;
-            image.setAttribute('data-state', 'add');
-
-            if(children) {
-                children.style.display = 'none';
+                if(children) {
+                    children.style.display = 'none';
+                }
             }
         }
     };
@@ -100,7 +108,7 @@ function appendFolder(folder, list) {
     recursiveCheckbox.checked = folder.recursivelyExcluded;
     recursiveCheckbox.disabled = checkbox.checked;
     recursiveCheckbox.className = 'recursive-checkbox';
-    recursiveCheckbox.addEventListener('change', sendValue('recursive', folder.id, recursiveCheckbox), false);
+    recursiveCheckbox.addEventListener('change', sendValue('recursive', folder.id, recursiveCheckbox, icon), false);
     listItem.appendChild(recursiveCheckbox);
 
     message.textContent = messageText;
@@ -112,6 +120,9 @@ function appendFolder(folder, list) {
 }
 
 function appendFolders(folders, list) {
+    while(list.firstChild) {
+        list.removeChild(list.firstChild);
+    }
     for(let folder of folders) {
         appendFolder(folder, list);
     }
@@ -128,11 +139,13 @@ self.port.on('remove-folder', function(folderID) {
 self.port.on('children', function(parentID, children) {
     let list = document.querySelector('#folder-' + parentID);
     appendFolders(children, list);
+    fetching.delete(parentID);
 });
 
 self.port.on('init', function(folders, plusIcon, minusIcon, texts) {
     recursiveText = texts.recursiveText;
     messageText = texts.messageText;
+    loadingText = texts.loadingText;
     addIcon = plusIcon;
     removeIcon = minusIcon;
 
