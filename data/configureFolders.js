@@ -156,9 +156,5 @@ self.port.on('init', function(folders, plusIcon, minusIcon, texts) {
         document.body.appendChild(rootFolders);
     }
 
-    for(let folder of folders) {
-        folder.title = texts[folder.title];
-    }
-
     appendFolders(folders, rootFolders);
 });
