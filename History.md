@@ -1,8 +1,13 @@
+2.10 / 2015-08-22
+===================
+
+ * Fixed issue and improved performance in folders to sort page.
+
 2.9 / 2015-08-13
 ==================
 
-  * Added missing german translation.
-  * Fixed issue causing hidden text in folders to sort page.
+ * Added missing german translation.
+ * Fixed issue causing hidden text in folders to sort page.
 
 2.8 / 2015-08-06
 ==================
