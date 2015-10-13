@@ -20,8 +20,8 @@
 
 'use strict';
 
-const { getDescription, isLivemark, isSmartBookmark } = require('annotations'),
-    { Bookmark, menuFolder } = require('bookmarks'),
+const { getDescription, isLivemark, isSmartBookmark } = require('lib/annotations'),
+    { Bookmark, menuFolder } = require('lib/bookmarks'),
     { createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, setDescription } = require('./utils');
 
 exports.testDescription = function(assert) {

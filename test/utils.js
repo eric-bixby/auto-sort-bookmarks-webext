@@ -28,13 +28,13 @@ const annotationService = Cc['@mozilla.org/browser/annotation-service;1'].getSer
 const asyncHistory = Cc['@mozilla.org/browser/history;1'].getService(Ci.mozIAsyncHistory);
 const bookmarkService = Cc['@mozilla.org/browser/nav-bookmarks-service;1'].getService(Ci.nsINavBookmarksService);
 const ioService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-const { Bookmark, Folder, Livemark, menuFolder, Separator, SmartBookmark, toolbarFolder, unsortedFolder } = require('bookmarks');
+const { Bookmark, Folder, Livemark, menuFolder, Separator, SmartBookmark, toolbarFolder, unsortedFolder } = require('lib/bookmarks');
 const descriptionAnnotation = 'bookmarkProperties/description';
 const livemarkFeedAnnotation = 'livemark/feedURI';
 const livemarkReadOnlyAnnotation = 'placesInternal/READ_ONLY';
 const livemarkSiteAnnotation = 'livemark/siteURI';
 const smartBookmarkAnnotation = 'Places/SmartBookmark';
-const { removeDoNotSortAnnotation, removeRecursiveAnnotation, setDoNotSortAnnotation, setRecursiveAnnotation } = require('annotations');
+const { removeDoNotSortAnnotation, removeRecursiveAnnotation, setDoNotSortAnnotation, setRecursiveAnnotation } = require('lib/annotations');
 
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 XPCOMUtils.defineLazyModuleGetter(this, 'PlacesUtils', 'resource://gre/modules/PlacesUtils.jsm');

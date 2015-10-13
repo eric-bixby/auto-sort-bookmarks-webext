@@ -20,8 +20,8 @@
 const simplePrefs = require('sdk/simple-prefs');
 const prefs = simplePrefs.prefs;
 const { MENU, TOOLBAR, UNSORTED } = require('sdk/places/bookmarks');
-const { menuFolder, toolbarFolder, unsortedFolder } = require('bookmarks');
-const { BookmarkSorter } = require('bookmark-sorter');
+const { menuFolder, toolbarFolder, unsortedFolder } = require('lib/bookmarks');
+const { BookmarkSorter } = require('lib/bookmark-sorter');
 const { sleep, spawn } = require('./task');
 const { assertBookmarksArray, createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, deleteAllBookmarks, ignore, range, resetPreferences, setDateAdded, setDescription, setKeyword, setLastModified, setVisits, sort } = require('./utils');
 

@@ -24,7 +24,7 @@ const { get, has, reset, set } = require('sdk/preferences/service'),
     self = require('sdk/self'),
     simplePrefs = require('sdk/simple-prefs'),
     prefs = simplePrefs.prefs,
-    { setPreferenceMaximum, setPreferenceMinimum } = require('options'),
+    { setPreferenceMaximum, setPreferenceMinimum } = require('lib/options'),
     { getOptionName } = require('./utils');
 
 /**
