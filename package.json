@@ -1,16 +1,15 @@
 {
     "author": "Antoni Boucher",
-    "dependencies": ["addon-sdk"],
     "description": "Sort bookmarks by multiple criteria",
     "license": "GPL-3.0",
     "id": "sortbookmarks@bouanto",
     "icon": "data/icon-48.png",
+	"icon64": "data/icon-64.png",
     "main": "lib/main.js",
-    "name": "Auto-Sort Bookmarks",
-    "translators": [{
-        "name": "Antoni Boucher"
-    }],
-    "version": "2.10.1",
+    "name": "sortbookmarks",
+	"title": "Auto-Sort Bookmarks",
+	"version": "2.10.1",
+    "translators": ["Antoni Boucher"],
     "preferences": [
         {
             "name": "auto_sort",
