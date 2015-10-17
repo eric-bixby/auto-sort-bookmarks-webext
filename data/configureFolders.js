@@ -26,7 +26,7 @@ let fetching = new Set();
 
 function sendValue(type, folderID, checkbox, image) {
 	return function() {
-		if(type === 'recursive' && image.getAttribute('data-state') === 'remove') {
+		if (type === 'recursive' && image.getAttribute('data-state') === 'remove') {
 			let children = document.querySelector('#folder-' + folderID);
 			children.style.display = 'block';
 		}
@@ -36,12 +36,12 @@ function sendValue(type, folderID, checkbox, image) {
 
 function toggleChildren(parentID, image, children, recursiveCheckbox) {
 	return function() {
-		if(!fetching.has(parentID)) {
-			if(image.getAttribute('data-state') === 'add') {
+		if (!fetching.has(parentID)) {
+			if (image.getAttribute('data-state') === 'add') {
 				image.src = removeIcon;
 				image.setAttribute('data-state', 'remove');
 
-				if(!recursiveCheckbox.checked) {
+				if (!recursiveCheckbox.checked) {
 					children.style.display = 'block';
 					children.textContent = loadingText;
 				}
@@ -55,7 +55,7 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
 				image.src = addIcon;
 				image.setAttribute('data-state', 'add');
 
-				if(children) {
+				if (children) {
 					children.style.display = 'none';
 				}
 			}
@@ -120,17 +120,17 @@ function appendFolder(folder, list) {
 }
 
 function appendFolders(folders, list) {
-	while(list.firstChild) {
+	while (list.firstChild) {
 		list.removeChild(list.firstChild);
 	}
-	for(let folder of folders) {
+	for (let folder of folders) {
 		appendFolder(folder, list);
 	}
 }
 
 self.port.on('remove-folder', function(folderID) {
 	let folder = document.querySelector('#folder-' + folderID);
-	if(folder) {
+	if (folder) {
 		let parent = folder.parentNode;
 		parent.parentNode.removeChild(parent);
 	}
@@ -150,7 +150,7 @@ self.port.on('init', function(folders, plusIcon, minusIcon, texts) {
 	removeIcon = minusIcon;
 
 	let rootFolders = document.querySelector('#rootFolders');
-	if(rootFolders === null) {
+	if (rootFolders === null) {
 		rootFolders = document.createElement('ul');
 		rootFolders.id = 'rootFolders';
 		document.body.appendChild(rootFolders);

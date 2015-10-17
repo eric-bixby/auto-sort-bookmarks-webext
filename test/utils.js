@@ -60,18 +60,18 @@ function bookmarkToString(bookmark) {
  */
 function assertBookmarksArray(assert, bookmarks1, bookmarks2) {
 	let generatedBookmarks1 = [];
-	for(let value of bookmarks1) {
+	for (let value of bookmarks1) {
 		generatedBookmarks1.push(value);
 	}
 
 	let generatedBookmarks2 = [];
-	for(let value of bookmarks2) {
+	for (let value of bookmarks2) {
 		generatedBookmarks2.push(value);
 	}
 
 	let equality = true;
-	if(generatedBookmarks1.length === generatedBookmarks2.length) {
-		for(let i = 0 ; i < generatedBookmarks1.length ; ++i) {
+	if (generatedBookmarks1.length === generatedBookmarks2.length) {
+		for (let i = 0 ; i < generatedBookmarks1.length ; ++i) {
 			equality = equality && generatedBookmarks1[i].id === generatedBookmarks2[i].id && generatedBookmarks1[i].title === generatedBookmarks2[i].title && generatedBookmarks1[i].url === generatedBookmarks2[i].url;
 		}
 	}
@@ -180,8 +180,8 @@ function getAllFolders() {
 	folders.push(unsortedFolder);
 	yield unsortedFolder;
 
-	for(let i = 0, length = folders.length ; i < length ; ++i) {
-		for(let folder of folders[i].getFolders()) {
+	for (let i = 0, length = folders.length ; i < length ; ++i) {
+		for (let folder of folders[i].getFolders()) {
 			yield folder;
 		}
 	}
@@ -193,11 +193,11 @@ function getAllFolders() {
 function deleteAllBookmarks() {
 	let folders = getAllFolders();
 	let id;
-	for(let folder of folders) {
-		while(folder.getChildren().length > 1 || folder.getChildren()[0].length > 0) {
-			for(let i = 0 ; i <= folder.getChildren()[0].length ; ++i) {
+	for (let folder of folders) {
+		while (folder.getChildren().length > 1 || folder.getChildren()[0].length > 0) {
+			for (let i = 0 ; i <= folder.getChildren()[0].length ; ++i) {
 				id = bookmarkService.getIdForItemAt(folder.id, i);
-				if(id > -1) {
+				if (id > -1) {
 					bookmarkService.removeItem(id);
 				}
 			}
@@ -225,7 +225,7 @@ function getOptionName(shortName) {
  * @param {int} parent The new parent.
  */
 function move(item, newIndex, parent) {
-	if(parent !== undefined) {
+	if (parent !== undefined) {
 		item.parentID = parent.id;
 	}
 
@@ -254,7 +254,7 @@ function openWindow() {
  * @param {Folder} folder The folder to print.
  */
 function printFolder(folder) {
-	for(let bookmark of folder.getChildren()[0]) {
+	for (let bookmark of folder.getChildren()[0]) {
 		console.log(bookmark.title);
 	}
 }
@@ -266,7 +266,7 @@ function printFolder(folder) {
  */
 function range(count) {
 	let array = [];
-	for(let i = 0 ; i < count ; ++i) {
+	for (let i = 0 ; i < count ; ++i) {
 		array.push(i);
 	}
 
@@ -288,7 +288,7 @@ function rename(item, newName) {
  */
 function resetPreferences() {
 	let preferences = ['auto_sort', 'delay', 'folder_delay', 'sort_menu', 'sort_toolbar', 'sort_unsorted', 'sort_by', 'inverse', 'then_sort_by', 'then_inverse', 'folder_sort_order', 'livemark_sort_order', 'smart_bookmark_sort_order', 'bookmark_sort_order', 'show_tools_menu_item', 'show_bookmarks_menu_item', 'show_bookmarks_toolbar_menu_item', 'show_bookmarks_manager_menu_item'];
-	for(let preference of preferences) {
+	for (let preference of preferences) {
 		reset(getOptionName(preference));
 	}
 }
@@ -345,12 +345,12 @@ function setLastModified(item, lastModified) {
 function setVisits(item, visits) {
 	let deferred = defer();
 
-	if(visits.length === undefined) {
+	if (visits.length === undefined) {
 		visits = [visits];
 	}
 
-	for(let index in visits) {
-		if(visits.hasOwnProperty(index)) {
+	for (let index in visits) {
+		if (visits.hasOwnProperty(index)) {
 			visits[index] = {
 				referrerURI: undefined,
 				transitionType: Ci.nsINavHistoryService.TRANSITION_LINK,
@@ -380,7 +380,7 @@ function showBookmarksManager() {
 
 	let window = windowUtils.getMostRecentWindow();
 	let bookmarksManager = windowUtils.getMostRecentWindow('Places:Organizer');
-	if(bookmarksManager === null) {
+	if (bookmarksManager === null) {
 		bookmarksManager = window.openDialog('chrome://browser/content/places/places.xul', '', 'chrome,toolbar=yes,dialog=no,resizable', 'AllBookmarks');
 
 		bookmarksManager.addEventListener('load', function() {

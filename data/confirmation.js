@@ -31,7 +31,7 @@ optionsButton.addEventListener('click', buttonClicked, false);
 
 self.port.on('show', function(iconURL) {
 	let images = document.querySelectorAll('img');
-	if(images.length === 0) {
+	if (images.length === 0) {
 		let image = new Image();
 		image.alt = 'Auto-Sort Bookmarks Icon';
 		image.src = iconURL;
