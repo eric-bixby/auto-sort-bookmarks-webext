@@ -1,2 +1,4 @@
 *.xpi
 *.swp
+*.iml
+.idea
