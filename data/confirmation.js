@@ -18,7 +18,7 @@
 'use strict';
 
 function buttonClicked(event) {
-    self.port.emit('button-clicked', event.target.id);
+	self.port.emit('button-clicked', event.target.id);
 }
 
 let yesButton = document.querySelector('#button-yes');
@@ -30,11 +30,11 @@ noButton.addEventListener('click', buttonClicked, false);
 optionsButton.addEventListener('click', buttonClicked, false);
 
 self.port.on('show', function(iconURL) {
-    let images = document.querySelectorAll('img');
-    if(images.length === 0) {
-        let image = new Image();
-        image.alt = 'Auto-Sort Bookmarks Icon';
-        image.src = iconURL;
-        document.body.insertBefore(image, document.querySelector('#question'));
-    }
+	let images = document.querySelectorAll('img');
+	if(images.length === 0) {
+		let image = new Image();
+		image.alt = 'Auto-Sort Bookmarks Icon';
+		image.src = iconURL;
+		document.body.insertBefore(image, document.querySelector('#question'));
+	}
 });

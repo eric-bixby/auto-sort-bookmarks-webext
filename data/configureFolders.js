@@ -25,136 +25,136 @@ let removeIcon;
 let fetching = new Set();
 
 function sendValue(type, folderID, checkbox, image) {
-    return function() {
-        if(type === 'recursive' && image.getAttribute('data-state') === 'remove') {
-            let children = document.querySelector('#folder-' + folderID);
-            children.style.display = 'block';
-        }
-        self.port.emit(type + '-checkbox-change', folderID, checkbox.checked);
-    };
+	return function() {
+		if(type === 'recursive' && image.getAttribute('data-state') === 'remove') {
+			let children = document.querySelector('#folder-' + folderID);
+			children.style.display = 'block';
+		}
+		self.port.emit(type + '-checkbox-change', folderID, checkbox.checked);
+	};
 }
 
 function toggleChildren(parentID, image, children, recursiveCheckbox) {
-    return function() {
-        if(!fetching.has(parentID)) {
-            if(image.getAttribute('data-state') === 'add') {
-                image.src = removeIcon;
-                image.setAttribute('data-state', 'remove');
+	return function() {
+		if(!fetching.has(parentID)) {
+			if(image.getAttribute('data-state') === 'add') {
+				image.src = removeIcon;
+				image.setAttribute('data-state', 'remove');
 
-                if(!recursiveCheckbox.checked) {
-                    children.style.display = 'block';
-                    children.textContent = loadingText;
-                }
+				if(!recursiveCheckbox.checked) {
+					children.style.display = 'block';
+					children.textContent = loadingText;
+				}
 
-                fetching.add(parentID);
-                setTimeout(function() {
-                    self.port.emit('query-children', parentID);
-                }, 100);
-            }
-            else {
-                image.src = addIcon;
-                image.setAttribute('data-state', 'add');
+				fetching.add(parentID);
+				setTimeout(function() {
+					self.port.emit('query-children', parentID);
+				}, 100);
+			}
+			else {
+				image.src = addIcon;
+				image.setAttribute('data-state', 'add');
 
-                if(children) {
-                    children.style.display = 'none';
-                }
-            }
-        }
-    };
+				if(children) {
+					children.style.display = 'none';
+				}
+			}
+		}
+	};
 }
 
 function appendFolder(folder, list) {
-    let listItem = document.createElement('li');
+	let listItem = document.createElement('li');
 
-    let recursiveCheckbox = document.createElement('input');
-    let recursiveLabel = document.createElement('label');
+	let recursiveCheckbox = document.createElement('input');
+	let recursiveLabel = document.createElement('label');
 
-    let children = document.createElement('ul');
-    children.id = 'folder-' + folder.id;
+	let children = document.createElement('ul');
+	children.id = 'folder-' + folder.id;
 
-    let icon = document.createElement('img');
-    icon.alt = 'plus-minus';
-    icon.src = addIcon;
-    icon.setAttribute('data-state', 'add');
-    icon.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
-    listItem.appendChild(icon);
+	let icon = document.createElement('img');
+	icon.alt = 'plus-minus';
+	icon.src = addIcon;
+	icon.setAttribute('data-state', 'add');
+	icon.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
+	listItem.appendChild(icon);
 
-    let label = document.createElement('label');
-    label.textContent = folder.title;
-    label.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
-    listItem.appendChild(label);
+	let label = document.createElement('label');
+	label.textContent = folder.title;
+	label.addEventListener('click', toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
+	listItem.appendChild(label);
 
-    let checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = !folder.excluded;
-    checkbox.addEventListener('change', sendValue('sort', folder.id, checkbox), false);
-    checkbox.addEventListener('change', function() {
-        recursiveCheckbox.disabled = checkbox.checked;
-        recursiveLabel.disabled = checkbox.checked;
-    }, false);
+	let checkbox = document.createElement('input');
+	checkbox.type = 'checkbox';
+	checkbox.checked = !folder.excluded;
+	checkbox.addEventListener('change', sendValue('sort', folder.id, checkbox), false);
+	checkbox.addEventListener('change', function() {
+		recursiveCheckbox.disabled = checkbox.checked;
+		recursiveLabel.disabled = checkbox.checked;
+	}, false);
 
-    listItem.appendChild(checkbox);
+	listItem.appendChild(checkbox);
 
-    recursiveLabel.textContent = recursiveText;
-    recursiveLabel.htmlFor = 'recursive-' + folder.id;
-    recursiveLabel.className = 'recursive';
-    recursiveLabel.disabled = checkbox.checked;
-    listItem.appendChild(recursiveLabel);
+	recursiveLabel.textContent = recursiveText;
+	recursiveLabel.htmlFor = 'recursive-' + folder.id;
+	recursiveLabel.className = 'recursive';
+	recursiveLabel.disabled = checkbox.checked;
+	listItem.appendChild(recursiveLabel);
 
-    let message = document.createElement('p');
+	let message = document.createElement('p');
 
-    recursiveCheckbox.type = 'checkbox';
-    recursiveCheckbox.id = 'recursive-' + folder.id;
-    recursiveCheckbox.checked = folder.recursivelyExcluded;
-    recursiveCheckbox.disabled = checkbox.checked;
-    recursiveCheckbox.className = 'recursive-checkbox';
-    recursiveCheckbox.addEventListener('change', sendValue('recursive', folder.id, recursiveCheckbox, icon), false);
-    listItem.appendChild(recursiveCheckbox);
+	recursiveCheckbox.type = 'checkbox';
+	recursiveCheckbox.id = 'recursive-' + folder.id;
+	recursiveCheckbox.checked = folder.recursivelyExcluded;
+	recursiveCheckbox.disabled = checkbox.checked;
+	recursiveCheckbox.className = 'recursive-checkbox';
+	recursiveCheckbox.addEventListener('change', sendValue('recursive', folder.id, recursiveCheckbox, icon), false);
+	listItem.appendChild(recursiveCheckbox);
 
-    message.textContent = messageText;
-    listItem.appendChild(message);
+	message.textContent = messageText;
+	listItem.appendChild(message);
 
-    listItem.appendChild(children);
+	listItem.appendChild(children);
 
-    list.appendChild(listItem);
+	list.appendChild(listItem);
 }
 
 function appendFolders(folders, list) {
-    while(list.firstChild) {
-        list.removeChild(list.firstChild);
-    }
-    for(let folder of folders) {
-        appendFolder(folder, list);
-    }
+	while(list.firstChild) {
+		list.removeChild(list.firstChild);
+	}
+	for(let folder of folders) {
+		appendFolder(folder, list);
+	}
 }
 
 self.port.on('remove-folder', function(folderID) {
-    let folder = document.querySelector('#folder-' + folderID);
-    if(folder) {
-        let parent = folder.parentNode;
-        parent.parentNode.removeChild(parent);
-    }
+	let folder = document.querySelector('#folder-' + folderID);
+	if(folder) {
+		let parent = folder.parentNode;
+		parent.parentNode.removeChild(parent);
+	}
 });
 
 self.port.on('children', function(parentID, children) {
-    let list = document.querySelector('#folder-' + parentID);
-    appendFolders(children, list);
-    fetching.delete(parentID);
+	let list = document.querySelector('#folder-' + parentID);
+	appendFolders(children, list);
+	fetching.delete(parentID);
 });
 
 self.port.on('init', function(folders, plusIcon, minusIcon, texts) {
-    recursiveText = texts.recursiveText;
-    messageText = texts.messageText;
-    loadingText = texts.loadingText;
-    addIcon = plusIcon;
-    removeIcon = minusIcon;
+	recursiveText = texts.recursiveText;
+	messageText = texts.messageText;
+	loadingText = texts.loadingText;
+	addIcon = plusIcon;
+	removeIcon = minusIcon;
 
-    let rootFolders = document.querySelector('#rootFolders');
-    if(rootFolders === null) {
-        rootFolders = document.createElement('ul');
-        rootFolders.id = 'rootFolders';
-        document.body.appendChild(rootFolders);
-    }
+	let rootFolders = document.querySelector('#rootFolders');
+	if(rootFolders === null) {
+		rootFolders = document.createElement('ul');
+		rootFolders.id = 'rootFolders';
+		document.body.appendChild(rootFolders);
+	}
 
-    appendFolders(folders, rootFolders);
+	appendFolders(folders, rootFolders);
 });
