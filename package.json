@@ -1,207 +1,207 @@
 {
-    "author": "Antoni Boucher",
-    "description": "Sort bookmarks by multiple criteria",
-    "license": "GPL-3.0",
-    "id": "sortbookmarks@bouanto",
-    "icon": "data/icon-48.png",
-	"icon64": "data/icon-64.png",
-    "main": "lib/main.js",
-    "name": "sortbookmarks",
+	"name": "sortbookmarks",
 	"title": "Auto-Sort Bookmarks",
+	"id": "sortbookmarks@bouanto",
+	"icon": "data/icon-48.png",
+	"icon64": "data/icon-64.png",
+	"description": "Sort bookmarks by multiple criteria",
+	"author": "Antoni Boucher",
+	"translators": ["Antoni Boucher"],
+	"license": "GPL-3.0",
 	"version": "2.10.3",
-    "translators": ["Antoni Boucher"],
-    "preferences": [
-        {
-            "name": "auto_sort",
-            "title": "Auto-sort",
-            "type": "bool",
-            "value": false
-        },
-        {
-            "name": "delay",
-            "title": "Delay",
-            "type": "integer",
-            "value": 0
-        },
-        {
-            "name": "folder_delay",
-            "title": "Delay for Folders",
-            "type": "integer",
-            "value": 30
-        },
-        {
-            "name": "case_insensitive",
-            "title": "Case Insensitive",
-            "type": "bool",
-            "value": false
-        },
-        {
-            "label": "Configure...",
-            "name": "exclude_folders",
-            "title": "Folders to Sort",
-            "type": "control"
-        },
-        {
-            "name": "sort_by",
-            "title": "Sort By",
-            "type": "menulist",
-            "value": 0,
-            "options": [
-                {
-                    "value": "0",
-                    "label": "Name"
-                },
-                {
-                    "value": "1",
-                    "label": "URL"
-                },
-                {
-                    "value": "2",
-                    "label": "Description"
-                },
-                {
-                    "value": "3",
-                    "label": "Keyword"
-                },
-                {
-                    "value": "4",
-                    "label": "Date Added"
-                },
-                {
-                    "value": "5",
-                    "label": "Last Modified"
-                },
-                {
-                    "value": "6",
-                    "label": "Last visited"
-                },
-                {
-                    "value": "7",
-                    "label": "Visited count"
-                },
-                {
-                    "value": "8",
-                    "label": "Reversed URL"
-                }
-            ]
-        },
-        {
-            "name": "inverse",
-            "title": "Inverse Order",
-            "type": "bool",
-            "value": false
-        },
-        {
-            "name": "then_sort_by",
-            "title": "Then Sort By",
-            "type": "menulist",
-            "value": -1,
-            "options": [
-                {
-                    "value": "-1",
-                    "label": "None"
-                },
-                {
-                    "value": "0",
-                    "label": "Name"
-                },
-                {
-                    "value": "1",
-                    "label": "URL"
-                },
-                {
-                    "value": "2",
-                    "label": "Description"
-                },
-                {
-                    "value": "3",
-                    "label": "Keyword"
-                },
-                {
-                    "value": "4",
-                    "label": "Date Added"
-                },
-                {
-                    "value": "5",
-                    "label": "Last Modified"
-                },
-                {
-                    "value": "6",
-                    "label": "Last visited"
-                },
-                {
-                    "value": "7",
-                    "label": "Visited count"
-                },
-                {
-                    "value": "8",
-                    "label": "Reversed URL"
-                }
-            ]
-        },
-        {
-            "name": "then_inverse",
-            "title": "Inverse Second Order",
-            "type": "bool",
-            "value": false
-        },
-        {
-            "name": "folder_sort_by",
-            "title": "Sort Folder By",
-            "type": "menulist",
-            "value": 0,
-            "options": [
-                {
-                    "value": "-1",
-                    "label": "None"
-                },
-                {
-                    "value": "0",
-                    "label": "Name"
-                },
-                {
-                    "value": "2",
-                    "label": "Description"
-                },
-                {
-                    "value": "4",
-                    "label": "Date Added"
-                },
-                {
-                    "value": "5",
-                    "label": "Last Modified"
-                }
-            ]
-        },
-        {
-            "name": "folder_inverse",
-            "title": "Inverse Folder Order",
-            "type": "bool",
-            "value": false
-        },
-        {
-            "name": "folder_sort_order",
-            "title": "Folder Sort Order",
-            "type": "integer",
-            "value": 1
-        },
-        {
-            "name": "livemark_sort_order",
-            "title": "Livemark Sort Order",
-            "type": "integer",
-            "value": 2
-        },
-        {
-            "name": "smart_bookmark_sort_order",
-            "title": "Smart Bookmark Sort Order",
-            "type": "integer",
-            "value": 3
-        },
-        {
-            "name": "bookmark_sort_order",
-            "title": "Bookmark Sort Order",
-            "type": "integer",
-            "value": 4
-        }
-    ]
+	"main": "lib/main.js",
+	"preferences": [
+		{
+			"name": "auto_sort",
+			"title": "Auto-sort",
+			"type": "bool",
+			"value": false
+		},
+		{
+			"name": "delay",
+			"title": "Delay",
+			"type": "integer",
+			"value": 0
+		},
+		{
+			"name": "folder_delay",
+			"title": "Delay for Folders",
+			"type": "integer",
+			"value": 30
+		},
+		{
+			"name": "case_insensitive",
+			"title": "Case Insensitive",
+			"type": "bool",
+			"value": false
+		},
+		{
+			"label": "Configure...",
+			"name": "exclude_folders",
+			"title": "Folders to Sort",
+			"type": "control"
+		},
+		{
+			"name": "sort_by",
+			"title": "Sort By",
+			"type": "menulist",
+			"value": 0,
+			"options": [
+				{
+					"value": "0",
+					"label": "Name"
+				},
+				{
+					"value": "1",
+					"label": "URL"
+				},
+				{
+					"value": "2",
+					"label": "Description"
+				},
+				{
+					"value": "3",
+					"label": "Keyword"
+				},
+				{
+					"value": "4",
+					"label": "Date Added"
+				},
+				{
+					"value": "5",
+					"label": "Last Modified"
+				},
+				{
+					"value": "6",
+					"label": "Last visited"
+				},
+				{
+					"value": "7",
+					"label": "Visited count"
+				},
+				{
+					"value": "8",
+					"label": "Reversed URL"
+				}
+			]
+		},
+		{
+			"name": "inverse",
+			"title": "Inverse Order",
+			"type": "bool",
+			"value": false
+		},
+		{
+			"name": "then_sort_by",
+			"title": "Then Sort By",
+			"type": "menulist",
+			"value": -1,
+			"options": [
+				{
+					"value": "-1",
+					"label": "None"
+				},
+				{
+					"value": "0",
+					"label": "Name"
+				},
+				{
+					"value": "1",
+					"label": "URL"
+				},
+				{
+					"value": "2",
+					"label": "Description"
+				},
+				{
+					"value": "3",
+					"label": "Keyword"
+				},
+				{
+					"value": "4",
+					"label": "Date Added"
+				},
+				{
+					"value": "5",
+					"label": "Last Modified"
+				},
+				{
+					"value": "6",
+					"label": "Last visited"
+				},
+				{
+					"value": "7",
+					"label": "Visited count"
+				},
+				{
+					"value": "8",
+					"label": "Reversed URL"
+				}
+			]
+		},
+		{
+			"name": "then_inverse",
+			"title": "Inverse Second Order",
+			"type": "bool",
+			"value": false
+		},
+		{
+			"name": "folder_sort_by",
+			"title": "Sort Folder By",
+			"type": "menulist",
+			"value": 0,
+			"options": [
+				{
+					"value": "-1",
+					"label": "None"
+				},
+				{
+					"value": "0",
+					"label": "Name"
+				},
+				{
+					"value": "2",
+					"label": "Description"
+				},
+				{
+					"value": "4",
+					"label": "Date Added"
+				},
+				{
+					"value": "5",
+					"label": "Last Modified"
+				}
+			]
+		},
+		{
+			"name": "folder_inverse",
+			"title": "Inverse Folder Order",
+			"type": "bool",
+			"value": false
+		},
+		{
+			"name": "folder_sort_order",
+			"title": "Folder Sort Order",
+			"type": "integer",
+			"value": 1
+		},
+		{
+			"name": "livemark_sort_order",
+			"title": "Livemark Sort Order",
+			"type": "integer",
+			"value": 2
+		},
+		{
+			"name": "smart_bookmark_sort_order",
+			"title": "Smart Bookmark Sort Order",
+			"type": "integer",
+			"value": 3
+		},
+		{
+			"name": "bookmark_sort_order",
+			"title": "Bookmark Sort Order",
+			"type": "integer",
+			"value": 4
+		}
+	]
 }
