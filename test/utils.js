@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const { Cc, Ci, Cu } = require('chrome');
-const { defer } = require('sdk/core/promise');
-const { MENU, TOOLBAR, UNSORTED } = require('sdk/places/bookmarks');
-const { reset } = require('sdk/preferences/service');
-const self = require('sdk/self');
-const windows = require('sdk/windows').browserWindows;
-const windowUtils = require('sdk/window/utils');
-const annotationService = Cc['@mozilla.org/browser/annotation-service;1'].getService(Ci.nsIAnnotationService);
-const asyncHistory = Cc['@mozilla.org/browser/history;1'].getService(Ci.mozIAsyncHistory);
-const bookmarkService = Cc['@mozilla.org/browser/nav-bookmarks-service;1'].getService(Ci.nsINavBookmarksService);
-const ioService = Cc['@mozilla.org/network/io-service;1'].getService(Ci.nsIIOService);
-const { Bookmark, Folder, Livemark, menuFolder, Separator, SmartBookmark, toolbarFolder, unsortedFolder } = require('lib/bookmarks');
-const descriptionAnnotation = 'bookmarkProperties/description';
-const livemarkFeedAnnotation = 'livemark/feedURI';
-const livemarkReadOnlyAnnotation = 'placesInternal/READ_ONLY';
-const livemarkSiteAnnotation = 'livemark/siteURI';
-const smartBookmarkAnnotation = 'Places/SmartBookmark';
-const { removeDoNotSortAnnotation, removeRecursiveAnnotation, setDoNotSortAnnotation, setRecursiveAnnotation } = require('lib/annotations');
+const { Cc, Ci, Cu } = require("chrome");
+const { defer } = require("sdk/core/promise");
+const { MENU, TOOLBAR, UNSORTED } = require("sdk/places/bookmarks");
+const { reset } = require("sdk/preferences/service");
+const self = require("sdk/self");
+const windows = require("sdk/windows").browserWindows;
+const windowUtils = require("sdk/window/utils");
+const annotationService = Cc["@mozilla.org/browser/annotation-service;1"].getService(Ci.nsIAnnotationService);
+const asyncHistory = Cc["@mozilla.org/browser/history;1"].getService(Ci.mozIAsyncHistory);
+const bookmarkService = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService);
+const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+const { Bookmark, Folder, Livemark, menuFolder, Separator, SmartBookmark, toolbarFolder, unsortedFolder } = require("lib/bookmarks");
+const descriptionAnnotation = "bookmarkProperties/description";
+const livemarkFeedAnnotation = "livemark/feedURI";
+const livemarkReadOnlyAnnotation = "placesInternal/READ_ONLY";
+const livemarkSiteAnnotation = "livemark/siteURI";
+const smartBookmarkAnnotation = "Places/SmartBookmark";
+const { removeDoNotSortAnnotation, removeRecursiveAnnotation, setDoNotSortAnnotation, setRecursiveAnnotation } = require("lib/annotations");
 
-Cu.import('resource://gre/modules/XPCOMUtils.jsm');
-XPCOMUtils.defineLazyModuleGetter(this, 'PlacesUtils', 'resource://gre/modules/PlacesUtils.jsm');
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "PlacesUtils", "resource://gre/modules/PlacesUtils.jsm");
 
 function ignore(folder) {
 	setDoNotSortAnnotation(folder.id);
@@ -50,7 +50,7 @@ function sort(folder) {
 }
 
 function bookmarkToString(bookmark) {
-	return bookmark.id + '. ' + bookmark.title;
+	return bookmark.id + ". " + bookmark.title;
 }
 
 /**
@@ -81,7 +81,7 @@ function assertBookmarksArray(assert, bookmarks1, bookmarks2) {
 
 	let bookmarks1String = JSON.stringify(generatedBookmarks1.map(bookmarkToString));
 	let bookmarks2String = JSON.stringify(generatedBookmarks2.map(bookmarkToString));
-	assert.ok(equality, '\nResult:   ' + (generatedBookmarks1.length > 0 ? bookmarks1String : '[]') + '\n !==\nExpected: ' + (generatedBookmarks2.length > 0 ? bookmarks2String : '[]'));
+	assert.ok(equality, "\nResult:   " + (generatedBookmarks1.length > 0 ? bookmarks1String : "[]") + "\n !==\nExpected: " + (generatedBookmarks2.length > 0 ? bookmarks2String : "[]"));
 }
 
 /**
@@ -215,7 +215,7 @@ function deleteAllBookmarks() {
  * @return {string} The long name.
  */
 function getOptionName(shortName) {
-	return 'extensions.' + self.id + '.' + shortName;
+	return "extensions." + self.id + "." + shortName;
 }
 
 /**
@@ -243,7 +243,7 @@ function openWindow() {
 			deferred.resolve();
 		},
 
-		url: '',
+		url: "",
 	});
 
 	return deferred.promise;
@@ -287,7 +287,7 @@ function rename(item, newName) {
  * Reset the preferences to their default value.
  */
 function resetPreferences() {
-	let preferences = ['auto_sort', 'delay', 'folder_delay', 'sort_menu', 'sort_toolbar', 'sort_unsorted', 'sort_by', 'inverse', 'then_sort_by', 'then_inverse', 'folder_sort_order', 'livemark_sort_order', 'smart_bookmark_sort_order', 'bookmark_sort_order', 'show_tools_menu_item', 'show_bookmarks_menu_item', 'show_bookmarks_toolbar_menu_item', 'show_bookmarks_manager_menu_item'];
+	let preferences = ["auto_sort", "delay", "folder_delay", "sort_menu", "sort_toolbar", "sort_unsorted", "sort_by", "inverse", "then_sort_by", "then_inverse", "folder_sort_order", "livemark_sort_order", "smart_bookmark_sort_order", "bookmark_sort_order", "show_tools_menu_item", "show_bookmarks_menu_item", "show_bookmarks_toolbar_menu_item", "show_bookmarks_manager_menu_item"];
 	for (let preference of preferences) {
 		reset(getOptionName(preference));
 	}
@@ -312,7 +312,7 @@ function setDescription(item, description) {
 		annotationService.setItemAnnotation(item.id, descriptionAnnotation, description, 0, Ci.nsIAnnotationService.EXPIRE_NEVER);
 	}
 	catch(exception) {
-		console.log('Cannot set description on item ' + item.id + '.');
+		console.log("Cannot set description on item " + item.id + ".");
 	}
 }
 
@@ -379,16 +379,16 @@ function showBookmarksManager() {
 	let deferred = defer();
 
 	let window = windowUtils.getMostRecentWindow();
-	let bookmarksManager = windowUtils.getMostRecentWindow('Places:Organizer');
+	let bookmarksManager = windowUtils.getMostRecentWindow("Places:Organizer");
 	if (bookmarksManager === null) {
-		bookmarksManager = window.openDialog('chrome://browser/content/places/places.xul', '', 'chrome,toolbar=yes,dialog=no,resizable', 'AllBookmarks');
+		bookmarksManager = window.openDialog("chrome://browser/content/places/places.xul", "", "chrome,toolbar=yes,dialog=no,resizable", "AllBookmarks");
 
-		bookmarksManager.addEventListener('load', function() {
+		bookmarksManager.addEventListener("load", function() {
 			deferred.resolve(bookmarksManager);
 		}, false);
 	}
 	else {
-		bookmarksManager.PlacesOrganizer.selectLeftPaneQuery('AllBookmarks');
+		bookmarksManager.PlacesOrganizer.selectLeftPaneQuery("AllBookmarks");
 		bookmarksManager.focus();
 
 		deferred.resolve(bookmarksManager);

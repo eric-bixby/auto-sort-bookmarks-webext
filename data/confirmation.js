@@ -15,26 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
 function buttonClicked(event) {
-	self.port.emit('button-clicked', event.target.id);
+	self.port.emit("button-clicked", event.target.id);
 }
 
-let yesButton = document.querySelector('#button-yes');
-let noButton = document.querySelector('#button-no');
-let optionsButton = document.querySelector('#button-change-options');
+let yesButton = document.querySelector("#button-yes");
+let noButton = document.querySelector("#button-no");
+let optionsButton = document.querySelector("#button-change-options");
 
-yesButton.addEventListener('click', buttonClicked, false);
-noButton.addEventListener('click', buttonClicked, false);
-optionsButton.addEventListener('click', buttonClicked, false);
+yesButton.addEventListener("click", buttonClicked, false);
+noButton.addEventListener("click", buttonClicked, false);
+optionsButton.addEventListener("click", buttonClicked, false);
 
-self.port.on('show', function(iconURL) {
-	let images = document.querySelectorAll('img');
+self.port.on("show", function(iconURL) {
+	let images = document.querySelectorAll("img");
 	if (images.length === 0) {
 		let image = new Image();
-		image.alt = 'Auto-Sort Bookmarks Icon';
+		image.alt = "Auto-Sort Bookmarks Icon";
 		image.src = iconURL;
-		document.body.insertBefore(image, document.querySelector('#question'));
+		document.body.insertBefore(image, document.querySelector("#question"));
 	}
 });

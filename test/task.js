@@ -3,7 +3,7 @@
 /* task.js v{{version}} taskjs.org | taskjs.org/license */
 //(function(global) {
 
-const { setTimeout } = require('sdk/timers');
+const { setTimeout } = require("sdk/timers");
 
 var global = this;
 
@@ -77,8 +77,8 @@ function enqueue_postMessage() {
 // Differences:
 // - does not flatten promises on `then`
 // - currently no enforcement of throwing
-// - uses task.js's `enqueue`
-// - null out deferred's waiting queue
+// - uses task.js"s `enqueue`
+// - null out deferred"s waiting queue
 
 function Promise() {
 	if (!(this instanceof Promise))
@@ -311,7 +311,7 @@ function choose() {
 	return deferred.promise;
 }
 
-const T_PAUSED	= 0;  // can't be scheduled or executed
+const T_PAUSED	= 0;  // can"t be scheduled or executed
 const T_STARTED   = 1;  // may or may not currently be executing
 const T_CANCELLED = 2;  // cancelled but not yet done cleaning up
 const T_CLOSED	= 3;  // completely done
@@ -334,7 +334,7 @@ function Task(thunk) {
 	this.tid = nextTID();				// thread ID
 	this.result = void 0;				// intermediate or final result
 	this.runState = R_RESOLVED;		  // execution status within scheduler
-	this.threadState = T_PAUSED;		 // state in thread's lifecycle
+	this.threadState = T_PAUSED;		 // state in thread"s lifecycle
 	this.thread = thunk.call(this);	  // thread
 	this.scheduler = currentScheduler(); // scheduler
 	this.deferred = new Deferred();

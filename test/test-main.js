@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+"use strict";
 
-const { MENU, TOOLBAR, UNSORTED } = require('sdk/places/bookmarks');
-const simplePrefs = require('sdk/simple-prefs');
+const { MENU, TOOLBAR, UNSORTED } = require("sdk/places/bookmarks");
+const simplePrefs = require("sdk/simple-prefs");
 const prefs = simplePrefs.prefs;
-const { menuFolder, toolbarFolder, unsortedFolder } = require('lib/bookmarks');
-const { adjustSortCriteria, createEvents, setPreferenceMinimumMaximum } = require('lib/main');
-const { sleep, spawn } = require('./task');
-const { assertBookmarksArray, createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, deleteAllBookmarks, deleteItem, ignore, move, rename, resetPreferences, setVisits, sort } = require('./utils');
+const { menuFolder, toolbarFolder, unsortedFolder } = require("lib/bookmarks");
+const { adjustSortCriteria, createEvents, setPreferenceMinimumMaximum } = require("lib/main");
+const { sleep, spawn } = require("./task");
+const { assertBookmarksArray, createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, deleteAllBookmarks, deleteItem, ignore, move, rename, resetPreferences, setVisits, sort } = require("./utils");
 
 exports.testAutoSort = function(assert, done) {
 	spawn(function() {
@@ -32,11 +32,11 @@ exports.testAutoSort = function(assert, done) {
 
 		deleteAllBookmarks();
 
-		let folder = createFolder('Folder', menuFolder);
+		let folder = createFolder("Folder", menuFolder);
 
-		let bookmark1 = createBookmark('Title', 'http://title.com/', folder);
-		let bookmark2 = createBookmark('Test', 'http://test.com/', folder);
-		let bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		let bookmark1 = createBookmark("Title", "http://title.com/", folder);
+		let bookmark2 = createBookmark("Test", "http://test.com/", folder);
+		let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		prefs.auto_sort = true;
 
@@ -49,11 +49,11 @@ exports.testAutoSort = function(assert, done) {
 
 		deleteAllBookmarks();
 
-		folder = createFolder('Folder', menuFolder);
+		folder = createFolder("Folder", menuFolder);
 
-		bookmark1 = createBookmark('Title', 'http://title.com/', folder);
-		bookmark2 = createBookmark('Test', 'http://test.com/', folder);
-		bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		bookmark1 = createBookmark("Title", "http://title.com/", folder);
+		bookmark2 = createBookmark("Test", "http://test.com/", folder);
+		bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		yield sleep(100);
 
@@ -75,23 +75,23 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		deleteAllBookmarks();
 
 		// Test adding bookmarks.
-		let folder = createFolder('Folder', menuFolder);
+		let folder = createFolder("Folder", menuFolder);
 
-		let bookmark1 = createBookmark('Title21', 'http://title21.com/', folder);
+		let bookmark1 = createBookmark("Title21", "http://title21.com/", folder);
 
 		yield sleep(100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		let bookmark2 = createBookmark('Test22', 'http://test22.com/', folder);
+		let bookmark2 = createBookmark("Test22", "http://test22.com/", folder);
 
 		yield sleep(100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		let bookmark3 = createBookmark('Abc23', 'http://abc23.com/', folder);
+		let bookmark3 = createBookmark("Abc23", "http://abc23.com/", folder);
 
 		yield sleep(100);
 
@@ -99,14 +99,14 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 1);
 
 		// Test changing bookmarks.
-		rename(bookmark3, 'Zebra23');
+		rename(bookmark3, "Zebra23");
 
 		yield sleep(100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1, bookmark3]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		rename(bookmark2, 'Title Test22');
+		rename(bookmark2, "Title Test22");
 
 		yield sleep(100);
 
@@ -128,7 +128,7 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		let bookmark4 = createBookmark('Abc24', 'http://abc24.com/', menuFolder);
+		let bookmark4 = createBookmark("Abc24", "http://abc24.com/", menuFolder);
 
 		move(bookmark4, 4, folder);
 
@@ -138,7 +138,7 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 1);
 
 		let separator3 = createSeparator(folder);
-		let bookmark10 = createBookmark('Firefox30', 'http://firefox30.com/', folder);
+		let bookmark10 = createBookmark("Firefox30", "http://firefox30.com/", folder);
 
 		yield sleep(100);
 
@@ -179,7 +179,7 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 2);
 
 		let separator4 = createSeparator(folder);
-		let bookmark11 = createBookmark('Mozilla31', 'http://mozilla31.com/', folder);
+		let bookmark11 = createBookmark("Mozilla31", "http://mozilla31.com/", folder);
 
 		yield sleep(100);
 
@@ -224,10 +224,10 @@ exports.testAutoSortOnChanges = function(assert, done) {
 
 		// Test deleting bookmarks.
 		let separator1 = createSeparator(folder);
-		let bookmark5 = createBookmark('One Test25', 'http://one25.com/', folder);
-		let bookmark6 = createBookmark('Two tests26', 'http://two26.com/', folder);
+		let bookmark5 = createBookmark("One Test25", "http://one25.com/", folder);
+		let bookmark6 = createBookmark("Two tests26", "http://two26.com/", folder);
 		let separator2 = createSeparator(folder);
-		let bookmark7 = createBookmark('Auie27', 'http://auie27.com/', folder);
+		let bookmark7 = createBookmark("Auie27", "http://auie27.com/", folder);
 
 		yield sleep(100);
 
@@ -261,17 +261,17 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 1);
 
 		// Test multiple changes.
-		let folder2 = createFolder('Folder', toolbarFolder);
-		let bookmark8 = createBookmark('Abc28', 'http://abc28.com/', folder2);
-		let bookmark9 = createBookmark('Test29', 'http://test29.com/', folder2);
+		let folder2 = createFolder("Folder", toolbarFolder);
+		let bookmark8 = createBookmark("Abc28", "http://abc28.com/", folder2);
+		let bookmark9 = createBookmark("Test29", "http://test29.com/", folder2);
 
 		yield sleep(100);
 
 		assertBookmarksArray(assert, folder2.getChildren()[0], [bookmark8, bookmark9]);
 		assert.strictEqual(folder2.getChildren().length, 1);
 
-		rename(bookmark3, 'Aiue23');
-		rename(bookmark8, 'Zeta29');
+		rename(bookmark3, "Aiue23");
+		rename(bookmark8, "Zeta29");
 
 		yield sleep(100);
 
@@ -281,7 +281,7 @@ exports.testAutoSortOnChanges = function(assert, done) {
 		assertBookmarksArray(assert, folder2.getChildren()[0], [bookmark9, bookmark8]);
 		assert.strictEqual(folder2.getChildren().length, 1);
 
-		rename(bookmark3, 'Zebra23');
+		rename(bookmark3, "Zebra23");
 
 		// Test visiting bookmarks.
 		prefs.sort_by = 7;
@@ -324,11 +324,11 @@ exports.testAutoSortOnOptionChanges = function(assert, done) {
 		// Sort Menu Folder.
 		deleteAllBookmarks();
 
-		let folder = createFolder('Folder', menuFolder);
+		let folder = createFolder("Folder", menuFolder);
 
-		let bookmark1 = createBookmark('Title', 'http://title.com/', folder);
-		let bookmark2 = createBookmark('Test', 'http://test.com/', folder);
-		let bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		let bookmark1 = createBookmark("Title", "http://title.com/", folder);
+		let bookmark2 = createBookmark("Test", "http://test.com/", folder);
+		let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		ignore(MENU);
 		prefs.auto_sort = true;
@@ -350,11 +350,11 @@ exports.testAutoSortOnOptionChanges = function(assert, done) {
 		// Sort Toolbar Folder.
 		deleteAllBookmarks();
 
-		folder = createFolder('Folder', toolbarFolder);
+		folder = createFolder("Folder", toolbarFolder);
 
-		bookmark1 = createBookmark('Title', 'http://title.com/', folder);
-		bookmark2 = createBookmark('Test', 'http://test.com/', folder);
-		bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		bookmark1 = createBookmark("Title", "http://title.com/", folder);
+		bookmark2 = createBookmark("Test", "http://test.com/", folder);
+		bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		ignore(TOOLBAR);
 		prefs.auto_sort = true;
@@ -376,11 +376,11 @@ exports.testAutoSortOnOptionChanges = function(assert, done) {
 		// Sort Unsorted Folder.
 		deleteAllBookmarks();
 
-		folder = createFolder('Folder', unsortedFolder);
+		folder = createFolder("Folder", unsortedFolder);
 
-		bookmark1 = createBookmark('Title', 'http://title.com/', folder);
-		bookmark2 = createBookmark('Test', 'http://test.com/', folder);
-		bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		bookmark1 = createBookmark("Title", "http://title.com/", folder);
+		bookmark2 = createBookmark("Test", "http://test.com/", folder);
+		bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		ignore(UNSORTED);
 		prefs.auto_sort = true;
@@ -402,12 +402,12 @@ exports.testAutoSortOnOptionChanges = function(assert, done) {
 		// Sort Order.
 		deleteAllBookmarks();
 
-		folder = createFolder('Folder', menuFolder);
+		folder = createFolder("Folder", menuFolder);
 
-		let folder1 = createFolder('Folder 1', folder);
-		let livemark1 = createLivemark('Livemark', 'http://www.mozilla.org/', folder);
-		let smartBookmark1 = createSmartBookmark('Smart Bookmark', 'MostVisited', 'place:sort=8&maxResults=10', folder);
-		bookmark1 = createBookmark('Bookmark', 'http://title.com/', folder);
+		let folder1 = createFolder("Folder 1", folder);
+		let livemark1 = createLivemark("Livemark", "http://www.mozilla.org/", folder);
+		let smartBookmark1 = createSmartBookmark("Smart Bookmark", "MostVisited", "place:sort=8&maxResults=10", folder);
+		bookmark1 = createBookmark("Bookmark", "http://title.com/", folder);
 
 		prefs.folder_sort_order = 1;
 		prefs.livemark_sort_order = 2;
@@ -458,11 +458,11 @@ exports.testAutoSortOnOptionChanges = function(assert, done) {
 		// Sort criteria.
 		deleteAllBookmarks();
 
-		folder = createFolder('Folder', toolbarFolder);
+		folder = createFolder("Folder", toolbarFolder);
 
-		bookmark1 = createBookmark('Test', 'http://1test.com/', folder);
-		bookmark2 = createBookmark('Test', 'http://2test.com/', folder);
-		bookmark3 = createBookmark('Abc', 'http://3abc.com/', folder);
+		bookmark1 = createBookmark("Test", "http://1test.com/", folder);
+		bookmark2 = createBookmark("Test", "http://2test.com/", folder);
+		bookmark3 = createBookmark("Abc", "http://3abc.com/", folder);
 
 		yield sleep(100);
 
@@ -523,30 +523,30 @@ exports.testAutoSortDelay = function(assert, done) {
 
 		deleteAllBookmarks();
 
-		let folder = createFolder('Folder', menuFolder);
+		let folder = createFolder("Folder", menuFolder);
 
-		let bookmark1 = createBookmark('Title', 'http://title.com/', folder);
+		let bookmark1 = createBookmark("Title", "http://title.com/", folder);
 
 		yield sleep(1100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		let bookmark2 = createBookmark('Test', 'http://test.com/', folder);
+		let bookmark2 = createBookmark("Test", "http://test.com/", folder);
 
 		yield sleep(1100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		let bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		yield sleep(1100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		let folder1 = createFolder('Folder1', folder);
+		let folder1 = createFolder("Folder1", folder);
 
 		yield sleep(1100);
 
@@ -564,11 +564,11 @@ exports.testAutoSortDelay = function(assert, done) {
 
 		deleteAllBookmarks();
 
-		folder = createFolder('Folder', menuFolder);
+		folder = createFolder("Folder", menuFolder);
 
-		bookmark1 = createBookmark('Title', 'http://title.com/', folder);
-		bookmark2 = createBookmark('Test', 'http://test.com/', folder);
-		bookmark3 = createBookmark('Abc', 'http://abc.com/', folder);
+		bookmark1 = createBookmark("Title", "http://title.com/", folder);
+		bookmark2 = createBookmark("Test", "http://test.com/", folder);
+		bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
 		yield sleep(100);
 
@@ -614,4 +614,4 @@ exports.testPreferenceMaximumMinimum = function(assert) {
 	resetPreferences();
 };
 
-require('sdk/test').run(exports);
+require("sdk/test").run(exports);
