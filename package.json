@@ -8,7 +8,7 @@
     "main": "lib/main.js",
     "name": "sortbookmarks",
 	"title": "Auto-Sort Bookmarks",
-	"version": "2.10.2",
+	"version": "2.10.3",
     "translators": ["Antoni Boucher"],
     "preferences": [
         {
