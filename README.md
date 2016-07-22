@@ -3,10 +3,6 @@
 
 Firefox Plugin to Sort Bookmarks by Multiple Criteria
 
-**I am looking for someone to maintain this project. Please open an issue if you wish to maintain this project.**
-
-This [wiki page](https://github.com/antoyo/auto-sort-bookmarks/wiki/Information-for-future-mainteners) contains many useful information for future mainteners.
-
 Description
 -----------
 
