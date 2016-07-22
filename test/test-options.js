@@ -2,7 +2,7 @@
 /*global require: false, exports: false */
 
 /*
- * Copyright (C) 2014  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2016  Boucher, Antoni <bouanto@zoho.com>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ function getOption(name) {
 function setOption(name, value) {
 	set(getOptionName(name), value);
 }
-
 
 /**
  * Test the setPreferenceMaximum() function.

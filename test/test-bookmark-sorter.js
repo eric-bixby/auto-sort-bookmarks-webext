@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2016  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ const prefs = simplePrefs.prefs;
 const { MENU, TOOLBAR, UNSORTED } = require("sdk/places/bookmarks");
 const { menuFolder, toolbarFolder, unsortedFolder } = require("lib/bookmarks");
 const { BookmarkSorter } = require("lib/bookmark-sorter");
-const { sleep, spawn } = require("./task");
+// FIXME: warnings
+//const { sleep, spawn } = require("./task");
 const { assertBookmarksArray, createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, deleteAllBookmarks, ignore, range, resetPreferences, setDateAdded, setDescription, setKeyword, setLastModified, setVisits, sort } = require("./utils");
 
 exports.testGetAllFolders = function(assert) {
@@ -149,8 +150,7 @@ function createSampleBookmarks() {
 	};
 }
 
-exports.testNotSortedFolders = function(assert, done) {
-	spawn(function() {
+exports.testNotSortedFolders = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -333,13 +333,9 @@ exports.testNotSortedFolders = function(assert, done) {
 		assert.strictEqual(bookmarks.folder6.getChildren().length, 1);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSeparator = function(assert, done) {
-	spawn(function() {
+exports.testSeparator = function(assert) {
 		deleteAllBookmarks();
 		sort(MENU);
 		sort(TOOLBAR);
@@ -431,13 +427,9 @@ exports.testSeparator = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 7);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortAll = function(assert, done) {
-	spawn(function() {
+exports.testSortAll = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -465,13 +457,9 @@ exports.testSortAll = function(assert, done) {
 		assert.strictEqual(unsortedFolder.getChildren().length, 1);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortCaseInsensitive = function(assert, done) {
-	spawn(function() {
+exports.testSortCaseInsensitive = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -504,13 +492,9 @@ exports.testSortCaseInsensitive = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 1);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortDelay = function(assert, done) {
-	spawn(function() {
+exports.testSortDelay = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -539,20 +523,19 @@ exports.testSortDelay = function(assert, done) {
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		yield sleep(100);
+        // FIXME: disabled
+		//yield sleep(100);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
-		yield sleep(200);
+        // FIXME: disabled
+		//yield sleep(200);
 
 		assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
 		assert.strictEqual(folder.getChildren().length, 1);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
 /**
@@ -586,8 +569,7 @@ function createSampleItems() {
 	};
 }
 
-exports.testSortOrder = function(assert, done) {
-	spawn(function() {
+exports.testSortOrder = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -658,13 +640,9 @@ exports.testSortOrder = function(assert, done) {
 		assert.strictEqual(bookmarks.folder.getChildren().length, 1);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByAccessCount = function(assert, done) {
-	spawn(function() {
+exports.testSortByAccessCount = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -722,13 +700,9 @@ exports.testSortByAccessCount = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByAccessCountAndLastVisited = function(assert, done) {
-	spawn(function() {
+exports.testSortByAccessCountAndLastVisited = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -786,13 +760,9 @@ exports.testSortByAccessCountAndLastVisited = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByAccessCountAndTitle = function(assert, done) {
-	spawn(function() {
+exports.testSortByAccessCountAndTitle = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -850,13 +820,9 @@ exports.testSortByAccessCountAndTitle = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByAccessCountReverseAndLastVisitedReverse = function(assert, done) {
-	spawn(function() {
+exports.testSortByAccessCountReverseAndLastVisitedReverse = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -914,13 +880,9 @@ exports.testSortByAccessCountReverseAndLastVisitedReverse = function(assert, don
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByDateAdded = function(assert, done) {
-	spawn(function() {
+exports.testSortByDateAdded = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -978,13 +940,9 @@ exports.testSortByDateAdded = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByDescription = function(assert, done) {
-	spawn(function() {
+exports.testSortByDescription = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1042,13 +1000,9 @@ exports.testSortByDescription = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByDescriptionAndTitle = function(assert, done) {
-	spawn(function() {
+exports.testSortByDescriptionAndTitle = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1106,13 +1060,9 @@ exports.testSortByDescriptionAndTitle = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByLastModified = function(assert, done) {
-	spawn(function() {
+exports.testSortByLastModified = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1170,13 +1120,9 @@ exports.testSortByLastModified = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByLastVisited = function(assert, done) {
-	spawn(function() {
+exports.testSortByLastVisited = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1234,13 +1180,9 @@ exports.testSortByLastVisited = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByKeyword = function(assert, done) {
-	spawn(function() {
+exports.testSortByKeyword = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1298,13 +1240,9 @@ exports.testSortByKeyword = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitle = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitle = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1353,13 +1291,9 @@ exports.testSortByTitle = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitleAndAccessCount = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitleAndAccessCount = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1417,13 +1351,9 @@ exports.testSortByTitleAndAccessCount = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitleAndDescription = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitleAndDescription = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1481,13 +1411,9 @@ exports.testSortByTitleAndDescription = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitleAndURL = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitleAndURL = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1536,13 +1462,9 @@ exports.testSortByTitleAndURL = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitleReverse = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitleReverse = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1591,13 +1513,9 @@ exports.testSortByTitleReverse = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitleReverseAndURL = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitleReverseAndURL = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1646,13 +1564,9 @@ exports.testSortByTitleReverseAndURL = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByTitleReverseAndURLReverse = function(assert, done) {
-	spawn(function() {
+exports.testSortByTitleReverseAndURLReverse = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1701,13 +1615,9 @@ exports.testSortByTitleReverseAndURLReverse = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByURL = function(assert, done) {
-	spawn(function() {
+exports.testSortByURL = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1756,13 +1666,9 @@ exports.testSortByURL = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
-exports.testSortByRevURL = function(assert, done) {
-	spawn(function() {
+exports.testSortByRevURL = function(assert) {
 		deleteAllBookmarks();
 
 		let bookmarkSorter = new BookmarkSorter();
@@ -1811,9 +1717,6 @@ exports.testSortByRevURL = function(assert, done) {
 		assert.strictEqual(folder.getChildren().length, 3);
 
 		resetPreferences();
-
-		done();
-	});
 };
 
 require("sdk/test").run(exports);
