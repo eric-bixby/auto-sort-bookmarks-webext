@@ -20,12 +20,12 @@
 
 "use strict";
 
-const {get, has, reset, set} = require("sdk/preferences/service"),
-    self = require("sdk/self"),
-    simplePrefs = require("sdk/simple-prefs"),
-    prefs = simplePrefs.prefs,
-    {setPreferenceMaximum, setPreferenceMinimum} = require("lib/options"),
-    {getOptionName} = require("./utils");
+const {get, has, reset, set} = require("sdk/preferences/service");
+const self = require("sdk/self");
+const simplePrefs = require("sdk/simple-prefs");
+const prefs = simplePrefs.prefs;
+const {setPreferenceMaximum, setPreferenceMinimum} = require("lib/options");
+const {getOptionName} = require("./utils");
 
 /**
  * Set the value of the `name`d preference.

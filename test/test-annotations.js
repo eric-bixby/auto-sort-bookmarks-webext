@@ -20,9 +20,9 @@
 
 "use strict";
 
-const {getDescription, isLivemark, isSmartBookmark} = require("lib/annotations"),
-    {Bookmark, menuFolder} = require("lib/bookmarks"),
-    {createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, setDescription} = require("./utils");
+const {getDescription, isLivemark, isSmartBookmark} = require("lib/annotations");
+const {Bookmark, menuFolder} = require("lib/bookmarks");
+const {createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, setDescription} = require("./utils");
 
 exports.testDescription = function (assert) {
     assert.strictEqual(getDescription(undefined), "");
