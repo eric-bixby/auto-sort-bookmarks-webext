@@ -1,4 +1,4 @@
 .*
 *.xpi
 test-*.txt
-
+test/**
