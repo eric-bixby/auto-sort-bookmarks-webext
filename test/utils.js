@@ -363,13 +363,13 @@ function setVisits(item, visits) {
         uri: ioService.newURI(item.url, null, null),
         visits: visits,
     }, {
-        handleCompletion: function () {
-            deferred.resolve();
-        },
+            handleCompletion: function () {
+                deferred.resolve();
+            },
 
-        handleResult: function () {
-        },
-    });
+            handleResult: function () {
+            },
+        });
 
     return deferred.promise;
 }
