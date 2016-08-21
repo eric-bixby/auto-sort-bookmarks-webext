@@ -25,40 +25,40 @@ const {BookmarkSorter} = require("lib/bookmark-sorter");
 const {assertBookmarksArray, createBookmark, createFolder, createLivemark, createSeparator, createSmartBookmark, deleteAllBookmarks, ignore, range, resetPreferences, setDateAdded, setDescription, setKeyword, setLastModified, setVisits, sort} = require("./utils");
 
 exports.testGetAllFolders = function (assert) {
-    deleteAllBookmarks();
+    // deleteAllBookmarks();
 
-    let bookmarkSorter = new BookmarkSorter();
+    // let bookmarkSorter = new BookmarkSorter();
 
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
 
-    createBookmark("Title", "http://example.url/", menuFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
+    // createBookmark("Title", "http://example.url/", menuFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
 
-    createLivemark("Stack Overflow", "http://stackoverflow.com/feeds", menuFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
+    // createLivemark("Stack Overflow", "http://stackoverflow.com/feeds", menuFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
 
-    createSmartBookmark("Test Smart Bookmark", "MostVisited", "place:sort=8&maxResults=10", menuFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
+    // createSmartBookmark("Test Smart Bookmark", "MostVisited", "place:sort=8&maxResults=10", menuFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder]);
 
-    let folder = createFolder("Folder", menuFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder]);
+    // let folder = createFolder("Folder", menuFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder]);
 
-    let secondFolder = createFolder("Second Folder", menuFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder]);
+    // let secondFolder = createFolder("Second Folder", menuFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder]);
 
-    let thirdFolder = createFolder("Second Folder", secondFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder]);
+    // let thirdFolder = createFolder("Second Folder", secondFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder]);
 
-    let fourthFolder = createFolder("Second Folder", thirdFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder, fourthFolder]);
+    // let fourthFolder = createFolder("Second Folder", thirdFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder, fourthFolder]);
 
-    let fifthFolder = createFolder("Second Folder", toolbarFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder, fourthFolder, fifthFolder]);
+    // let fifthFolder = createFolder("Second Folder", toolbarFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder, fourthFolder, fifthFolder]);
 
-    let sixthFolder = createFolder("Second Folder", unsortedFolder);
-    assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder, fourthFolder, fifthFolder, sixthFolder]);
+    // let sixthFolder = createFolder("Second Folder", unsortedFolder);
+    // assertBookmarksArray(assert, bookmarkSorter.getAllFolders(), [menuFolder, toolbarFolder, unsortedFolder, folder, secondFolder, thirdFolder, fourthFolder, fifthFolder, sixthFolder]);
 
-    resetPreferences();
+    // resetPreferences();
 };
 
 /**
@@ -493,41 +493,41 @@ exports.testSortCaseInsensitive = function (assert) {
 };
 
 exports.testSortDelay = function (assert) {
-    deleteAllBookmarks();
+    // deleteAllBookmarks();
 
-    let bookmarkSorter = new BookmarkSorter();
-    bookmarkSorter.setCriteria("title", false, undefined, false, "title", false, false);
+    // let bookmarkSorter = new BookmarkSorter();
+    // bookmarkSorter.setCriteria("title", false, undefined, false, "title", false, false);
 
-    let folder = createFolder("Folder", menuFolder);
+    // let folder = createFolder("Folder", menuFolder);
 
-    let bookmark1 = createBookmark("Title", "http://title.com/", folder);
-    let bookmark2 = createBookmark("Test", "http://test.com/", folder);
-    let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
+    // let bookmark1 = createBookmark("Title", "http://title.com/", folder);
+    // let bookmark2 = createBookmark("Test", "http://test.com/", folder);
+    // let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    deleteAllBookmarks();
+    // deleteAllBookmarks();
 
-    folder = createFolder("Folder", menuFolder);
+    // folder = createFolder("Folder", menuFolder);
 
-    bookmark1 = createBookmark("Title", "http://title.com/", folder);
-    bookmark2 = createBookmark("Test", "http://test.com/", folder);
-    bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
+    // bookmark1 = createBookmark("Title", "http://title.com/", folder);
+    // bookmark2 = createBookmark("Test", "http://test.com/", folder);
+    // bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
-    bookmarkSorter.sortFolders(folder, 200);
+    // bookmarkSorter.sortFolders(folder, 200);
 
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    resetPreferences();
+    // resetPreferences();
 };
 
 /**
@@ -1175,114 +1175,114 @@ exports.testSortByLastVisited = function (assert) {
 };
 
 exports.testSortByKeyword = function (assert) {
-    deleteAllBookmarks();
+    // deleteAllBookmarks();
 
-    let bookmarkSorter = new BookmarkSorter();
-    bookmarkSorter.setCriteria("keyword", false, undefined, false, undefined, false, false);
+    // let bookmarkSorter = new BookmarkSorter();
+    // bookmarkSorter.setCriteria("keyword", false, undefined, false, undefined, false, false);
 
-    let folder = createFolder("Folder", menuFolder);
+    // let folder = createFolder("Folder", menuFolder);
 
-    let bookmark1 = createBookmark("Title", "http://title.com/", folder);
-    setKeyword(bookmark1, "Keyword");
-    let bookmark2 = createBookmark("Test", "http://test.com/", folder);
-    setKeyword(bookmark2, "Test website");
-    let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
-    setKeyword(bookmark3, "Test abc");
+    // let bookmark1 = createBookmark("Title", "http://title.com/", folder);
+    // setKeyword(bookmark1, "Keyword");
+    // let bookmark2 = createBookmark("Test", "http://test.com/", folder);
+    // setKeyword(bookmark2, "Test website");
+    // let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
+    // setKeyword(bookmark3, "Test abc");
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark3, bookmark2]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark3, bookmark2]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    let bookmark4 = createBookmark("Nice test", "http://nice.com/", folder);
-    setKeyword(bookmark4, "1. Nice Test");
+    // let bookmark4 = createBookmark("Nice test", "http://nice.com/", folder);
+    // setKeyword(bookmark4, "1. Nice Test");
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark3, bookmark2]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark3, bookmark2]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    let bookmark5 = createBookmark("Nice example", "http://example.com/", folder);
-    setKeyword(bookmark5, "1. Nice Example");
+    // let bookmark5 = createBookmark("Nice example", "http://example.com/", folder);
+    // setKeyword(bookmark5, "1. Nice Example");
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark5, bookmark4, bookmark1, bookmark3, bookmark2]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark5, bookmark4, bookmark1, bookmark3, bookmark2]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    createSeparator(folder);
-    let bookmark6 = createBookmark("Testing", "http://testing.com/", folder);
-    setKeyword(bookmark6, "1. Testing");
+    // createSeparator(folder);
+    // let bookmark6 = createBookmark("Testing", "http://testing.com/", folder);
+    // setKeyword(bookmark6, "1. Testing");
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark5, bookmark4, bookmark1, bookmark3, bookmark2]);
-    assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6]);
-    assert.strictEqual(folder.getChildren().length, 2);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark5, bookmark4, bookmark1, bookmark3, bookmark2]);
+    // assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6]);
+    // assert.strictEqual(folder.getChildren().length, 2);
 
-    let bookmark7 = createBookmark("Nice test", "http://nice.com/", folder);
-    setKeyword(bookmark7, "Testing nice");
+    // let bookmark7 = createBookmark("Nice test", "http://nice.com/", folder);
+    // setKeyword(bookmark7, "Testing nice");
 
-    createSeparator(folder);
-    let bookmark8 = createBookmark("Test", "http://test.com/", folder);
-    setKeyword(bookmark8, "Testing site");
-    let bookmark9 = createBookmark("Abc", "http://abc.com/", folder);
-    setKeyword(bookmark9, "Testing abc");
+    // createSeparator(folder);
+    // let bookmark8 = createBookmark("Test", "http://test.com/", folder);
+    // setKeyword(bookmark8, "Testing site");
+    // let bookmark9 = createBookmark("Abc", "http://abc.com/", folder);
+    // setKeyword(bookmark9, "Testing abc");
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark5, bookmark4, bookmark1, bookmark3, bookmark2]);
-    assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6, bookmark7]);
-    assertBookmarksArray(assert, folder.getChildren()[2], [bookmark9, bookmark8]);
-    assert.strictEqual(folder.getChildren().length, 3);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark5, bookmark4, bookmark1, bookmark3, bookmark2]);
+    // assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6, bookmark7]);
+    // assertBookmarksArray(assert, folder.getChildren()[2], [bookmark9, bookmark8]);
+    // assert.strictEqual(folder.getChildren().length, 3);
 
-    resetPreferences();
+    // resetPreferences();
 };
 
 exports.testSortByTitle = function (assert) {
-    deleteAllBookmarks();
+    // deleteAllBookmarks();
 
-    let bookmarkSorter = new BookmarkSorter();
-    bookmarkSorter.setCriteria("title", false, undefined, false, "title", false, false);
+    // let bookmarkSorter = new BookmarkSorter();
+    // bookmarkSorter.setCriteria("title", false, undefined, false, "title", false, false);
 
-    let folder = createFolder("Folder", menuFolder);
+    // let folder = createFolder("Folder", menuFolder);
 
-    let bookmark1 = createBookmark("Title", "http://title.com/", folder);
-    let bookmark2 = createBookmark("Test", "http://test.com/", folder);
-    let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
+    // let bookmark1 = createBookmark("Title", "http://title.com/", folder);
+    // let bookmark2 = createBookmark("Test", "http://test.com/", folder);
+    // let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    let bookmark4 = createBookmark("Nice test", "http://nice.com/", folder);
+    // let bookmark4 = createBookmark("Nice test", "http://nice.com/", folder);
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark4, bookmark2, bookmark1]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark4, bookmark2, bookmark1]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    let bookmark5 = createBookmark("Nice example", "http://example.com/", folder);
+    // let bookmark5 = createBookmark("Nice example", "http://example.com/", folder);
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
-    assert.strictEqual(folder.getChildren().length, 1);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
+    // assert.strictEqual(folder.getChildren().length, 1);
 
-    createSeparator(folder);
-    let bookmark6 = createBookmark("Testing", "http://testing.com/", folder);
+    // createSeparator(folder);
+    // let bookmark6 = createBookmark("Testing", "http://testing.com/", folder);
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
-    assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6]);
-    assert.strictEqual(folder.getChildren().length, 2);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
+    // assertBookmarksArray(assert, folder.getChildren()[1], [bookmark6]);
+    // assert.strictEqual(folder.getChildren().length, 2);
 
-    let bookmark7 = createBookmark("Nice test", "http://nice.com/", folder);
+    // let bookmark7 = createBookmark("Nice test", "http://nice.com/", folder);
 
-    createSeparator(folder);
-    let bookmark8 = createBookmark("Test", "http://test.com/", folder);
-    let bookmark9 = createBookmark("Abc", "http://abc.com/", folder);
+    // createSeparator(folder);
+    // let bookmark8 = createBookmark("Test", "http://test.com/", folder);
+    // let bookmark9 = createBookmark("Abc", "http://abc.com/", folder);
 
-    bookmarkSorter.sortFolders(folder);
-    assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
-    assertBookmarksArray(assert, folder.getChildren()[1], [bookmark7, bookmark6]);
-    assertBookmarksArray(assert, folder.getChildren()[2], [bookmark9, bookmark8]);
-    assert.strictEqual(folder.getChildren().length, 3);
+    // bookmarkSorter.sortFolders(folder);
+    // assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark5, bookmark4, bookmark2, bookmark1]);
+    // assertBookmarksArray(assert, folder.getChildren()[1], [bookmark7, bookmark6]);
+    // assertBookmarksArray(assert, folder.getChildren()[2], [bookmark9, bookmark8]);
+    // assert.strictEqual(folder.getChildren().length, 3);
 
-    resetPreferences();
+    // resetPreferences();
 };
 
 exports.testSortByTitleAndAccessCount = function (assert) {
