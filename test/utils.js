@@ -172,19 +172,18 @@ function getAllFolders() {
     let folders = [];
 
     folders.push(menuFolder);
-    yield menuFolder;
 
     folders.push(toolbarFolder);
-    yield toolbarFolder;
 
     folders.push(unsortedFolder);
-    yield unsortedFolder;
 
     for (let i = 0, length = folders.length; i < length; ++i) {
         for (let folder of folders[i].getFolders()) {
-            yield folder;
+            folders.push(folder);
         }
     }
+
+    return folders;
 }
 
 /**

@@ -1,6 +1,3 @@
-/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true, undef:true, unused:true, curly:true, moz:true, indent:4, maxerr:50, globalstrict: true */
-/*global require: false, exports: false */
-
 /*
  * Copyright (C) 2014-2016  Boucher, Antoni <bouanto@zoho.com>
  * 

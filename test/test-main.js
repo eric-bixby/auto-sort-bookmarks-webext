@@ -38,9 +38,6 @@ exports.testAutoSort = function (assert) {
 
     prefs.auto_sort = true;
 
-    // FIXME: disabled
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
@@ -53,9 +50,6 @@ exports.testAutoSort = function (assert) {
     bookmark1 = createBookmark("Title", "http://title.com/", folder);
     bookmark2 = createBookmark("Test", "http://test.com/", folder);
     bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
-
-    // FIXME: disabled
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -75,21 +69,15 @@ exports.testAutoSortOnChanges = function (assert) {
 
     let bookmark1 = createBookmark("Title21", "http://title21.com/", folder);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     let bookmark2 = createBookmark("Test22", "http://test22.com/", folder);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     let bookmark3 = createBookmark("Abc23", "http://abc23.com/", folder);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -97,14 +85,10 @@ exports.testAutoSortOnChanges = function (assert) {
     // Test changing bookmarks.
     rename(bookmark3, "Zebra23");
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     rename(bookmark2, "Title Test22");
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -112,14 +96,10 @@ exports.testAutoSortOnChanges = function (assert) {
     // Test moving bookmarks.
     move(bookmark3, 0);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     move(bookmark1, 4);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -128,15 +108,11 @@ exports.testAutoSortOnChanges = function (assert) {
 
     move(bookmark4, 4, folder);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     let separator3 = createSeparator(folder);
     let bookmark10 = createBookmark("Firefox30", "http://firefox30.com/", folder);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark2, bookmark3]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark10]);
@@ -144,15 +120,11 @@ exports.testAutoSortOnChanges = function (assert) {
 
     move(separator3, 3);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark10, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 2);
 
     move(bookmark4, 2);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark10, bookmark3]);
@@ -160,15 +132,11 @@ exports.testAutoSortOnChanges = function (assert) {
 
     move(bookmark4, 7);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark4, bookmark10, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 2);
 
     move(bookmark10, 2);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark10, bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark4, bookmark3]);
@@ -177,16 +145,12 @@ exports.testAutoSortOnChanges = function (assert) {
     let separator4 = createSeparator(folder);
     let bookmark11 = createBookmark("Mozilla31", "http://mozilla31.com/", folder);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark10, bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark4, bookmark3]);
     assertBookmarksArray(assert, folder.getChildren()[2], [bookmark11]);
     assert.strictEqual(folder.getChildren().length, 3);
 
     move(bookmark10, 4);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark4, bookmark10, bookmark3]);
@@ -195,16 +159,12 @@ exports.testAutoSortOnChanges = function (assert) {
 
     move(bookmark10, 9);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark4, bookmark3]);
     assertBookmarksArray(assert, folder.getChildren()[2], [bookmark10, bookmark11]);
     assert.strictEqual(folder.getChildren().length, 3);
 
     move(separator4, 4);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark4]);
@@ -216,16 +176,12 @@ exports.testAutoSortOnChanges = function (assert) {
     deleteItem(bookmark10);
     deleteItem(bookmark11);
 
-    //yield sleep(100);
-
     // Test deleting bookmarks.
     let separator1 = createSeparator(folder);
     let bookmark5 = createBookmark("One Test25", "http://one25.com/", folder);
     let bookmark6 = createBookmark("Two tests26", "http://two26.com/", folder);
     let separator2 = createSeparator(folder);
     let bookmark7 = createBookmark("Auie27", "http://auie27.com/", folder);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark1, bookmark2, bookmark3]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark5, bookmark6]);
@@ -234,8 +190,6 @@ exports.testAutoSortOnChanges = function (assert) {
 
     deleteItem(bookmark1);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark2, bookmark3]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark5, bookmark6]);
     assertBookmarksArray(assert, folder.getChildren()[2], [bookmark7]);
@@ -243,15 +197,11 @@ exports.testAutoSortOnChanges = function (assert) {
 
     deleteItem(separator2);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark2, bookmark3]);
     assertBookmarksArray(assert, folder.getChildren()[1], [bookmark7, bookmark5, bookmark6]);
     assert.strictEqual(folder.getChildren().length, 2);
 
     deleteItem(separator1);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark7, bookmark5, bookmark2, bookmark6, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -261,15 +211,11 @@ exports.testAutoSortOnChanges = function (assert) {
     let bookmark8 = createBookmark("Abc28", "http://abc28.com/", folder2);
     let bookmark9 = createBookmark("Test29", "http://test29.com/", folder2);
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder2.getChildren()[0], [bookmark8, bookmark9]);
     assert.strictEqual(folder2.getChildren().length, 1);
 
     rename(bookmark3, "Aiue23");
     rename(bookmark8, "Zeta29");
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark3, bookmark7, bookmark5, bookmark2, bookmark6]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -283,25 +229,15 @@ exports.testAutoSortOnChanges = function (assert) {
     prefs.sort_by = 7;
     prefs.then_sort_by = 0;
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark4, bookmark7, bookmark5, bookmark2, bookmark6, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
-    yield setVisits(bookmark2, [10]);
-    //yield sleep(10);
-    yield setVisits(bookmark3, [10]);
-    //yield sleep(10);
-    yield setVisits(bookmark4, [100, 200, 300, 400]);
-    //yield sleep(10);
-    yield setVisits(bookmark5, [10]);
-    //yield sleep(10);
-    yield setVisits(bookmark6, [10]);
-    //yield sleep(10);
-    yield setVisits(bookmark7, [10]);
-    //yield sleep(10);
-
-    //yield sleep(100);
+    setVisits(bookmark2, [10]);
+    setVisits(bookmark3, [10]);
+    setVisits(bookmark4, [100, 200, 300, 400]);
+    setVisits(bookmark5, [10]);
+    setVisits(bookmark6, [10]);
+    setVisits(bookmark7, [10]);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark7, bookmark5, bookmark2, bookmark6, bookmark3, bookmark4]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -325,14 +261,10 @@ exports.testAutoSortOnOptionChanges = function (assert) {
     ignore(MENU);
     prefs.auto_sort = true;
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     sort(MENU);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -351,14 +283,10 @@ exports.testAutoSortOnOptionChanges = function (assert) {
     ignore(TOOLBAR);
     prefs.auto_sort = true;
 
-    //yield sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     sort(TOOLBAR);
-
-    //yield sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -377,14 +305,10 @@ exports.testAutoSortOnOptionChanges = function (assert) {
     ignore(UNSORTED);
     prefs.auto_sort = true;
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     sort(UNSORTED);
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -407,42 +331,30 @@ exports.testAutoSortOnOptionChanges = function (assert) {
     prefs.bookmark_sort_order = 4;
     prefs.auto_sort = true;
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [folder1, livemark1, smartBookmark1, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.bookmark_sort_order = 1;
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, folder1, livemark1, smartBookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.smart_bookmark_sort_order = 1;
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, folder1, smartBookmark1, livemark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.folder_sort_order = 4;
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, smartBookmark1, livemark1, folder1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.livemark_sort_order = 1;
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, livemark1, smartBookmark1, folder1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.folder_sort_order = 1;
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, folder1, livemark1, smartBookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -456,14 +368,10 @@ exports.testAutoSortOnOptionChanges = function (assert) {
     bookmark2 = createBookmark("Test", "http://2test.com/", folder);
     bookmark3 = createBookmark("Abc", "http://3abc.com/", folder);
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark1, bookmark2]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.sort_by = 1;
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -472,28 +380,20 @@ exports.testAutoSortOnOptionChanges = function (assert) {
     prefs.inverse = true;
     prefs.then_inverse = true;
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.then_sort_by = 1;
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.inverse = false;
 
-    //yeild sleep(100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     prefs.then_inverse = false;
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark1, bookmark2]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -515,33 +415,23 @@ exports.testAutoSortDelay = function (assert) {
 
     let bookmark1 = createBookmark("Title", "http://title.com/", folder);
 
-    //yeild sleep(1100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     let bookmark2 = createBookmark("Test", "http://test.com/", folder);
-
-    //yeild sleep(1100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     let bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
 
-    //yeild sleep(1100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
 
     let folder1 = createFolder("Folder1", folder);
 
-    //yeild sleep(1100);
-
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark3, bookmark2, bookmark1, folder1]);
     assert.strictEqual(folder.getChildren().length, 1);
-
-    //yeild sleep(2000);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [folder1, bookmark3, bookmark2, bookmark1]);
     assert.strictEqual(folder.getChildren().length, 1);
@@ -557,8 +447,6 @@ exports.testAutoSortDelay = function (assert) {
     bookmark1 = createBookmark("Title", "http://title.com/", folder);
     bookmark2 = createBookmark("Test", "http://test.com/", folder);
     bookmark3 = createBookmark("Abc", "http://abc.com/", folder);
-
-    //yeild sleep(100);
 
     assertBookmarksArray(assert, folder.getChildren()[0], [bookmark1, bookmark2, bookmark3]);
     assert.strictEqual(folder.getChildren().length, 1);
