@@ -8,7 +8,7 @@
 	"author": "Antoni Boucher",
 	"translators": ["Antoni Boucher"],
 	"license": "GPL-3.0",
-	"version": "2.10.6",
+	"version": "2.10.7",
 	"main": "lib/main.js",
 	"permissions": {
     	"multiprocess": true
