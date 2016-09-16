@@ -23,7 +23,7 @@ These options work like this:
 
 **Main Options:**
 
-* **Auto-sort :** if this option is enabled, the bookmarks will be sorted when Firefox is opened, when this option is activated and when bookmarks are added, changed, moved or deleted.
+* **Auto-sort:** if this option is enabled, the bookmarks will be sorted when Firefox is opened, when this option is activated and when bookmarks are added, changed, moved or deleted.
 This means you cannot move any bookmarks in the same folder, unless it is moved over a separator.
 * **Delay:** allow to define a delay (in seconds) before automatically sorting bookmarks.
 * **Delay for Folders:** allow to define a delay (in seconds) before automatically sorting folders. This is to avoid that a new folder is sorted before you can choose it when adding a new bookmark.
@@ -45,7 +45,7 @@ If you want to exclude a folder recursively from being sorted, check the recursi
 
 **Sort Order:**
 
-* **Folder Sort Order :** this option specify the order in which the folders are sorted. For instance, it is possible to sort folders before livemarks, smart bookmarks and bookmarks. To do this, the folder sort order should be lesser than the other sort orders.
+* **Folder Sort Order:** this option specify the order in which the folders are sorted. For instance, it is possible to sort folders before livemarks, smart bookmarks and bookmarks. To do this, the folder sort order should be lesser than the other sort orders.
 If the sort order of two types are at the same level, the bookmarks from these types will be sorted together.
 * **Livemark Sort Order:** this option specify the sort order of livemarks.
 * **Smart Bookmark Sort Order:** this option specify the sort order of smart bookmarks
