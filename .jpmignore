@@ -1,5 +1,7 @@
 .*
+*.py
 *.sh
 *.xpi
 test-*.txt
 test/**
+bookmarks.html
