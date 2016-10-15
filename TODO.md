@@ -13,4 +13,7 @@
 - [ ] Translate the options in French
 - [ ] Only delay the folder sort for new folder when the user is in the new bookmark dialog
 - [ ] Add bookmark observer to log the actions for debugging
+- [ ] Fix localization; not all translated values are being used
+- [ ] Verify translations for errors
+- [ ] Add locale meta-data to package.json
 
