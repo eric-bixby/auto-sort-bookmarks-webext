@@ -3,4 +3,4 @@
 *.iml
 .idea
 test-*.txt
-bookmarks.html
+bookmarks*.html
