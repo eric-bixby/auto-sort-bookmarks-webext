@@ -2,5 +2,5 @@
 *.swp
 *.iml
 .idea
-test-*.txt
 bookmarks*.html
+test-*.txt
