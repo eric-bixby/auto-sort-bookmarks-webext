@@ -17,6 +17,10 @@
 
 "use strict";
 
+/**
+ * Handle button click event.
+ * @param event
+ */
 function buttonClicked(event) {
     self.port.emit("button-clicked", event.target.id);
 }

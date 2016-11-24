@@ -24,6 +24,14 @@ let recursiveText = "";
 let removeIcon;
 let fetching = new Set();
 
+/**
+ * Send value.
+ * @param type
+ * @param folderID
+ * @param checkbox
+ * @param image
+ * @returns {Function}
+ */
 function sendValue(type, folderID, checkbox, image) {
     return function () {
         if (type === "recursive" && image.getAttribute("data-state") === "remove") {
@@ -34,6 +42,14 @@ function sendValue(type, folderID, checkbox, image) {
     };
 }
 
+/**
+ * Toggle children.
+ * @param parentID
+ * @param image
+ * @param children
+ * @param recursiveCheckbox
+ * @returns {Function}
+ */
 function toggleChildren(parentID, image, children, recursiveCheckbox) {
     return function () {
         if (!fetching.has(parentID)) {
@@ -63,6 +79,11 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
     };
 }
 
+/**
+ * Append folder.
+ * @param folder
+ * @param list
+ */
 function appendFolder(folder, list) {
     let listItem = document.createElement("li");
 
@@ -119,6 +140,11 @@ function appendFolder(folder, list) {
     list.appendChild(listItem);
 }
 
+/**
+ * Append folders.
+ * @param folders
+ * @param list
+ */
 function appendFolders(folders, list) {
     while (list.firstChild) {
         list.removeChild(list.firstChild);
