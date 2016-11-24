@@ -6,6 +6,12 @@
   "bugs": {
     "url": "https://github.com/antoyo/auto-sort-bookmarks/issues"
   },
+  "contributors": [
+    {
+      "email": "ebixby@yahoo.com",
+      "name": "Eric Bixby"
+    }
+  ],
   "homepage": "https://github.com/antoyo/auto-sort-bookmarks",
   "icon": "data/icon-48.png",
   "icon64": "data/icon-64.png",
