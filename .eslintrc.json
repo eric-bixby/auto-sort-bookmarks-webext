@@ -4,6 +4,9 @@
     "browser": true,
     "es6": true
   },
+  "globals": {
+    "XPCOMUtils": true
+  },
   "extends": "eslint:recommended",
   "rules": {
     "indent": [
