@@ -1,7 +1,7 @@
 {
   "name": "auto_sort_bookmarks",
   "description": "Sort bookmarks by multiple criteria",
-  "version": "2.10.9",
+  "version": "2.10.10",
   "author": "Antoni Boucher",
   "bugs": {
     "url": "https://github.com/antoyo/auto-sort-bookmarks/issues"
