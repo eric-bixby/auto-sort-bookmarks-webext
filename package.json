@@ -1,17 +1,15 @@
 {
   "name": "auto_sort_bookmarks",
   "description": "Sort bookmarks by multiple criteria",
-  "version": "2.10.11",
-  "author": "Antoni Boucher",
+  "version": "2.10.12",
+  "author": "Antoni Boucher, Eric Bixby",
   "bugs": {
     "url": "https://github.com/antoyo/auto-sort-bookmarks/issues"
   },
-  "contributors": [
-    {
-      "email": "ebixby@yahoo.com",
-      "name": "Eric Bixby"
-    }
-  ],
+  "engines": {
+    "firefox": ">=38.0a1",
+    "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}": ">=27.1.0b1"
+  },
   "homepage": "https://github.com/antoyo/auto-sort-bookmarks",
   "icon": "data/icon-48.png",
   "icon64": "data/icon-64.png",
@@ -223,8 +221,5 @@
     "type": "git",
     "url": "git+https://github.com/antoyo/auto-sort-bookmarks.git"
   },
-  "title": "Auto-Sort Bookmarks",
-  "translators": [
-    "Antoni Boucher"
-  ]
+  "title": "Auto-Sort Bookmarks"
 }
