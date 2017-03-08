@@ -221,5 +221,8 @@
     "type": "git",
     "url": "git+https://github.com/antoyo/auto-sort-bookmarks.git"
   },
+  "scripts": {
+    "jpm-travis": "jpm --binary `which firefox` test -v"
+  },
   "title": "Auto-Sort Bookmarks"
 }
