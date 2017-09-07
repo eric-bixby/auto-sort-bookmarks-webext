@@ -1,0 +1,13 @@
+{
+  "name": "auto_sort_bookmarks-migration",
+  "version": "2.10.13",
+  "manifest_version": 2,
+  "permissions": [
+    "storage"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  }
+}
