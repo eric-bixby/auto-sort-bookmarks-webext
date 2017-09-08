@@ -7,7 +7,7 @@ node_js:
 
 # set version of Firefox to use for add-on testing
 addons:
-  firefox: "47.0"
+  firefox: "55.0"
 
 # run Firefox in headless mode
 before_install:
