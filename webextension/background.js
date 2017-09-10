@@ -7,5 +7,6 @@ port.onMessage.addListener((msg) => {
     if (msg) {
         // Where it can be saved using the WebExtensions storage API.
         browser.storage.local.set(msg);
+        console.warn(JSON.stringify(msg, null, 2));
     }
 });
