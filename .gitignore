@@ -4,3 +4,4 @@
 .idea
 bookmarks*.html
 test-*.txt
+webext/build/**

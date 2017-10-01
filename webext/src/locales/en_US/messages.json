@@ -1,0 +1,65 @@
+{
+  "title": {
+    "message": "Auto-Sort Bookmarks"
+  },
+  "weh_prefs_label_auto_sort": {
+    "message": "Auto-sort"
+  },
+  "weh_prefs_label_delay": {
+    "message": "Delay"
+  },
+  "weh_prefs_label_folder_delay": {
+    "message": "Delay for Folders"
+  },
+  "weh_prefs_label_case_insensitive": {
+    "message": "Case Insensitive"
+  },
+  "weh_prefs_label_sort_by": {
+    "message": "Sort By"
+  },
+  "weh_prefs_label_inverse": {
+    "message": "Inverse Order"
+  },
+  "weh_prefs_label_then_sort_by": {
+    "message": "Then Sort By"
+  },
+  "weh_prefs_label_then_inverse": {
+    "message": "Inverse Second Order"
+  },
+  "weh_prefs_label_folder_sort_by": {
+    "message": "Sort Folder By"
+  },
+  "weh_prefs_label_folder_inverse": {
+    "message": "Inverse Folder Order"
+  },
+  "weh_prefs_label_folder_sort_order": {
+    "message": "Folder Sort Order"
+  },
+  "weh_prefs_label_livemark_sort_order": {
+    "message": "Livemark Sort Order"
+  },
+  "weh_prefs_label_smart_bookmark_sort_order": {
+    "message": "Smart Bookmark Sort Order"
+  },
+  "weh_prefs_label_bookmark_sort_order": {
+    "message": "Bookmark Sort Order"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "sort": {
+    "message": "Sort"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "default": {
+    "message": "Default"
+  },
+  "version": {
+    "message": "Version"
+  }
+}
