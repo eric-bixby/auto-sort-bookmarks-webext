@@ -3,7 +3,7 @@
 [![Build
 Status](https://travis-ci.org/eric-bixby/auto-sort-bookmarks-webext.svg?branch=master)](https://travis-ci.org/eric-bixby/auto-sort-bookmarks-webext)
 
-Firefox Plugin to Sort Bookmarks by Multiple Criteria
+Web-Extension to Sort Bookmarks by Multiple Criteria.
 
 Description
 -----------

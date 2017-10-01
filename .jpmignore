@@ -1,7 +1,0 @@
-.*
-*.py
-*.sh
-*.xpi
-bookmarks*.html
-test-*.txt
-test/**
