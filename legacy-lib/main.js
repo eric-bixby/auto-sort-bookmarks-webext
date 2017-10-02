@@ -44,8 +44,6 @@ const sortCriterias = [
     "accessCount",
     "revurl"
 ];
-const webext = require("sdk/webextension");
-const { setSyncLegacyDataPort } = require("lib/user-data-storage");
 
 /**
  * On item added/changed/moved/removed/visited callback.
@@ -221,14 +219,6 @@ function createWidgets(install) {
  * @param upgrade
  */
 function migrate(upgrade) {
-    webext.startup().then(({ browser }) => {
-        browser.runtime.onConnect.addListener(port => {
-            if (port.name === "sync-legacy-addon-data") {
-                setSyncLegacyDataPort(port);
-            }
-        });
-    });
-
     if (upgrade) {
         if (!prefs.migration) {
             prefs.migration = "2.7";
