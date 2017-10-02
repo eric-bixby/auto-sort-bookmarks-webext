@@ -1,34 +1,41 @@
 {
-  "manifest_version": 2,
-  "name": "Auto-Sort Bookmarks",
-  "default_locale": "en_US",
-  "version": "3.0",
-  "version_name": "3.0 beta 2",
-  "author": "Eric Bixby",
-  "description": "Sort bookmarks by multiple criteria",
+  "applications": {
+    "gecko": {
+      "id": "sortbookmarks@bouanto",
+      "strict_min_version": "52.0"
+    }
+  },
+  "author": "Antoni Boucher",
   "background": {
     "scripts": [
       "background/default-prefs.js",
       "background/main.js"
-    ],
-    "persistent": true
+    ]
   },
+  "browser_action": {
+    "default_icon": {
+      "40": "content/images/icon-40.png"
+    },
+    "default_popup": "content/popup.html",
+    "default_title": "Auto-Sort Bookmarks"
+  },
+  "manifest_version": 2,
+  "name": "Auto-Sort Bookmarks",
+  "default_locale": "en_US",
+  "description": "Sort bookmarks by multiple criteria.",
   "icons": {
     "32": "content/images/icon-32.png",
     "40": "content/images/icon-40.png",
     "48": "content/images/icon-48.png",
     "128": "content/images/icon-128.png"
   },
-  "browser_action": {
-    "default_icon": {
-      "40": "content/images/icon-40.png"
-    },
-    "default_title": "Auto-Sort Bookmarks",
-    "default_popup": "content/popup.html"
+  "options_ui": {
+    "open_in_tab": true,
+    "page": "content/settings.html?panel=settings"
   },
-  "options_page": "content/settings.html?panel=settings",
   "permissions": [
-    "tabs",
-    "bookmarks"
-  ]
+    "bookmarks",
+    "tabs"
+  ],
+  "version": "3.0"
 }
