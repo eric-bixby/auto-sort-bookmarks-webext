@@ -37,6 +37,13 @@ function addBookmarkObserver() {
 }
 
 /**
+ * Remove the bookmark observer.
+ */
+function removeBookmarkObserver() {
+    // bookmarkManager.removeListener("changed", onChanged);
+}
+
+/**
  * Sort all bookmarks.
  */
 function sortAllBookmarks() {
@@ -44,10 +51,12 @@ function sortAllBookmarks() {
 }
 
 /**
- * Remove the bookmark observer.
+ * Sort if the auto sort option is on.
  */
-function removeBookmarkObserver() {
-    // bookmarkManager.removeListener("changed", onChanged);
+function sortIfAuto() {
+    // if (prefs.auto_sort) {
+    //     sortAllBookmarks();
+    // }
 }
 
 /**
@@ -58,15 +67,6 @@ function adjustAutoSort() {
     // if (prefs.auto_sort) {
     //     sortAllBookmarks();
     //     addBookmarkObserver();
-    // }
-}
-
-/**
- * Sort if the auto sort option is on.
- */
-function sortIfAuto() {
-    // if (prefs.auto_sort) {
-    //     sortAllBookmarks();
     // }
 }
 
@@ -123,7 +123,7 @@ function migratePrefs() {
 }
 
 /**
- * main method
+ * main
  */
 migratePrefs();
 createSettingsPanel();
