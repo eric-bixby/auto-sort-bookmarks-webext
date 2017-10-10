@@ -18,6 +18,37 @@
 "use strict";
 
 /**
+ * Various settings.
+ */
+var asb = {
+    // only set to true while debugging, set to false when released
+    "log": true,
+    "version": {
+        "current": function () {
+            return chrome.app.getDetails().version;
+        },
+        "local": function (set) {
+            if (set === undefined) {
+                return localStorage["version"];
+            } else {
+                localStorage["version"] = this.current();
+            }
+        }
+    }
+};
+
+/**
+ * If enabled, send message to console for debugging.
+ *
+ * @param {*} o
+ */
+function log(o) {
+    if (asb.log) {
+        console.log(o);
+    }
+}
+
+/**
  * On item added/changed/moved/removed/visited callback.
  *
  * @param item
@@ -27,6 +58,7 @@
  */
 function onChanged(item, deleted, newFolder, annotationChange) {
     // bookmarkSorter.setChanged();
+    log("onChanged");
 }
 
 /**
@@ -34,6 +66,7 @@ function onChanged(item, deleted, newFolder, annotationChange) {
  */
 function addBookmarkObserver() {
     // bookmarkManager.on("changed", onChanged);
+    log("addBookmarkObserver");
 }
 
 /**
@@ -41,6 +74,7 @@ function addBookmarkObserver() {
  */
 function removeBookmarkObserver() {
     // bookmarkManager.removeListener("changed", onChanged);
+    log("removeBookmarkObserver");
 }
 
 /**
@@ -48,6 +82,7 @@ function removeBookmarkObserver() {
  */
 function sortAllBookmarks() {
     // bookmarkSorter.setChanged();
+    log("sortAllBookmarks");
 }
 
 /**
@@ -57,6 +92,7 @@ function sortIfAuto() {
     // if (prefs.auto_sort) {
     //     sortAllBookmarks();
     // }
+    log("sortIfAuto");
 }
 
 /**
@@ -68,6 +104,7 @@ function adjustAutoSort() {
     //     sortAllBookmarks();
     //     addBookmarkObserver();
     // }
+    log("adjustAutoSort");
 }
 
 /**
@@ -81,12 +118,15 @@ function adjustSortCriteria() {
     //     differentFolderOrder, prefs.case_insensitive
     // );
     // sortIfAuto();
+    log("adjustSortCriteria");
 }
 
 /**
- * Show the addon options.
+ * Register user events.
  */
-function createSettingsPanel() {
+function registerUserEvents() {
+    log("registerUserEvents");
+
     /*
     * Popup panel that opens from a toolbar button.
     */
@@ -120,12 +160,15 @@ function migratePrefs() {
     // if (upgrade) {
     //     prefs.migration = self.version;
     // }
+    log("migratePrefs");
 }
 
 /**
  * main
  */
+log("main:bdeing");
 migratePrefs();
-createSettingsPanel();
+registerUserEvents();
 adjustSortCriteria();
 adjustAutoSort();
+log("main:end");
