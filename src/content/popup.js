@@ -15,9 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('skeleton', []);
+"use strict";
 
-angular.module('skeleton').directive('skelLink', function () {
+/* global weh, angular */
+
+angular.module("skeleton", []);
+
+angular.module("skeleton").directive("skelLink", function () {
     return {
         template: function (elem, attr) {
             return `
@@ -27,11 +31,7 @@ angular.module('skeleton').directive('skelLink', function () {
                 </a>
             `;
         }
-    }
+    };
 });
 
-angular.module('skeleton').controller('SkelCtrl', ['$scope', function ($scope) {
-    // in case you need a controller to do stuff
-}]);
-
-weh.ngBootstrap('skeleton');
+weh.ngBootstrap("skeleton");

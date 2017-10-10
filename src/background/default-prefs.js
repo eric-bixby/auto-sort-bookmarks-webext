@@ -15,6 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+"use strict";
+
+/* global weh */
+
 weh.prefs.declare([{
     name: "auto_sort",
     type: "boolean",

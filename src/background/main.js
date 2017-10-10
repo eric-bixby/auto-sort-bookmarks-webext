@@ -17,6 +17,8 @@
 
 "use strict";
 
+/* global weh */
+
 /**
  * Various settings.
  */

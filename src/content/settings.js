@@ -15,6 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-weh.ngBootstrap('weh.prefs');
+"use strict";
+
+/* global weh */
+
+weh.ngBootstrap("weh.prefs");
 
 weh.setPageTitle(weh._("settings"));
