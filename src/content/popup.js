@@ -19,8 +19,10 @@
 
 /* global weh, angular */
 
+// initialize list
 angular.module("skeleton", []);
 
+// register directive factory
 angular.module("skeleton").directive("skelLink", function () {
     return {
         template: function (elem, attr) {
@@ -34,4 +36,10 @@ angular.module("skeleton").directive("skelLink", function () {
     };
 });
 
+// register controller
+angular.module("skeleton").controller("SkelCtrl", ["$scope", function ($scope) {
+    // in case you need a controller to do stuff
+}]);
+
+// bootstrap angular
 weh.ngBootstrap("skeleton");
