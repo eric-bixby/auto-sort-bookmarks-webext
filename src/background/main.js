@@ -22,7 +22,7 @@
 /**
  * Various settings.
  */
-var asb = {
+let asb = {
     // only set to true while debugging, set to false when released
     "log": true,
     "version": {
