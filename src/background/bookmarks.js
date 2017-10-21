@@ -17,7 +17,7 @@
 
 "use strict";
 
-/* global bookmarkService, prefs, getDescription, isSmartBookmark, isLivemark */
+/* global when, merge, emit, Ci, XPCOMUtils, bookmarkService, historyService, prefs, getDescription, isSmartBookmark, isLivemark, hasDoNotSortAnnotation, isRecursivelyExcluded, hasRecursiveAnnotation */
 
 /* exported getRootFolders, getChildrenFolders */
 
@@ -562,9 +562,9 @@ function getRootFolders() {
         });
     }
 
-    folders[0].title = _("Bookmarks Menu");
-    folders[1].title = _("Bookmarks Toolbar");
-    folders[2].title = _("Unsorted Bookmarks");
+    folders[0].title = "Bookmarks Menu";
+    folders[1].title = "Bookmarks Toolbar";
+    folders[2].title = "Unsorted Bookmarks";
 
     return folders;
 }

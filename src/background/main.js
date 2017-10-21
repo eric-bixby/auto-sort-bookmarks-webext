@@ -17,7 +17,7 @@
 
 "use strict";
 
-/* global weh */
+/* global weh, chrome */
 
 /**
  * Various settings.
