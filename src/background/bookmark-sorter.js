@@ -17,31 +17,11 @@
 
 "use strict";
 
-/* global Folder */
+/* global Folder, isRecursivelyExcluded, menuFolder, toolbarFolder, unsortedFolder */
 
 /**
- * Get start time.
- * @param name
- * @returns {number}
- */
-// function getStartTime(name) {
-//     let now = new Date();
-//     return now.getTime();
-// }
-
-/**
- * Get finish time.
- * @param name
- * @param startTime
- */
-// function getFinishTime(name, startTime) {
-//     let now = new Date();
-//     let elapsed = now.getTime() - startTime;
-//     console.log(name + " (" + elapsed + "ms)");
-// }
-
-/**
- * Reverse the base of an URL to do a better sorting
+ * Reverse the base of an URL to do a better sorting.
+ *
  * @param str
  * @return {*}
  */
@@ -52,7 +32,7 @@ function reverseBaseUrl(str) {
 
     // Used code generator: https://regex101.com/
     str = str.replace(/^\S+:\/\//, "");
-    let re = /^[^\/]+$|^[^\/]+/;
+    let re = /^[^/]+$|^[^/]+/;
 
     let m;
 
@@ -306,11 +286,11 @@ let BookmarkSorter = {
         if (folder.canBeSorted()) {
             let self = this;
             self.sortFolder(folder);
-            bookmarkService.runInBatchMode({
-                runBatched() {
-                    folder.save();
-                },
-            }, null);
+            // bookmarkService.runInBatchMode({
+            //     runBatched() {
+            //         folder.save();
+            //     },
+            // }, null);
         }
     },
 

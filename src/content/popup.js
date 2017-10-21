@@ -39,6 +39,7 @@ angular.module("skeleton").directive("skelLink", function () {
 // register controller
 angular.module("skeleton").controller("SkelCtrl", ["$scope", function ($scope) {
     // in case you need a controller to do stuff
+    console.log($scope);
 }]);
 
 // bootstrap angular

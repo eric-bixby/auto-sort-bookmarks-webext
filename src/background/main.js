@@ -22,7 +22,7 @@
 /**
  * Various settings.
  */
-let asb = {
+let prefs = {
     // only set to true while debugging, set to false when released
     "log": true,
     "version": {
@@ -36,7 +36,8 @@ let asb = {
                 localStorage["version"] = this.current();
             }
         }
-    }
+    },
+    "auto_sort": true
 };
 
 /**
@@ -45,7 +46,7 @@ let asb = {
  * @param {*} o
  */
 function log(o) {
-    if (asb.log) {
+    if (prefs.log) {
         console.log(o);
     }
 }
@@ -58,10 +59,10 @@ function log(o) {
  * @param newFolder
  * @param annotationChange
  */
-function onChanged(item, deleted, newFolder, annotationChange) {
-    // bookmarkSorter.setChanged();
-    log("onChanged");
-}
+// function onChanged(item, deleted, newFolder, annotationChange) {
+//     bookmarkSorter.setChanged();
+//     log("onChanged");
+// }
 
 /**
  * Add the bookmark observer.
@@ -91,9 +92,9 @@ function sortAllBookmarks() {
  * Sort if the auto sort option is on.
  */
 function sortIfAuto() {
-    // if (prefs.auto_sort) {
-    //     sortAllBookmarks();
-    // }
+    if (prefs.auto_sort) {
+        sortAllBookmarks();
+    }
     log("sortIfAuto");
 }
 
@@ -101,11 +102,11 @@ function sortIfAuto() {
  * Adjust the auto sorting feature.
  */
 function adjustAutoSort() {
-    // removeBookmarkObserver();
-    // if (prefs.auto_sort) {
-    //     sortAllBookmarks();
-    //     addBookmarkObserver();
-    // }
+    removeBookmarkObserver();
+    if (prefs.auto_sort) {
+        sortAllBookmarks();
+        addBookmarkObserver();
+    }
     log("adjustAutoSort");
 }
 
@@ -119,7 +120,7 @@ function adjustSortCriteria() {
     //     sortCriterias[parseInt(prefs.folder_sort_by)], prefs.folder_inverse,
     //     differentFolderOrder, prefs.case_insensitive
     // );
-    // sortIfAuto();
+    sortIfAuto();
     log("adjustSortCriteria");
 }
 
@@ -157,8 +158,6 @@ function registerUserEvents() {
  * Migrate prefs from older version to current version.
  */
 function migratePrefs() {
-    // TODO: preferences to be handled by weh
-    //
     // if (upgrade) {
     //     prefs.migration = self.version;
     // }

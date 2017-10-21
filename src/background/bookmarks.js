@@ -17,20 +17,22 @@
 
 "use strict";
 
-/* global bookmarkService, prefs, getDescription */
+/* global bookmarkService, prefs, getDescription, isSmartBookmark, isLivemark */
+
+/* exported getRootFolders, getChildrenFolders */
 
 /**
- * Item class. Base class for bookmarks/folders/separators/live bookmarks/smart bookmarks.
+ * Item class.
  */
 class Item {
     /**
      * Get an item.
-     * @constructor
+     *
      * @param itemID
      * @param index
      * @param parentID
      */
-    initialize(itemID, index, parentID) {
+    constructor(itemID, index, parentID) {
         this.id = itemID;
         this.setIndex(index);
         this.parentID = parentID;
@@ -38,6 +40,7 @@ class Item {
 
     /**
      * Get the parent folder.
+     *
      * @return {Item} The parent folder.
      */
     getFolder() {
@@ -58,6 +61,7 @@ class Item {
 
     /**
      * Set the new `index` saving the old index.
+     *
      * @param {int} index The new index.
      */
     setIndex(index) {
@@ -68,11 +72,11 @@ class Item {
 
 /**
  * Bookmark class.
- * @extends Item
  */
 class Bookmark extends Item {
     /**
      * Get a bookmark.
+     *
      * @param {int} itemID The bookmark identifier.
      * @param {int} index The bookmark position.
      * @param {int} parentID The bookmark parent identifier.
@@ -82,15 +86,15 @@ class Bookmark extends Item {
      * @param {int} accessCount The access count.
      * @param {int} dateAdded The timestamp of the date added.
      * @param {int} lastModified The timestamp of the last modified date.
-     * @constructor
      */
-    initialize(itemID, index, parentID, title, dateAdded, lastModified, url, lastVisited, accessCount) {
+    constructor(itemID, index, parentID, title, dateAdded, lastModified, url, lastVisited, accessCount) {
+        super(itemID, index, parentID);
+
         if (title === null || dateAdded === null || lastModified === null || url === null || lastVisited === null || accessCount === null) {
             // console.error("Corrupted bookmark found. ID: " + itemID + " - Title: " + title + " - URL: " + url);
             this.corrupted = true;
         }
 
-        Item.prototype.initialize.call(this, itemID, index, parentID);
         this.title = title || "";
         this.url = url || "";
         this.lastVisited = lastVisited || 0;
@@ -121,6 +125,7 @@ class Bookmark extends Item {
 
 /**
  * Determine if bookmark exists.
+ *
  * @param itemID
  * @returns {boolean}
  */
@@ -130,16 +135,15 @@ Bookmark.exists = function (itemID) {
 
 /**
  * Bookmark manager class.
- * @extends EventTarget
  */
 class BookmarkManager extends EventTarget {
     /**
      * Create a new bookmark observer.
-     * @constructor
+     *
      * @param options
      */
-    initializeinitialize(options) {
-        EventTarget.prototype.initialize.call(this, options);
+    constructor(options) {
+        super(options);
         merge(this, options);
         this.createObserver();
     }
@@ -185,29 +189,27 @@ BookmarkManager.prototype.observers = [];
 
 /**
  * Separator class.
- * @extends Item
  */
 class Separator extends Item {
     /**
      * Get a separator.
+     *
      * @param {int} itemID The separator identifier.
      * @param {int} index The separator position.
      * @param {int} parentID The separator parent identifier.
-     * @constructor
      */
-    initialize(itemID, index, parentID) {
-        Item.prototype.initialize.call(this, itemID, index, parentID);
+    constructor(itemID, index, parentID) {
+        super(itemID, index, parentID);
     }
 }
 
 /**
  * Folder class.
- * @extends Bookmark
  */
 class Folder extends Bookmark {
     /**
      * Get an existing folder.
-     * @constructor
+     *
      * @param {int} itemID The folder identifier.
      * @param {int} index The folder position.
      * @param {int} parentID The folder parent identifier.
@@ -215,13 +217,14 @@ class Folder extends Bookmark {
      * @param dateAdded
      * @param lastModified
      */
-    initialize(itemID, index, parentID, title, dateAdded, lastModified) {
-        Bookmark.prototype.initialize.call(this, itemID, index, parentID, title, dateAdded, lastModified);
+    constructor(itemID, index, parentID, title, dateAdded, lastModified) {
+        super(itemID, index, parentID, title, dateAdded, lastModified);
         this.order = prefs.folder_sort_order || 1;
     }
 
     /**
      * Check if this folder can be sorted.
+     *
      * @return {boolean} Whether it can be sorted or not.
      */
     canBeSorted() {
@@ -234,6 +237,7 @@ class Folder extends Bookmark {
 
     /**
      * Get the immediate children.
+     *
      * @return {Array.<Item>} The children.
      */
     getChildren() {
@@ -331,6 +335,7 @@ class Folder extends Bookmark {
 
     /**
      * Check if this folder is a root folder (menu, toolbar, unsorted).
+     *
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
@@ -339,6 +344,7 @@ class Folder extends Bookmark {
 
     /**
      * Check if at least one children has moved.
+     *
      * @return {boolean} Whether at least one children has moved or not.
      */
     hasMove() {
@@ -371,46 +377,45 @@ class Folder extends Bookmark {
 
 /**
  * Livemark class.
- * @extends Bookmark
  */
 class Livemark extends Bookmark {
     /**
      * Get an existing smart bookmark.
+     *
      * @param {int} itemID The folder identifier.
      * @param {int} index The folder position.
      * @param {int} parentID The folder parent identifier.
      * @param {string} title The folder title.
-     * @constructor
      * @param dateAdded
      * @param lastModified
      */
-    initialize(itemID, index, parentID, title, dateAdded, lastModified) {
-        Bookmark.prototype.initialize.call(this, itemID, index, parentID, title, dateAdded, lastModified);
+    constructor(itemID, index, parentID, title, dateAdded, lastModified) {
+        super(itemID, index, parentID, title, dateAdded, lastModified);
         this.order = prefs.livemark_sort_order || 2;
     }
 }
 
 /**
  * Smart bookmark class.
- * @extends Bookmark
  */
 class SmartBookmark extends Bookmark {
     /**
      * Get an existing smart bookmark.
-     * @constructor
+     *
      * @param {int} itemID The folder identifier.
      * @param {int} index The folder position.
      * @param {int} parentID The folder parent identifier.
      * @param {string} title The folder title.
      */
-    initialize(itemID, index, parentID, title) {
-        Bookmark.prototype.initialize.call(this, itemID, index, parentID, title);
+    constructor(itemID, index, parentID, title) {
+        super(itemID, index, parentID, title);
         this.order = prefs.smart_bookmark_sort_order || 3;
     }
 }
 
 /**
  * Create an item from the `type`.
+ *
  * @param {int} type The item type.
  * @param {int} itemID The item ID.
  * @param {int} parentID The parent ID.
@@ -454,6 +459,7 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
 
 /**
  * Create an item from the `node` type.
+ *
  * @param {object} node The node item.
  * @param {int} parentID The parent ID.
  * @return {Item} The new item.
@@ -480,6 +486,7 @@ function createItemFromNode(node, parentID) {
 
 /**
  * Get the children folders of a folder.
+ *
  * @param parentID
  * @return {Array}
  */
@@ -523,18 +530,21 @@ function getChildrenFolders(parentID) {
 
 /**
  * The bookmarks menu folder.
+ *
  * @type {Folder}
  */
 let menuFolder = new Folder(bookmarkService.bookmarksMenuFolder);
 
 /**
  * The bookmarks toolbar folder.
+ *
  * @type {Folder}
  */
 let toolbarFolder = new Folder(bookmarkService.toolbarFolder);
 
 /**
  * The unsorted bookmarks folder.
+ *
  * @type {Folder}
  */
 let unsortedFolder = new Folder(bookmarkService.unfiledBookmarksFolder);
