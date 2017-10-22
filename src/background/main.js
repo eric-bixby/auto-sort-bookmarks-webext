@@ -22,7 +22,7 @@
 /**
  * Various settings.
  */
-let prefs = {
+let asb = {
     // only set to true while debugging, set to false when released
     "log": true,
     "version": {
@@ -46,7 +46,7 @@ let prefs = {
  * @param {*} o
  */
 function log(o) {
-    if (prefs.log) {
+    if (asb.log) {
         console.log(o);
     }
 }
@@ -69,7 +69,6 @@ function log(o) {
  */
 function addBookmarkObserver() {
     // bookmarkManager.on("changed", onChanged);
-    log("addBookmarkObserver");
 }
 
 /**
@@ -77,7 +76,6 @@ function addBookmarkObserver() {
  */
 function removeBookmarkObserver() {
     // bookmarkManager.removeListener("changed", onChanged);
-    log("removeBookmarkObserver");
 }
 
 /**
@@ -85,17 +83,15 @@ function removeBookmarkObserver() {
  */
 function sortAllBookmarks() {
     // bookmarkSorter.setChanged();
-    log("sortAllBookmarks");
 }
 
 /**
  * Sort if the auto sort option is on.
  */
 function sortIfAuto() {
-    if (prefs.auto_sort) {
+    if (asb.auto_sort) {
         sortAllBookmarks();
     }
-    log("sortIfAuto");
 }
 
 /**
@@ -103,11 +99,11 @@ function sortIfAuto() {
  */
 function adjustAutoSort() {
     removeBookmarkObserver();
-    if (prefs.auto_sort) {
+
+    if (asb.auto_sort) {
         sortAllBookmarks();
         addBookmarkObserver();
     }
-    log("adjustAutoSort");
 }
 
 /**
@@ -121,15 +117,12 @@ function adjustSortCriteria() {
     //     differentFolderOrder, prefs.case_insensitive
     // );
     sortIfAuto();
-    log("adjustSortCriteria");
 }
 
 /**
  * Register user events.
  */
 function registerUserEvents() {
-    log("registerUserEvents");
-
     /*
     * Popup panel that opens from a toolbar button.
     */
@@ -155,21 +148,34 @@ function registerUserEvents() {
 }
 
 /**
- * Migrate prefs from older version to current version.
+ * Install or upgrade prefs.
  */
-function migratePrefs() {
-    // if (upgrade) {
-    //     prefs.migration = self.version;
-    // }
-    log("migratePrefs");
+function installOrUpgradePrefs() {
+    let local_version = asb.version.local();
+
+    // check if this is a first install
+    if (local_version !== asb.version.current()) {
+        if (local_version === undefined) {
+            // first install
+            log("First install");
+            for (var param in weh.prefs.getAll()) {
+                weh.prefs.values[param] = weh.prefs.specs[param].defaultValue;
+            }
+
+            //localStorage["prefs"] = 1;
+        } else {
+            log("Upgrade");
+        }
+
+        // update the localStorage version for next time
+        asb.version.local("set");
+    }
 }
 
 /**
  * main
  */
-log("main:bdeing");
-migratePrefs();
+installOrUpgradePrefs();
 registerUserEvents();
 adjustSortCriteria();
 adjustAutoSort();
-log("main:end");
