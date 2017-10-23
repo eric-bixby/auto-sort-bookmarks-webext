@@ -20,23 +20,24 @@
 /* global chrome */
 /* global Ci */
 /* global XPCOMUtils */
-/* global annotationService */
-/* global bookmarkService */
-/* global descriptionAnnotation */
 /* global emit */
-/* global historyService */
-/* global livemarkAnnotation */
 /* global merge */
 /* global prefs */
-/* global smartBookmarkAnnotation */
 /* global weh */
 
-/* exported getChildrenFolders */
-/* exported getRootFolders */
-/* exported removeDoNotSortAnnotation */
-/* exported removeRecursiveAnnotation */
-/* exported setDoNotSortAnnotation */
-/* exported setRecursiveAnnotation */
+/* global bookmarkManager */
+/* global data */
+/* global tabs */
+
+/* global annotationService */
+/* global bookmarkService */
+/* global historyService */
+
+/* global descriptionAnnotation */
+/* global livemarkAnnotation */
+/* global smartBookmarkAnnotation */
+
+/* exported showConfigureFoldersToExclude */
 
 /**
  * Various settings.
@@ -1244,6 +1245,83 @@ function getRootFolders() {
     folders[2].title = "Unsorted Bookmarks";
 
     return folders;
+}
+
+/**
+ * Show the page to configure the folders to exclude.
+ */
+function showConfigureFoldersToExclude() {
+    return function () {
+        /**
+         * Send children.
+         * @param worker
+         * @returns {Function}
+         */
+        function sendChildren(worker) {
+            return function (parentID) {
+                let children = getChildrenFolders(parentID);
+                worker.port.emit("children", parentID, children);
+            };
+        }
+
+        let worker;
+
+        /**
+         * Handle onRemove event.
+         * @param item
+         */
+        function onRemove(item) {
+            if (worker && item instanceof Folder) {
+                worker.port.emit("remove-folder", item.id);
+            }
+        }
+
+        bookmarkManager.on("remove", onRemove);
+
+        tabs.open({
+            url: data.url("configureFolders.html"),
+            onOpen: function (tab) {
+                tab.on("ready", function () {
+                    worker = tab.attach({
+                        contentScriptFile: data.url("configureFolders.js")
+                    });
+
+                    worker.port.on("sort-checkbox-change", function (folderID, activated) {
+                        if (activated) {
+                            removeDoNotSortAnnotation(folderID);
+                        }
+                        else {
+                            setDoNotSortAnnotation(folderID);
+                        }
+                    });
+
+                    worker.port.on("recursive-checkbox-change", function (folderID, activated) {
+                        if (activated) {
+                            setRecursiveAnnotation(folderID);
+                        }
+                        else {
+                            removeRecursiveAnnotation(folderID);
+                        }
+                    });
+
+                    worker.port.on("query-children", sendChildren(worker));
+
+                    const texts = {
+                        recursiveText: "Recursive",
+                        messageText: "The sub-folders are recursively excluded.",
+                        loadingText: "Loading...",
+                    };
+
+                    worker.port.emit("init", getRootFolders(), data.url("add.png"), data.url("remove.png"), texts);
+                });
+            },
+
+            onClose: function () {
+                worker = null;
+                bookmarkManager.removeListener("remove", onRemove);
+            },
+        });
+    };
 }
 
 /**
