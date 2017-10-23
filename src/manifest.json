@@ -8,8 +8,6 @@
   "author": "Antoni Boucher",
   "background": {
     "scripts": [
-      "background/bookmark-sorter.js",
-      "background/bookmarks.js",
       "background/default-prefs.js",
       "background/main.js"
     ]
