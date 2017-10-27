@@ -24,7 +24,6 @@
 /* global tabs */
 
 /* global annotationService */
-/* global bookmarkService */
 /* global historyService */
 
 /* global descriptionAnnotation */
@@ -88,12 +87,6 @@ class BookmarkManager {
             asb.status.import_active = false;
         });
 
-        chrome.bookmarks.onMoved.addListener(function (id, moveInfo) {
-            if (!asb.status.import_active) {
-                log("onMoved id = " + id + " " + moveInfo);
-            }
-        });
-
         setTimeout(this.createChangeListeners, 500);
     }
 
@@ -102,7 +95,7 @@ class BookmarkManager {
      */
     createChangeListeners() {
         if (asb.status.sort_active > 0) {
-            setTimeout(this.createListeners, 500);
+            setTimeout(this.createChangeListeners, 500);
         } else {
             asb.status.listeners_active = true;
 
@@ -130,7 +123,7 @@ class BookmarkManager {
                 }
             });
 
-            log("All listeners active.\n");
+            log("All listeners active");
         }
     }
 }
@@ -158,7 +151,7 @@ class Item {
      * @return {Item} The parent folder.
      */
     getFolder() {
-        return createItem(bookmarkService.TYPE_FOLDER, this.parentID);
+        return createItem(chrome.bookmarks.folderID, this.parentID);
     }
 
     /**
@@ -166,7 +159,7 @@ class Item {
      */
     saveIndex() {
         try {
-            bookmarkService.setItemIndex(this.id, this.index);
+            chrome.bookmarks.setItemIndex(this.id, this.index);
         }
         catch (exception) {
             // console.error("failed to move " + this.id + ". " + this.title + " to " + this.index + " (" + this.url + ")");
@@ -226,7 +219,7 @@ class Bookmark extends Item {
     setKeyword() {
         let keyword = "";
         try {
-            keyword = bookmarkService.getKeywordForBookmark(this.id);
+            keyword = chrome.bookmarks.getKeywordForBookmark(this.id);
             keyword = keyword || "";
         }
         catch (exception) {
@@ -243,7 +236,7 @@ class Bookmark extends Item {
      * @returns {boolean}
      */
     exists(itemID) {
-        return bookmarkService.getItemIndex(itemID) >= 0;
+        return chrome.bookmarks.getItemIndex(itemID) >= 0;
     }
 }
 
@@ -383,9 +376,9 @@ class Folder extends Bookmark {
             return true;
         }
         else {
-            let parentID = bookmarkService.getFolderIdForItem(this.id);
+            let parentID = chrome.bookmarks.getFolderIdForItem(this.id);
             if (parentID > 0) {
-                let parentFolder = createItem(bookmarkService.TYPE_FOLDER, parentID);
+                let parentFolder = createItem(chrome.bookmarks.folderID, parentID);
                 return parentFolder.hasAncestorExcluded();
             }
         }
@@ -399,7 +392,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.id === bookmarkService.placesRoot;
+        return this.id === chrome.bookmarks.placesRoot;
     }
 
     /**
@@ -710,11 +703,12 @@ class BookmarkSorter {
         if (folder.canBeSorted()) {
             let self = this;
             self.sortFolder(folder);
-            // bookmarkService.runInBatchMode({
+            // chrome.bookmarks.runInBatchMode({
             //     runBatched() {
             //         folder.save();
             //     },
             // }, null);
+            folder.save();
         }
     }
 
@@ -1126,7 +1120,7 @@ function reverseBaseUrl(str) {
 function createItem(type, itemID, index, parentID, title, url, lastVisited, accessCount, dateAdded, lastModified) {
     let item;
     switch (type) {
-        case bookmarkService.TYPE_BOOKMARK:
+        case chrome.bookmarks.TYPE_BOOKMARK:
             if (isSmartBookmark(itemID)) {
                 item = new SmartBookmark(itemID, index, parentID, title);
             }
@@ -1135,7 +1129,7 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
             }
 
             break;
-        case bookmarkService.TYPE_FOLDER:
+        case chrome.bookmarks.TYPE_FOLDER:
             if (isLivemark(itemID)) {
                 item = new Livemark(itemID, index, parentID, title, dateAdded, lastModified);
             }
@@ -1144,7 +1138,7 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
             }
 
             break;
-        case bookmarkService.TYPE_SEPARATOR:
+        case chrome.bookmarks.TYPE_SEPARATOR:
             item = new Separator(itemID, index, parentID);
             break;
     }
@@ -1163,16 +1157,16 @@ function createItemFromNode(node, parentID) {
     let type;
     switch (node.type) {
         case node.RESULT_TYPE_URI:
-            type = bookmarkService.TYPE_BOOKMARK;
+            type = chrome.bookmarks.TYPE_BOOKMARK;
             break;
         case node.RESULT_TYPE_FOLDER:
-            type = bookmarkService.TYPE_FOLDER;
+            type = chrome.bookmarks.TYPE_FOLDER;
             break;
         case node.RESULT_TYPE_SEPARATOR:
-            type = bookmarkService.TYPE_SEPARATOR;
+            type = chrome.bookmarks.TYPE_SEPARATOR;
             break;
         case node.RESULT_TYPE_QUERY:
-            type = bookmarkService.TYPE_BOOKMARK;
+            type = chrome.bookmarks.TYPE_BOOKMARK;
             break;
     }
 
@@ -1347,21 +1341,21 @@ const sortCriterias = [
  *
  * @type {Folder}
  */
-let menuFolder = new Folder(bookmarkService.bookmarksMenuFolder);
+let menuFolder = new Folder(chrome.bookmarks.menuFolder);
 
 /**
  * The bookmarks toolbar folder.
  *
  * @type {Folder}
  */
-let toolbarFolder = new Folder(bookmarkService.toolbarFolder);
+let toolbarFolder = new Folder(chrome.bookmarks.toolbarFolder);
 
 /**
  * The unsorted bookmarks folder.
  *
  * @type {Folder}
  */
-let unsortedFolder = new Folder(bookmarkService.unfiledBookmarksFolder);
+let unsortedFolder = new Folder(chrome.bookmarks.unsortedFolder);
 
 installOrUpgradePrefs();
 registerUserEvents();
