@@ -18,18 +18,14 @@
 "use strict";
 
 /* global chrome */
-/* global prefs */
 /* global weh */
 
+// TODO: port excluded folders feature
 /* global tabs */
-
 /* global annotationService */
-/* global historyService */
-
 /* global descriptionAnnotation */
 /* global livemarkAnnotation */
 /* global smartBookmarkAnnotation */
-
 /* exported showConfigureFoldersToExclude */
 
 // =======
@@ -67,7 +63,7 @@ let asb = {
  */
 class BookmarkManager {
     /**
-     * Create a new bookmark observer.
+     * Create bookmark listeners.
      */
     constructor() {
         this.createImportListeners();
@@ -99,27 +95,39 @@ class BookmarkManager {
         } else {
             asb.status.listeners_active = true;
 
-            chrome.bookmarks.onCreated.addListener(function (id, bookmark) {
-                if (!asb.status.import_active) {
-                    log("onCreated id = " + id + " " + bookmark);
-                }
-            });
-
             chrome.bookmarks.onChanged.addListener(function (id, changeInfo) {
                 if (!asb.status.import_active) {
                     log("onChanged id = " + id + " " + changeInfo);
-                }
-            });
-
-            chrome.bookmarks.onMoved.addListener(function (id, moveInfo) {
-                if (!asb.status.import_active) {
-                    log("onMoved id = " + id + " " + moveInfo);
+                    // TODO: emit changed
                 }
             });
 
             chrome.bookmarks.onChildrenReordered.addListener(function (id, reorderInfo) {
                 if (!asb.status.import_active) {
                     log("onChildrenReordered id = " + id + " " + reorderInfo);
+                    // TODO: emit changed
+                }
+            });
+
+            chrome.bookmarks.onCreated.addListener(function (id, bookmark) {
+                if (!asb.status.import_active) {
+                    log("onCreated id = " + id + " " + bookmark);
+                    // TODO: emit changed
+                }
+            });
+
+            chrome.bookmarks.onMoved.addListener(function (id, moveInfo) {
+                if (!asb.status.import_active) {
+                    log("onMoved id = " + id + " " + moveInfo);
+                    // TODO: emit changed
+                }
+            });
+
+            chrome.bookmarks.onRemoved.addListener(function (id, removeInfo) {
+                if (!asb.status.import_active) {
+                    // TODO: check if item is separator, sort if true
+                    log("onRemoved id = " + id + " " + removeInfo);
+                    // TODO: emit changed
                 }
             });
 
@@ -208,7 +216,7 @@ class Bookmark extends Item {
         this.accessCount = accessCount || 0;
         this.dateAdded = dateAdded || 0;
         this.lastModified = lastModified || 0;
-        this.order = prefs.bookmark_sort_order || 4;
+        this.order = weh.prefs["bookmark_sort_order"] || 4;
         this.description = getDescription(this) || "";
         this.setKeyword();
     }
@@ -272,7 +280,7 @@ class Folder extends Bookmark {
      */
     constructor(itemID, index, parentID, title, dateAdded, lastModified) {
         super(itemID, index, parentID, title, dateAdded, lastModified);
-        this.order = prefs.folder_sort_order || 1;
+        this.order = weh.prefs["folder_sort_order"] || 1;
     }
 
     /**
@@ -297,6 +305,8 @@ class Folder extends Bookmark {
         let index = 0;
 
         this.children = [[]];
+
+        // TODO: port to browser.bookmarks.getChildren()
 
         let options = historyService.getNewQueryOptions();
         options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
@@ -333,6 +343,8 @@ class Folder extends Bookmark {
         let folders = [];
         let folder;
         let node;
+
+        // TODO: port to browser.bookmarks.getChildren()
 
         let options = historyService.getNewQueryOptions();
         options.excludeItems = true;
@@ -444,7 +456,7 @@ class Livemark extends Bookmark {
      */
     constructor(itemID, index, parentID, title, dateAdded, lastModified) {
         super(itemID, index, parentID, title, dateAdded, lastModified);
-        this.order = prefs.livemark_sort_order || 2;
+        this.order = weh.prefs["livemark_sort_order"] || 2;
     }
 }
 
@@ -462,7 +474,7 @@ class SmartBookmark extends Bookmark {
      */
     constructor(itemID, index, parentID, title) {
         super(itemID, index, parentID, title);
-        this.order = prefs.smart_bookmark_sort_order || 3;
+        this.order = weh.prefs["smart_bookmark_sort_order"] || 3;
     }
 }
 
@@ -821,14 +833,15 @@ function onChanged(item, deleted, newFolder, annotationChange) {
  * Add the bookmark observer.
  */
 function addBookmarkObserver() {
-    bookmarkManager.on("changed", onChanged);
+    //bookmarkManager.on("changed", onChanged);
+    onChanged();
 }
 
 /**
  * Remove the bookmark observer.
  */
 function removeBookmarkObserver() {
-    bookmarkManager.removeListener("changed", onChanged);
+    //bookmarkManager.removeListener("changed", onChanged);
 }
 
 /**
@@ -863,11 +876,11 @@ function adjustAutoSort() {
  * Adjust the sort criteria of the bookmark sorter.
  */
 function adjustSortCriteria() {
-    let differentFolderOrder = prefs.folder_sort_order !== prefs.livemark_sort_order && prefs.folder_sort_order !== prefs.smart_bookmark_sort_order && prefs.folder_sort_order !== prefs.bookmark_sort_order;
-    bookmarkSorter.setCriteria(sortCriterias[prefs.sort_by], prefs.inverse,
-        sortCriterias[parseInt(prefs.then_sort_by)] || undefined, prefs.then_inverse,
-        sortCriterias[parseInt(prefs.folder_sort_by)], prefs.folder_inverse,
-        differentFolderOrder, prefs.case_insensitive
+    let differentFolderOrder = weh.prefs["folder_sort_order"] !== weh.prefs["livemark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["smart_bookmark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["bookmark_sort_order"];
+    bookmarkSorter.setCriteria(sortCriterias[weh.prefs["sort_by"]], weh.prefs["inverse"],
+        sortCriterias[parseInt(weh.prefs["then_sort_by"])] || undefined, weh.prefs["then_inverse"],
+        sortCriterias[parseInt(weh.prefs["folder_sort_by"])], weh.prefs["folder_inverse"],
+        differentFolderOrder, weh.prefs["case_insensitive"]
     );
     sortIfAuto();
 }
@@ -905,8 +918,6 @@ function registerUserEvents() {
  */
 function installOrUpgradePrefs() {
     let local_version = asb.version.local();
-    log("local-version=" + local_version);
-    log("current-version=" + asb.version.current());
 
     // check if this is a first install
     if (local_version !== asb.version.current()) {
@@ -914,10 +925,9 @@ function installOrUpgradePrefs() {
             // first install
             log("First install");
             for (var param in weh.prefs.getAll()) {
-                weh.prefs.values[param] = weh.prefs.specs[param].defaultValue;
+                weh.prefs[param] = weh.prefs.$specs[param].defaultValue;
             }
-
-            //localStorage["prefs"] = 1;
+            // TODO: save to localStorage
         } else {
             log("Upgrade");
         }
@@ -1184,6 +1194,8 @@ function getChildrenFolders(parentID) {
     let folder;
     let node;
 
+    // TODO: port to browser.bookmarks.getChildren()
+
     let options = historyService.getNewQueryOptions();
     options.excludeItems = true;
     options.excludeQueries = true;
@@ -1308,7 +1320,7 @@ function showConfigureFoldersToExclude() {
 
             onClose: function () {
                 worker = null;
-                bookmarkManager.removeListener("remove", onRemove);
+                //bookmarkManager.removeListener("remove", onRemove);
             },
         });
     };
