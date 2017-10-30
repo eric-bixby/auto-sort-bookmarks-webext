@@ -16,9 +16,9 @@
    id="SVGRoot"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="icon.svg"
-   inkscape:export-filename="/Users/ericbixby/Dropbox/Code/JavaScript/AutoSortBookmarks/misc/icon-128.png"
-   inkscape:export-xdpi="768"
-   inkscape:export-ydpi="768">
+   inkscape:export-filename="/Users/ericbixby/Dropbox/GitHub/auto-sort-bookmarks-webext/src/content/_assets/images/icon-16.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -27,8 +27,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16"
-     inkscape:cx="-2.78125"
-     inkscape:cy="8"
+     inkscape:cx="-16.375"
+     inkscape:cy="5.8950893"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -94,7 +94,7 @@
       <path
          id="path1602"
          d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#0000ff;fill-opacity:1"
          transform="scale(0.8)" />
     </marker>
     <marker
@@ -107,7 +107,7 @@
        inkscape:isstock="true">
       <path
          id="path1487"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#0000ff;fill-opacity:1"
          d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
          transform="scale(0.6) rotate(180) translate(0,0)" />
     </marker>
@@ -192,8 +192,8 @@
        x="1.375"
        y="11.5625" />
     <path
-       style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:10;stroke-opacity:1;marker-end:url(#Arrow2Lend)"
-       d="M 11,1 V 14"
+       style="fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.83666003;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:10;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="m 10.96875,3 v 7"
        id="path915"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
