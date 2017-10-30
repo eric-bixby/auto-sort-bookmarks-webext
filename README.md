@@ -48,5 +48,5 @@ If you want to exclude a folder recursively from being sorted, check the recursi
 * **Folder Sort Order:** this option specify the order in which the folders are sorted. For instance, it is possible to sort folders before livemarks, smart bookmarks and bookmarks. To do this, the folder sort order should be lesser than the other sort orders.
 If the sort order of two types are at the same level, the bookmarks from these types will be sorted together.
 * **Livemark Sort Order:** this option specify the sort order of livemarks.
-* **Smart Bookmark Sort Order:** this option specify the sort order of smart bookmarks
+* **Smart Bookmark Sort Order:** this option specify the sort order of smart bookmarks.
 * **Bookmark Sort Order:** this option specify the bookmark sort order.
