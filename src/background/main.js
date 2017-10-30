@@ -17,16 +17,17 @@
 
 "use strict";
 
-/* global chrome */
 /* global weh */
 
 // TODO: port excluded folders feature
-/* global tabs */
 /* global annotationService */
 /* global descriptionAnnotation */
 /* global livemarkAnnotation */
 /* global smartBookmarkAnnotation */
 /* exported showConfigureFoldersToExclude */
+
+// TODO: port historyService
+/* exported createItemFromNode */
 
 // =======
 // CLASSES
@@ -46,7 +47,10 @@ let asb = {
     },
     "version": {
         "current": function () {
-            return chrome.app.getDetails().version;
+            // TODO: chrome.app undefined for firefox, only chrome
+            // return chrome.app.getDetails().version;
+            var manifest = browser.runtime.getManifest();
+            return manifest.version;
         },
         "local": function (set) {
             if (set === undefined) {
@@ -66,19 +70,22 @@ class BookmarkManager {
      * Create bookmark listeners.
      */
     constructor() {
-        this.createImportListeners();
+        // TODO: not supported in firefox, only chrome
+        // this.createImportListeners();
+
+        this.createChangeListeners();
     }
 
     /**
      * Create bookmark import listeners.
      */
     createImportListeners() {
-        chrome.bookmarks.onImportBegan.addListener(function () {
+        browser.bookmarks.onImportBegan.addListener(function () {
             log("Import began");
             asb.status.import_active = true;
         });
 
-        chrome.bookmarks.onImportEnded.addListener(function () {
+        browser.bookmarks.onImportEnded.addListener(function () {
             log("Import ended");
             asb.status.import_active = false;
         });
@@ -95,35 +102,36 @@ class BookmarkManager {
         } else {
             asb.status.listeners_active = true;
 
-            chrome.bookmarks.onChanged.addListener(function (id, changeInfo) {
+            // TODO: not supported by firefox, only chrome
+            // browser.bookmarks.onChildrenReordered.addListener(function (id, reorderInfo) {
+            //     if (!asb.status.import_active) {
+            //         log("onChildrenReordered id = " + id + " " + reorderInfo);
+            //         // TODO: emit changed
+            //     }
+            // });
+
+            browser.bookmarks.onChanged.addListener(function (id, changeInfo) {
                 if (!asb.status.import_active) {
                     log("onChanged id = " + id + " " + changeInfo);
                     // TODO: emit changed
                 }
             });
 
-            chrome.bookmarks.onChildrenReordered.addListener(function (id, reorderInfo) {
-                if (!asb.status.import_active) {
-                    log("onChildrenReordered id = " + id + " " + reorderInfo);
-                    // TODO: emit changed
-                }
-            });
-
-            chrome.bookmarks.onCreated.addListener(function (id, bookmark) {
+            browser.bookmarks.onCreated.addListener(function (id, bookmark) {
                 if (!asb.status.import_active) {
                     log("onCreated id = " + id + " " + bookmark);
                     // TODO: emit changed
                 }
             });
 
-            chrome.bookmarks.onMoved.addListener(function (id, moveInfo) {
+            browser.bookmarks.onMoved.addListener(function (id, moveInfo) {
                 if (!asb.status.import_active) {
                     log("onMoved id = " + id + " " + moveInfo);
                     // TODO: emit changed
                 }
             });
 
-            chrome.bookmarks.onRemoved.addListener(function (id, removeInfo) {
+            browser.bookmarks.onRemoved.addListener(function (id, removeInfo) {
                 if (!asb.status.import_active) {
                     // TODO: check if item is separator, sort if true
                     log("onRemoved id = " + id + " " + removeInfo);
@@ -159,7 +167,7 @@ class Item {
      * @return {Item} The parent folder.
      */
     getFolder() {
-        return createItem(chrome.bookmarks.folderID, this.parentID);
+        return createItem(browser.bookmarks.folderID, this.parentID);
     }
 
     /**
@@ -167,7 +175,7 @@ class Item {
      */
     saveIndex() {
         try {
-            chrome.bookmarks.setItemIndex(this.id, this.index);
+            browser.bookmarks.setItemIndex(this.id, this.index);
         }
         catch (exception) {
             // console.error("failed to move " + this.id + ". " + this.title + " to " + this.index + " (" + this.url + ")");
@@ -227,7 +235,7 @@ class Bookmark extends Item {
     setKeyword() {
         let keyword = "";
         try {
-            keyword = chrome.bookmarks.getKeywordForBookmark(this.id);
+            keyword = browser.bookmarks.getKeywordForBookmark(this.id);
             keyword = keyword || "";
         }
         catch (exception) {
@@ -244,7 +252,7 @@ class Bookmark extends Item {
      * @returns {boolean}
      */
     exists(itemID) {
-        return chrome.bookmarks.getItemIndex(itemID) >= 0;
+        return browser.bookmarks.getItemIndex(itemID) >= 0;
     }
 }
 
@@ -302,36 +310,38 @@ class Folder extends Bookmark {
      * @return {Array.<Item>} The children.
      */
     getChildren() {
-        let index = 0;
+        log("getChildren");
+
+        // let index = 0;
 
         this.children = [[]];
 
         // TODO: port to browser.bookmarks.getChildren()
 
-        let options = historyService.getNewQueryOptions();
-        options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
+        // let options = historyService.getNewQueryOptions();
+        // options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
 
-        let query = historyService.getNewQuery();
-        query.setFolders([this.id], 1);
+        // let query = historyService.getNewQuery();
+        // query.setFolders([this.id], 1);
 
-        let result = historyService.executeQuery(query, options);
+        // let result = historyService.executeQuery(query, options);
 
-        let rootNode = result.root;
-        rootNode.containerOpen = true;
+        // let rootNode = result.root;
+        // rootNode.containerOpen = true;
 
-        for (let i = 0; i < rootNode.childCount; ++i) {
-            let node = rootNode.getChild(i);
-            let item = createItemFromNode(node, this.id);
-            if (item instanceof Separator) {
-                this.children.push([]);
-                ++index;
-            }
-            else if (item !== undefined) {
-                this.children[index].push(item);
-            }
-        }
+        // for (let i = 0; i < rootNode.childCount; ++i) {
+        //     let node = rootNode.getChild(i);
+        //     let item = createItemFromNode(node, this.id);
+        //     if (item instanceof Separator) {
+        //         this.children.push([]);
+        //         ++index;
+        //     }
+        //     else if (item !== undefined) {
+        //         this.children[index].push(item);
+        //     }
+        // }
 
-        rootNode.containerOpen = false;
+        // rootNode.containerOpen = false;
 
         return this.children;
     }
@@ -340,42 +350,45 @@ class Folder extends Bookmark {
      * Get folders recursively.
      */
     getFolders() {
+        log("getFolders");
+
         let folders = [];
-        let folder;
-        let node;
+
+        // let folder;
+        // let node;
 
         // TODO: port to browser.bookmarks.getChildren()
 
-        let options = historyService.getNewQueryOptions();
-        options.excludeItems = true;
-        options.excludeQueries = true;
-        options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
+        // let options = historyService.getNewQueryOptions();
+        // options.excludeItems = true;
+        // options.excludeQueries = true;
+        // options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
 
-        let query = historyService.getNewQuery();
-        query.setFolders([this.id], 1);
+        // let query = historyService.getNewQuery();
+        // query.setFolders([this.id], 1);
 
-        let result = historyService.executeQuery(query, options);
+        // let result = historyService.executeQuery(query, options);
 
-        let rootNode = result.root;
-        rootNode.containerOpen = true;
+        // let rootNode = result.root;
+        // rootNode.containerOpen = true;
 
-        for (let i = 0; i < rootNode.childCount; ++i) {
-            node = rootNode.getChild(i);
+        // for (let i = 0; i < rootNode.childCount; ++i) {
+        //     node = rootNode.getChild(i);
 
-            if (!isRecursivelyExcluded(node.itemId)) {
-                folder = new Folder(node.itemId, node.bookmarkIndex, this.id, node.title, node.dateAdded, node.lastModified);
+        //     if (!isRecursivelyExcluded(node.itemId)) {
+        //         folder = new Folder(node.itemId, node.bookmarkIndex, this.id, node.title, node.dateAdded, node.lastModified);
 
-                if (!isLivemark(folder.id)) {
-                    folders.push(folder);
+        //         if (!isLivemark(folder.id)) {
+        //             folders.push(folder);
 
-                    for (let f of folder.getFolders()) {
-                        folders.push(f);
-                    }
-                }
-            }
-        }
+        //             for (let f of folder.getFolders()) {
+        //                 folders.push(f);
+        //             }
+        //         }
+        //     }
+        // }
 
-        rootNode.containerOpen = false;
+        // rootNode.containerOpen = false;
 
         return folders;
     }
@@ -388,9 +401,11 @@ class Folder extends Bookmark {
             return true;
         }
         else {
-            let parentID = chrome.bookmarks.getFolderIdForItem(this.id);
+            // TODO: maybe parentID is already set?
+            // let parentID = getFolderIdForItem(this.id);
+            let parentID = 0;
             if (parentID > 0) {
-                let parentFolder = createItem(chrome.bookmarks.folderID, parentID);
+                let parentFolder = createItem(browser.bookmarks.folderID, parentID);
                 return parentFolder.hasAncestorExcluded();
             }
         }
@@ -404,7 +419,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.id === chrome.bookmarks.placesRoot;
+        return this.id === browser.bookmarks.placesRoot;
     }
 
     /**
@@ -715,7 +730,7 @@ class BookmarkSorter {
         if (folder.canBeSorted()) {
             let self = this;
             self.sortFolder(folder);
-            // chrome.bookmarks.runInBatchMode({
+            // browser.bookmarks.runInBatchMode({
             //     runBatched() {
             //         folder.save();
             //     },
@@ -825,8 +840,7 @@ function log(o) {
  */
 function onChanged(item, deleted, newFolder, annotationChange) {
     bookmarkSorter.setChanged();
-    log("onChanged");
-    log(annotationChange);
+    log("onChanged, item=" + item + ", deleted=" + deleted + ", newFolder=" + newFolder + ", annotationChange=" + annotationChange);
 }
 
 /**
@@ -925,7 +939,9 @@ function installOrUpgradePrefs() {
             // first install
             log("First install");
             for (var param in weh.prefs.getAll()) {
-                weh.prefs[param] = weh.prefs.$specs[param].defaultValue;
+                let value = weh.prefs.$specs[param].defaultValue;
+                log("param=" + param + ", defaultValue=" + value);
+                weh.prefs[param] = value;
             }
             // TODO: save to localStorage
         } else {
@@ -1130,7 +1146,7 @@ function reverseBaseUrl(str) {
 function createItem(type, itemID, index, parentID, title, url, lastVisited, accessCount, dateAdded, lastModified) {
     let item;
     switch (type) {
-        case chrome.bookmarks.TYPE_BOOKMARK:
+        case browser.bookmarks.TYPE_BOOKMARK:
             if (isSmartBookmark(itemID)) {
                 item = new SmartBookmark(itemID, index, parentID, title);
             }
@@ -1139,7 +1155,7 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
             }
 
             break;
-        case chrome.bookmarks.TYPE_FOLDER:
+        case browser.bookmarks.TYPE_FOLDER:
             if (isLivemark(itemID)) {
                 item = new Livemark(itemID, index, parentID, title, dateAdded, lastModified);
             }
@@ -1148,7 +1164,7 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
             }
 
             break;
-        case chrome.bookmarks.TYPE_SEPARATOR:
+        case browser.bookmarks.TYPE_SEPARATOR:
             item = new Separator(itemID, index, parentID);
             break;
     }
@@ -1167,16 +1183,16 @@ function createItemFromNode(node, parentID) {
     let type;
     switch (node.type) {
         case node.RESULT_TYPE_URI:
-            type = chrome.bookmarks.TYPE_BOOKMARK;
+            type = browser.bookmarks.TYPE_BOOKMARK;
             break;
         case node.RESULT_TYPE_FOLDER:
-            type = chrome.bookmarks.TYPE_FOLDER;
+            type = browser.bookmarks.TYPE_FOLDER;
             break;
         case node.RESULT_TYPE_SEPARATOR:
-            type = chrome.bookmarks.TYPE_SEPARATOR;
+            type = browser.bookmarks.TYPE_SEPARATOR;
             break;
         case node.RESULT_TYPE_QUERY:
-            type = chrome.bookmarks.TYPE_BOOKMARK;
+            type = browser.bookmarks.TYPE_BOOKMARK;
             break;
     }
 
@@ -1190,41 +1206,43 @@ function createItemFromNode(node, parentID) {
  * @return {Array}
  */
 function getChildrenFolders(parentID) {
+    log("getChildrenFolders, parentID=" + parentID);
     let children = [];
-    let folder;
-    let node;
+
+    // let folder;
+    // let node;
 
     // TODO: port to browser.bookmarks.getChildren()
 
-    let options = historyService.getNewQueryOptions();
-    options.excludeItems = true;
-    options.excludeQueries = true;
-    options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
+    // let options = historyService.getNewQueryOptions();
+    // options.excludeItems = true;
+    // options.excludeQueries = true;
+    // options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
 
-    let query = historyService.getNewQuery();
-    query.setFolders([parentID], 1);
+    // let query = historyService.getNewQuery();
+    // query.setFolders([parentID], 1);
 
-    let result = historyService.executeQuery(query, options);
+    // let result = historyService.executeQuery(query, options);
 
-    let rootNode = result.root;
-    rootNode.containerOpen = true;
+    // let rootNode = result.root;
+    // rootNode.containerOpen = true;
 
-    for (let i = 0; i < rootNode.childCount; ++i) {
-        node = rootNode.getChild(i);
+    // for (let i = 0; i < rootNode.childCount; ++i) {
+    //     node = rootNode.getChild(i);
 
-        folder = new Folder(node.itemId, node.bookmarkIndex, parentID, node.title, node.dateAdded, node.lastModified);
+    //     folder = new Folder(node.itemId, node.bookmarkIndex, parentID, node.title, node.dateAdded, node.lastModified);
 
-        if (!isLivemark(folder.id)) {
-            children.push({
-                id: folder.id,
-                title: folder.title,
-                excluded: hasDoNotSortAnnotation(folder.id),
-                recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-            });
-        }
-    }
+    //     if (!isLivemark(folder.id)) {
+    //         children.push({
+    //             id: folder.id,
+    //             title: folder.title,
+    //             excluded: hasDoNotSortAnnotation(folder.id),
+    //             recursivelyExcluded: hasRecursiveAnnotation(folder.id),
+    //         });
+    //     }
+    // }
 
-    rootNode.containerOpen = false;
+    // rootNode.containerOpen = false;
 
     return children;
 }
@@ -1280,7 +1298,7 @@ function showConfigureFoldersToExclude() {
 
         bookmarkManager.on("remove", onRemove);
 
-        tabs.open({
+        browser.tabs.open({
             url: data.url("configureFolders.html"),
             onOpen: function (tab) {
                 tab.on("ready", function () {
@@ -1353,21 +1371,21 @@ const sortCriterias = [
  *
  * @type {Folder}
  */
-let menuFolder = new Folder(chrome.bookmarks.menuFolder);
+let menuFolder = new Folder(browser.bookmarks.menuFolder);
 
 /**
  * The bookmarks toolbar folder.
  *
  * @type {Folder}
  */
-let toolbarFolder = new Folder(chrome.bookmarks.toolbarFolder);
+let toolbarFolder = new Folder(browser.bookmarks.toolbarFolder);
 
 /**
  * The unsorted bookmarks folder.
  *
  * @type {Folder}
  */
-let unsortedFolder = new Folder(chrome.bookmarks.unsortedFolder);
+let unsortedFolder = new Folder(browser.bookmarks.unsortedFolder);
 
 installOrUpgradePrefs();
 registerUserEvents();
