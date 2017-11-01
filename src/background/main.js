@@ -41,7 +41,6 @@ let asb = {
     // only set to true while debugging, set to false when released
     "log": true,
     "status": {
-        "import_active": false,
         "listeners_active": false,
         "sort_active": 0
     },
@@ -70,26 +69,6 @@ class BookmarkManager {
      * Create bookmark listeners.
      */
     constructor() {
-        // TODO: not supported in firefox, only chrome
-        // this.createImportListeners();
-
-        this.createChangeListeners();
-    }
-
-    /**
-     * Create bookmark import listeners.
-     */
-    createImportListeners() {
-        browser.bookmarks.onImportBegan.addListener(function () {
-            log("Import began");
-            asb.status.import_active = true;
-        });
-
-        browser.bookmarks.onImportEnded.addListener(function () {
-            log("Import ended");
-            asb.status.import_active = false;
-        });
-
         setTimeout(this.createChangeListeners, 500);
     }
 
@@ -102,41 +81,25 @@ class BookmarkManager {
         } else {
             asb.status.listeners_active = true;
 
-            // TODO: not supported by firefox, only chrome
-            // browser.bookmarks.onChildrenReordered.addListener(function (id, reorderInfo) {
-            //     if (!asb.status.import_active) {
-            //         log("onChildrenReordered id = " + id + " " + reorderInfo);
-            //         // TODO: emit changed
-            //     }
-            // });
-
             browser.bookmarks.onChanged.addListener(function (id, changeInfo) {
-                if (!asb.status.import_active) {
-                    log("onChanged id = " + id + " " + changeInfo);
-                    // TODO: emit changed
-                }
+                log("onChanged id = " + id + " " + changeInfo);
+                sortIfAuto();
             });
 
             browser.bookmarks.onCreated.addListener(function (id, bookmark) {
-                if (!asb.status.import_active) {
-                    log("onCreated id = " + id + " " + bookmark);
-                    // TODO: emit changed
-                }
+                log("onCreated id = " + id + " " + bookmark);
+                sortIfAuto();
             });
 
             browser.bookmarks.onMoved.addListener(function (id, moveInfo) {
-                if (!asb.status.import_active) {
-                    log("onMoved id = " + id + " " + moveInfo);
-                    // TODO: emit changed
-                }
+                log("onMoved id = " + id + " " + moveInfo);
+                sortIfAuto();
             });
 
             browser.bookmarks.onRemoved.addListener(function (id, removeInfo) {
-                if (!asb.status.import_active) {
-                    // TODO: check if item is separator, sort if true
-                    log("onRemoved id = " + id + " " + removeInfo);
-                    // TODO: emit changed
-                }
+                // TODO: check if item is separator, sort if true
+                log("onRemoved id = " + id + " " + removeInfo);
+                sortIfAuto();
             });
 
             log("All listeners active");
@@ -831,34 +794,6 @@ function log(o) {
 }
 
 /**
- * On item added/changed/moved/removed/visited callback.
- *
- * @param item
- * @param deleted
- * @param newFolder
- * @param annotationChange
- */
-function onChanged(item, deleted, newFolder, annotationChange) {
-    bookmarkSorter.setChanged();
-    log("onChanged, item=" + item + ", deleted=" + deleted + ", newFolder=" + newFolder + ", annotationChange=" + annotationChange);
-}
-
-/**
- * Add the bookmark observer.
- */
-function addBookmarkObserver() {
-    //bookmarkManager.on("changed", onChanged);
-    onChanged();
-}
-
-/**
- * Remove the bookmark observer.
- */
-function removeBookmarkObserver() {
-    //bookmarkManager.removeListener("changed", onChanged);
-}
-
-/**
  * Sort all bookmarks.
  */
 function sortAllBookmarks() {
@@ -871,18 +806,6 @@ function sortAllBookmarks() {
 function sortIfAuto() {
     if (asb.auto_sort) {
         sortAllBookmarks();
-    }
-}
-
-/**
- * Adjust the auto sorting feature.
- */
-function adjustAutoSort() {
-    removeBookmarkObserver();
-
-    if (asb.auto_sort) {
-        sortAllBookmarks();
-        addBookmarkObserver();
     }
 }
 
@@ -1350,9 +1273,6 @@ function showConfigureFoldersToExclude() {
 
 log("main:begin");
 
-var bookmarkManager = new BookmarkManager();
-var bookmarkSorter = new BookmarkSorter();
-
 const data = self.data;
 const sortCriterias = [
     "title",
@@ -1387,9 +1307,11 @@ let toolbarFolder = new Folder(browser.bookmarks.toolbarFolder);
  */
 let unsortedFolder = new Folder(browser.bookmarks.unsortedFolder);
 
+var bookmarkSorter = new BookmarkSorter();
+var bookmarkManager = new BookmarkManager();
+
 installOrUpgradePrefs();
 registerUserEvents();
 adjustSortCriteria();
-adjustAutoSort();
 
 log("main:end");
