@@ -67,6 +67,8 @@ class BookmarkManager {
      * Create bookmark listeners.
      */
     constructor() {
+        log("BookmarkManager");
+
         setTimeout(this.createChangeListeners, 500);
     }
 
@@ -74,6 +76,8 @@ class BookmarkManager {
      * Create bookmark change listeners.
      */
     createChangeListeners() {
+        log("BookmarkManager.createChangeListeners");
+
         if (asb.status.sort_active > 0) {
             setTimeout(this.createChangeListeners, 500);
         } else {
@@ -100,7 +104,7 @@ class BookmarkManager {
                 sortIfAuto();
             });
 
-            log("All listeners active");
+            log("All listeners created");
         }
     }
 }
@@ -117,6 +121,8 @@ class Item {
      * @param parentID
      */
     constructor(itemID, index, parentID) {
+        log("Item");
+
         this.id = itemID;
         this.setIndex(index);
         this.parentID = parentID;
@@ -128,6 +134,8 @@ class Item {
      * @return {Item} The parent folder.
      */
     getFolder() {
+        log("Item.getFolders");
+
         return createItem(browser.bookmarks.folderID, this.parentID);
     }
 
@@ -135,6 +143,8 @@ class Item {
      * Save the new index.
      */
     saveIndex() {
+        log("Item.saveIndex");
+
         try {
             browser.bookmarks.setItemIndex(this.id, this.index);
         }
@@ -149,6 +159,8 @@ class Item {
      * @param {int} index The new index.
      */
     setIndex(index) {
+        log("Item.setIndex");
+
         this.oldIndex = this.index || index;
         this.index = index;
     }
@@ -174,6 +186,8 @@ class Bookmark extends Item {
     constructor(itemID, index, parentID, title, dateAdded, lastModified, url, lastVisited, accessCount) {
         super(itemID, index, parentID);
 
+        log("Bookmark");
+
         if (title === null || dateAdded === null || lastModified === null || url === null || lastVisited === null || accessCount === null) {
             // console.error("Corrupted bookmark found. ID: " + itemID + " - Title: " + title + " - URL: " + url);
             this.corrupted = true;
@@ -194,6 +208,8 @@ class Bookmark extends Item {
      * Fetch the keyword and set it to the current bookmark.
      */
     setKeyword() {
+        log("Bookmark.setKeyword");
+
         let keyword = "";
         try {
             keyword = browser.bookmarks.getKeywordForBookmark(this.id);
@@ -213,6 +229,8 @@ class Bookmark extends Item {
      * @returns {boolean}
      */
     exists(itemID) {
+        log("Bookmark.exists");
+
         return browser.bookmarks.getItemIndex(itemID) >= 0;
     }
 }
@@ -230,6 +248,8 @@ class Separator extends Item {
      */
     constructor(itemID, index, parentID) {
         super(itemID, index, parentID);
+
+        log("Separator");
     }
 }
 
@@ -249,6 +269,7 @@ class Folder extends Bookmark {
      */
     constructor(itemID, index, parentID, title, dateAdded, lastModified) {
         super(itemID, index, parentID, title, dateAdded, lastModified);
+        log("Folder");
         this.order = weh.prefs["folder_sort_order"] || 1;
     }
 
@@ -258,6 +279,8 @@ class Folder extends Bookmark {
      * @return {boolean} Whether it can be sorted or not.
      */
     canBeSorted() {
+        log("Folder.canBeSorted");
+
         if (hasDoNotSortAnnotation(this.id) || this.hasAncestorExcluded()) {
             return false;
         }
@@ -271,7 +294,7 @@ class Folder extends Bookmark {
      * @return {Array.<Item>} The children.
      */
     getChildren() {
-        log("getChildren");
+        log("Folder.getChildren");
 
         // let index = 0;
 
@@ -311,7 +334,7 @@ class Folder extends Bookmark {
      * Get folders recursively.
      */
     getFolders() {
-        log("getFolders");
+        log("Folder.getFolders");
 
         let folders = [];
 
@@ -358,6 +381,8 @@ class Folder extends Bookmark {
      * Check if this folder has an ancestor that is recursively excluded.
      */
     hasAncestorExcluded() {
+        log("Folder.hasAncestorExcluded");
+
         if (isRecursivelyExcluded(this.id)) {
             return true;
         }
@@ -380,6 +405,8 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
+        log("Folder.isRoot");
+
         return this.id === browser.bookmarks.placesRoot;
     }
 
@@ -389,6 +416,8 @@ class Folder extends Bookmark {
      * @return {boolean} Whether at least one children has moved or not.
      */
     hasMove() {
+        log("Folder.hasMove");
+
         for (let i = 0; i < this.children.length; ++i) {
             let length = this.children[i].length;
             for (let j = 0; j < length; ++j) {
@@ -405,6 +434,8 @@ class Folder extends Bookmark {
      * Save the new children positions.
      */
     save() {
+        log("Folder.save");
+
         if (this.hasMove()) {
             for (let i = 0; i < this.children.length; ++i) {
                 let length = this.children[i].length;
@@ -432,6 +463,9 @@ class Livemark extends Bookmark {
      */
     constructor(itemID, index, parentID, title, dateAdded, lastModified) {
         super(itemID, index, parentID, title, dateAdded, lastModified);
+
+        log("Livemark");
+
         this.order = weh.prefs["livemark_sort_order"] || 2;
     }
 }
@@ -450,6 +484,9 @@ class SmartBookmark extends Bookmark {
      */
     constructor(itemID, index, parentID, title) {
         super(itemID, index, parentID, title);
+
+        log("SmarkBookmark");
+
         this.order = weh.prefs["smart_bookmark_sort_order"] || 3;
     }
 }
@@ -462,6 +499,8 @@ class BookmarkSorter {
      * Get a bookmark sorter.
      */
     constructor() {
+        log("BookmarkSorter");
+
         /**
          * Indicates if sorting is in progress.
          */
@@ -484,6 +523,8 @@ class BookmarkSorter {
      * Create a bookmark comparator.
      */
     createCompare() {
+        log("BookmarkSorter.createCompare");
+
         let comparator;
 
         /**
@@ -611,6 +652,8 @@ class BookmarkSorter {
      * Sort all bookmarks.
      */
     sortAllBookmarks() {
+        log("BookmarkSorter.sortAllBookmarks");
+
         let p1 = new Promise((resolve) => {
             let folders = [];
 
@@ -672,6 +715,8 @@ class BookmarkSorter {
      * @param caseInsensitive
      */
     setCriteria(firstSortCriteria, firstReverse, secondSortCriteria, secondReverse, folderSortCriteria, folderReverse, differentFolderOrder, caseInsensitive) {
+        log("BookmarkSorter.setCriteria");
+
         BookmarkSorter.prototype.firstReverse = firstReverse ? -1 : 1;
         BookmarkSorter.prototype.firstSortCriteria = firstSortCriteria;
         BookmarkSorter.prototype.secondReverse = secondReverse ? -1 : 1;
@@ -688,6 +733,8 @@ class BookmarkSorter {
      * @param {Folder} folder The folder to sort and save.
      */
     sortAndSave(folder) {
+        log("BookmarkSorter.sortAndSave");
+
         if (folder.canBeSorted()) {
             let self = this;
             self.sortFolder(folder);
@@ -705,6 +752,8 @@ class BookmarkSorter {
      * @param {Folder} folder The folder to sort.
      */
     sortFolder(folder) {
+        log("BookmarkSorter.sortFolder");
+
         folder.getChildren();
 
         let delta = 0;
@@ -726,6 +775,8 @@ class BookmarkSorter {
      * @param folders The folders to sort.
      */
     sortFolders(folders) {
+        log("BookmarkSorter.sortFolders");
+
         folders = folders instanceof Folder ? [folders] : folders;
 
         let self = this;
@@ -756,6 +807,8 @@ class BookmarkSorter {
      * Set flag to trigger sorting.
      */
     setChanged() {
+        log("BookmarkSorter.setChanged");
+
         this.changed = true;
     }
 
@@ -763,6 +816,8 @@ class BookmarkSorter {
      * Perform sorting only if there was a change and not already sorting.
      */
     sortIfChanged() {
+        log("BookmarkSorter.sortIfChanged");
+
         if (this.changed && !this.sorting) {
             this.sorting = true;
             this.sortAllBookmarks();
