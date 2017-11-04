@@ -46,8 +46,6 @@ let asb = {
     },
     "version": {
         "current": function () {
-            // TODO: chrome.app undefined for firefox, only chrome
-            // return chrome.app.getDetails().version;
             var manifest = browser.runtime.getManifest();
             return manifest.version;
         },
@@ -797,6 +795,8 @@ function log(o) {
  * Sort all bookmarks.
  */
 function sortAllBookmarks() {
+    log("sortAllBookmarks");
+
     bookmarkSorter.setChanged();
 }
 
@@ -804,6 +804,8 @@ function sortAllBookmarks() {
  * Sort if the auto sort option is on.
  */
 function sortIfAuto() {
+    log("sortIfAuto");
+
     if (asb.auto_sort) {
         sortAllBookmarks();
     }
@@ -813,6 +815,8 @@ function sortIfAuto() {
  * Adjust the sort criteria of the bookmark sorter.
  */
 function adjustSortCriteria() {
+    log("adjustSortCriteria");
+
     let differentFolderOrder = weh.prefs["folder_sort_order"] !== weh.prefs["livemark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["smart_bookmark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["bookmark_sort_order"];
     bookmarkSorter.setCriteria(sortCriterias[weh.prefs["sort_by"]], weh.prefs["inverse"],
         sortCriterias[parseInt(weh.prefs["then_sort_by"])] || undefined, weh.prefs["then_inverse"],
@@ -826,6 +830,8 @@ function adjustSortCriteria() {
  * Register user events.
  */
 function registerUserEvents() {
+    log("registerUserEvents");
+
     /*
     * Popup panel that opens from a toolbar button.
     */
@@ -854,6 +860,8 @@ function registerUserEvents() {
  * Install or upgrade prefs.
  */
 function installOrUpgradePrefs() {
+    log("installOrUpgradePrefs");
+
     let local_version = asb.version.local();
 
     // check if this is a first install
@@ -883,6 +891,8 @@ function installOrUpgradePrefs() {
  * @return {*} The item description.
  */
 function getDescription(item) {
+    log("getDescription, item=" + item);
+
     let description;
     try {
         description = annotationService.getItemAnnotation(item.id, descriptionAnnotation);
@@ -902,6 +912,8 @@ function getDescription(item) {
  * @returns {*} The item annotation.
  */
 function getItemAnnotation(itemID, name) {
+    log("getItemAnnotation, itemID=" + itemID);
+
     let annotation;
     try {
         annotation = annotationService.getItemAnnotation(itemID, name);
@@ -920,6 +932,8 @@ function getItemAnnotation(itemID, name) {
  * @return {boolean}
  */
 function hasDoNotSortAnnotation(itemID) {
+    log("hasDoNotSortAnnotation, itemID=" + itemID);
+
     let annotation = getItemAnnotation(itemID, "autosortbookmarks/donotsort");
     return annotation !== undefined;
 }
@@ -931,6 +945,8 @@ function hasDoNotSortAnnotation(itemID) {
  * @return {boolean}
  */
 function hasRecursiveAnnotation(itemID) {
+    log("hasRecursiveAnnotation, itemID=" + itemID);
+
     let annotation = getItemAnnotation(itemID, "autosortbookmarks/recursive");
     return annotation !== undefined;
 }
@@ -942,6 +958,8 @@ function hasRecursiveAnnotation(itemID) {
  * @return {boolean}
  */
 function isRecursivelyExcluded(itemID) {
+    log("isRecursivelyExcluded, itemID=" + itemID);
+
     return hasDoNotSortAnnotation(itemID) && hasRecursiveAnnotation(itemID);
 }
 
@@ -952,6 +970,8 @@ function isRecursivelyExcluded(itemID) {
  * @return {*} Whether the item is a livemark or not.
  */
 function isLivemark(itemID) {
+    log("isLivemark, itemID=" + itemID);
+
     return annotationService.itemHasAnnotation(itemID, livemarkAnnotation);
 }
 
@@ -962,6 +982,8 @@ function isLivemark(itemID) {
  * @return {boolean} Whether the item is a smart bookmark or not.
  */
 function isSmartBookmark(itemID) {
+    log("isSmartBookmark, itemID=" + itemID);
+
     return annotationService.itemHasAnnotation(itemID, smartBookmarkAnnotation);
 }
 
@@ -972,6 +994,8 @@ function isSmartBookmark(itemID) {
  * @param name
  */
 function removeItemAnnotation(itemID, name) {
+    log("removeItemAnnotation, itemID=" + itemID);
+
     annotationService.removeItemAnnotation(itemID, name);
 }
 
@@ -981,6 +1005,8 @@ function removeItemAnnotation(itemID, name) {
  * @param itemID
  */
 function removeDoNotSortAnnotation(itemID) {
+    log("removeDoNotSortAnnotation, itemID=" + itemID);
+
     removeItemAnnotation(itemID, "autosortbookmarks/donotsort");
 }
 
@@ -990,6 +1016,8 @@ function removeDoNotSortAnnotation(itemID) {
  * @param itemID
  */
 function removeRecursiveAnnotation(itemID) {
+    log("removeRecursiveAnnotation, itemID=" + itemID);
+
     removeItemAnnotation(itemID, "autosortbookmarks/recursive");
 }
 
@@ -1001,6 +1029,8 @@ function removeRecursiveAnnotation(itemID) {
  * @param value
  */
 function setItemAnnotation(itemID, name, value) {
+    log("setItemAnnotation, itemID=" + itemID);
+
     if (Bookmark.exists(itemID)) {
         annotationService.setItemAnnotation(itemID, name, value, 0, annotationService.EXPIRE_NEVER);
     }
@@ -1011,6 +1041,8 @@ function setItemAnnotation(itemID, name, value) {
  * @param itemID
  */
 function setDoNotSortAnnotation(itemID) {
+    log("setDoNotSortAnnotation, itemID=" + itemID);
+
     setItemAnnotation(itemID, "autosortbookmarks/donotsort", true);
 }
 
@@ -1019,6 +1051,8 @@ function setDoNotSortAnnotation(itemID) {
  * @param itemID
  */
 function setRecursiveAnnotation(itemID) {
+    log("setRecursiveAnnotation, itemID=" + itemID);
+
     setItemAnnotation(itemID, "autosortbookmarks/recursive", true);
 }
 
@@ -1029,6 +1063,8 @@ function setRecursiveAnnotation(itemID) {
  * @return {*}
  */
 function reverseBaseUrl(str) {
+    log("reverseBaseUrl, url=" + str);
+
     if (!str) {
         return "";
     }
@@ -1067,6 +1103,8 @@ function reverseBaseUrl(str) {
  * @param index
  */
 function createItem(type, itemID, index, parentID, title, url, lastVisited, accessCount, dateAdded, lastModified) {
+    log("createItem");
+
     let item;
     switch (type) {
         case browser.bookmarks.TYPE_BOOKMARK:
@@ -1103,6 +1141,8 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
  * @return {Item} The new item.
  */
 function createItemFromNode(node, parentID) {
+    log("createItemFromNode, node=" + node + ", parentID=" + parentID);
+
     let type;
     switch (node.type) {
         case node.RESULT_TYPE_URI:
@@ -1130,6 +1170,7 @@ function createItemFromNode(node, parentID) {
  */
 function getChildrenFolders(parentID) {
     log("getChildrenFolders, parentID=" + parentID);
+
     let children = [];
 
     // let folder;
@@ -1174,6 +1215,8 @@ function getChildrenFolders(parentID) {
  * Get the root folders.
  */
 function getRootFolders() {
+    log("getFolders");
+
     let folders = [];
     for (let folder of [menuFolder, toolbarFolder, unsortedFolder]) {
         folders.push({
