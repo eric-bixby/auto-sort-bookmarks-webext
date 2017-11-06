@@ -41,7 +41,6 @@ let asb = {
     // only set to true while debugging, set to false when released
     "log": true,
     "status": {
-        "listeners_active": false,
         "sort_active": 0
     },
     "version": {
@@ -81,8 +80,6 @@ class BookmarkManager {
         if (asb.status.sort_active > 0) {
             setTimeout(this.createChangeListeners, 500);
         } else {
-            asb.status.listeners_active = true;
-
             browser.bookmarks.onChanged.addListener(function (id, changeInfo) {
                 log("onChanged id = " + id + " " + changeInfo);
                 sortIfAuto();
@@ -103,8 +100,6 @@ class BookmarkManager {
                 log("onRemoved id = " + id + " " + removeInfo);
                 sortIfAuto();
             });
-
-            log("All listeners created");
         }
     }
 }
@@ -121,7 +116,7 @@ class Item {
      * @param parentID
      */
     constructor(itemID, index, parentID) {
-        log("Item");
+        log("Item, itemID=" + itemID + ", index=" + index + ", parentID=" + parentID);
 
         this.id = itemID;
         this.setIndex(index);
@@ -861,7 +856,7 @@ function sortAllBookmarks() {
 function sortIfAuto() {
     log("sortIfAuto");
 
-    if (asb.auto_sort) {
+    if (weh.prefs["auto_sort"]) {
         sortAllBookmarks();
     }
 }
@@ -873,11 +868,13 @@ function adjustSortCriteria() {
     log("adjustSortCriteria");
 
     let differentFolderOrder = weh.prefs["folder_sort_order"] !== weh.prefs["livemark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["smart_bookmark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["bookmark_sort_order"];
+
     bookmarkSorter.setCriteria(sortCriterias[weh.prefs["sort_by"]], weh.prefs["inverse"],
         sortCriterias[parseInt(weh.prefs["then_sort_by"])] || undefined, weh.prefs["then_inverse"],
         sortCriterias[parseInt(weh.prefs["folder_sort_by"])], weh.prefs["folder_inverse"],
         differentFolderOrder, weh.prefs["case_insensitive"]
     );
+
     sortIfAuto();
 }
 
@@ -942,7 +939,7 @@ function installOrUpgradePrefs() {
 /**
  * Get the item description.
  *
- * @param {*} item The item.
+ * @param {Bookmark} item The item.
  * @return {*} The item description.
  */
 function getDescription(item) {
@@ -955,6 +952,8 @@ function getDescription(item) {
     catch (exception) {
         description = "";
     }
+
+    log("description=" + description);
 
     return description;
 }
