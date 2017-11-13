@@ -9,6 +9,7 @@ Description
 Provide a way to sort all bookmarks and automatically sort bookmarks.
 
 This extension considers separators, so that it sorts bookmarks between separators.
+
 This extension adds an icon to sort all bookmarks to the toolbar. To remove it, you must choose the Customize option  in the context menu on the Firefox user interface.
 
 **Please backup your current bookmarks in case you do not like the new bookmarks order. Thus, you could restore them.**

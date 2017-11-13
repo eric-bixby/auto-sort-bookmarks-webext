@@ -22,8 +22,6 @@
 // TODO: port excluded folders feature
 /* global annotationService */
 /* global descriptionAnnotation */
-/* global livemarkAnnotation */
-/* global smartBookmarkAnnotation */
 /* exported showConfigureFoldersToExclude */
 
 // TODO: port historyService
@@ -37,11 +35,12 @@
  * Various settings.
  */
 let asb = {
-    "auto_sort": true,
     // only set to true while debugging, set to false when released
     "log": true,
-    "status": {
-        "sort_active": 0
+    "rootID": {
+        "bookmarks_bar": "1",
+        "other_bookmarks": "2",
+        "mobile_bookmarks": "3"
     },
     "version": {
         "current": function () {
@@ -66,9 +65,9 @@ class BookmarkManager {
      * Create bookmark listeners.
      */
     constructor() {
-        log("BookmarkManager");
+        log("new BookmarkManager()");
 
-        setTimeout(this.createChangeListeners, 500);
+        this.createChangeListeners();
     }
 
     /**
@@ -77,30 +76,26 @@ class BookmarkManager {
     createChangeListeners() {
         log("BookmarkManager.createChangeListeners");
 
-        if (asb.status.sort_active > 0) {
-            setTimeout(this.createChangeListeners, 500);
-        } else {
-            browser.bookmarks.onChanged.addListener(function (id, changeInfo) {
-                log("onChanged id = " + id + " " + changeInfo);
-                sortIfAuto();
-            });
+        browser.bookmarks.onChanged.addListener(function (id, changeInfo) {
+            log("onChanged id = " + id + " " + changeInfo);
+            sortIfAuto();
+        });
 
-            browser.bookmarks.onCreated.addListener(function (id, bookmark) {
-                log("onCreated id = " + id + " " + bookmark);
-                sortIfAuto();
-            });
+        browser.bookmarks.onCreated.addListener(function (id, bookmark) {
+            log("onCreated id = " + id + " " + bookmark);
+            sortIfAuto();
+        });
 
-            browser.bookmarks.onMoved.addListener(function (id, moveInfo) {
-                log("onMoved id = " + id + " " + moveInfo);
-                sortIfAuto();
-            });
+        browser.bookmarks.onMoved.addListener(function (id, moveInfo) {
+            log("onMoved id = " + id + " " + moveInfo);
+            sortIfAuto();
+        });
 
-            browser.bookmarks.onRemoved.addListener(function (id, removeInfo) {
-                // TODO: check if item is separator, sort if true
-                log("onRemoved id = " + id + " " + removeInfo);
-                sortIfAuto();
-            });
-        }
+        browser.bookmarks.onRemoved.addListener(function (id, removeInfo) {
+            // TODO: check if item is separator, sort if true
+            log("onRemoved id = " + id + " " + removeInfo);
+            sortIfAuto();
+        });
     }
 }
 
@@ -111,12 +106,12 @@ class Item {
     /**
      * Get an item.
      *
-     * @param itemID
-     * @param index
-     * @param parentID
+     * @param {string} itemID
+     * @param {int} index
+     * @param {string} parentID
      */
     constructor(itemID, index, parentID) {
-        log("Item, itemID=" + itemID + ", index=" + index + ", parentID=" + parentID);
+        log("new Item(itemID=" + itemID + ", index=" + index + ", parentID=" + parentID + ")");
 
         this.id = itemID;
         this.setIndex(index);
@@ -129,9 +124,9 @@ class Item {
      * @return {Item} The parent folder.
      */
     getFolder() {
-        log("Item.getFolders");
+        log("Item.getFolder");
 
-        return createItem(browser.bookmarks.folderID, this.parentID);
+        return createItem("folder", this.parentID);
     }
 
     /**
@@ -144,7 +139,7 @@ class Item {
             browser.bookmarks.setItemIndex(this.id, this.index);
         }
         catch (exception) {
-            // console.error("failed to move " + this.id + ". " + this.title + " to " + this.index + " (" + this.url + ")");
+            log("failed to move " + this.id + ". " + this.title + " to " + this.index + " (" + this.url + ")");
         }
     }
 
@@ -154,7 +149,7 @@ class Item {
      * @param {int} index The new index.
      */
     setIndex(index) {
-        log("Item.setIndex");
+        log("Item.setIndex(index=" + index + ")");
 
         this.oldIndex = this.index || index;
         this.index = index;
@@ -168,9 +163,9 @@ class Bookmark extends Item {
     /**
      * Get a bookmark.
      *
-     * @param {int} itemID The bookmark identifier.
+     * @param {string} itemID The bookmark identifier.
      * @param {int} index The bookmark position.
-     * @param {int} parentID The bookmark parent identifier.
+     * @param {string} parentID The bookmark parent identifier.
      * @param {string} title The bookmark title.
      * @param {string} url The item URL.
      * @param {int} lastVisited The timestamp of the last visit.
@@ -181,10 +176,10 @@ class Bookmark extends Item {
     constructor(itemID, index, parentID, title, dateAdded, lastModified, url, lastVisited, accessCount) {
         super(itemID, index, parentID);
 
-        log("Bookmark");
+        log("new Bookmark(itemID=" + itemID + ")");
 
         if (title === null || dateAdded === null || lastModified === null || url === null || lastVisited === null || accessCount === null) {
-            // console.error("Corrupted bookmark found. ID: " + itemID + " - Title: " + title + " - URL: " + url);
+            log("Corrupted bookmark found. ID: " + itemID + " - Title: " + title + " - URL: " + url);
             this.corrupted = true;
         }
 
@@ -220,13 +215,13 @@ class Bookmark extends Item {
     /**
      * Determine if bookmark exists.
      *
-     * @param itemID
-     * @returns {boolean}
+     * @param {string} itemID
+     * @returns {boolean} Whether the bookmark exists.
      */
     exists(itemID) {
-        log("Bookmark.exists");
+        log("Bookmark.exists(itemID=" + itemID + ")");
 
-        return browser.bookmarks.getItemIndex(itemID) >= 0;
+        return parseInteger(browser.bookmarks.getItemIndex(itemID)) >= 0;
     }
 }
 
@@ -237,14 +232,14 @@ class Separator extends Item {
     /**
      * Get a separator.
      *
-     * @param {int} itemID The separator identifier.
+     * @param {string} itemID The separator identifier.
      * @param {int} index The separator position.
-     * @param {int} parentID The separator parent identifier.
+     * @param {string} parentID The separator parent identifier.
      */
     constructor(itemID, index, parentID) {
         super(itemID, index, parentID);
 
-        log("Separator");
+        log("new Separator(itemID=" + itemID + ")");
     }
 }
 
@@ -255,16 +250,16 @@ class Folder extends Bookmark {
     /**
      * Get an existing folder.
      *
-     * @param {int} itemID The folder identifier.
+     * @param {string} itemID The folder identifier.
      * @param {int} index The folder position.
-     * @param {int} parentID The folder parent identifier.
+     * @param {string} parentID The folder parent identifier.
      * @param {string} title The folder title.
-     * @param dateAdded
-     * @param lastModified
+     * @param {int} dateAdded The timestamp of the date added.
+     * @param {int} lastModified The timestamp of the last modified date.
      */
     constructor(itemID, index, parentID, title, dateAdded, lastModified) {
         super(itemID, index, parentID, title, dateAdded, lastModified);
-        log("Folder");
+        log("new Folder(itemID=" + itemID + ")");
         this.order = weh.prefs["folder_sort_order"] || 1;
     }
 
@@ -284,45 +279,29 @@ class Folder extends Bookmark {
     }
 
     /**
-     * Get the immediate children.
-     *
-     * @return {Array.<Item>} The children.
+     * Set the immediate children.
      */
-    getChildren() {
-        log("Folder.getChildren");
-
-        // let index = 0;
+    setChildren() {
+        log("Folder.setChildren");
 
         this.children = [[]];
+        var self = this;
 
-        // TODO: port to browser.bookmarks.getChildren()
+        browser.bookmarks.getChildren("" + this.id, function (o) {
+            let index = 0;
 
-        // let options = historyService.getNewQueryOptions();
-        // options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
-
-        // let query = historyService.getNewQuery();
-        // query.setFolders([this.id], 1);
-
-        // let result = historyService.executeQuery(query, options);
-
-        // let rootNode = result.root;
-        // rootNode.containerOpen = true;
-
-        // for (let i = 0; i < rootNode.childCount; ++i) {
-        //     let node = rootNode.getChild(i);
-        //     let item = createItemFromNode(node, this.id);
-        //     if (item instanceof Separator) {
-        //         this.children.push([]);
-        //         ++index;
-        //     }
-        //     else if (item !== undefined) {
-        //         this.children[index].push(item);
-        //     }
-        // }
-
-        // rootNode.containerOpen = false;
-
-        return this.children;
+            for (let node of o) {
+                let item = createItemFromNode(node, this.id);
+                if (item instanceof Separator) {
+                    // create sub-array to store nodes after separator
+                    self.children.push([]);
+                    ++index;
+                }
+                else if (item !== undefined) {
+                    self.children[index].push(item);
+                }
+            }
+        });
     }
 
     /**
@@ -382,11 +361,11 @@ class Folder extends Bookmark {
             return true;
         }
         else {
-            // TODO: maybe parentID is already set?
+            // TODO: get id of folder
             // let parentID = getFolderIdForItem(this.id);
             let parentID = 0;
             if (parentID > 0) {
-                let parentFolder = createItem(browser.bookmarks.folderID, parentID);
+                let parentFolder = createItem("folder", parentID);
                 return parentFolder.hasAncestorExcluded();
             }
         }
@@ -449,17 +428,17 @@ class Livemark extends Bookmark {
     /**
      * Get an existing smart bookmark.
      *
-     * @param {int} itemID The folder identifier.
+     * @param {string} itemID The folder identifier.
      * @param {int} index The folder position.
-     * @param {int} parentID The folder parent identifier.
+     * @param {string} parentID The folder parent identifier.
      * @param {string} title The folder title.
-     * @param dateAdded
-     * @param lastModified
+     * @param {int} dateAdded The timestamp of the date added.
+     * @param {int} lastModified The timestamp of the last modified date.
      */
     constructor(itemID, index, parentID, title, dateAdded, lastModified) {
         super(itemID, index, parentID, title, dateAdded, lastModified);
 
-        log("Livemark");
+        log("new Livemark(itemID=" + itemID + ")");
 
         this.order = weh.prefs["livemark_sort_order"] || 2;
     }
@@ -472,15 +451,15 @@ class SmartBookmark extends Bookmark {
     /**
      * Get an existing smart bookmark.
      *
-     * @param {int} itemID The folder identifier.
+     * @param {string} itemID The folder identifier.
      * @param {int} index The folder position.
-     * @param {int} parentID The folder parent identifier.
+     * @param {string} parentID The folder parent identifier.
      * @param {string} title The folder title.
      */
     constructor(itemID, index, parentID, title) {
         super(itemID, index, parentID, title);
 
-        log("SmarkBookmark");
+        log("new SmarkBookmark(itemID=" + itemID + ")");
 
         this.order = weh.prefs["smart_bookmark_sort_order"] || 3;
     }
@@ -494,24 +473,12 @@ class BookmarkSorter {
      * Get a bookmark sorter.
      */
     constructor() {
-        log("BookmarkSorter");
+        log("new BookmarkSorter()");
 
         /**
          * Indicates if sorting is in progress.
          */
         this.sorting = false;
-
-        /**
-         * Indicates if there was a change which means a sort is needed.
-         */
-        this.changed = false;
-
-        /**
-         * Delay for thread which checks for change.
-         */
-        this.delay = 3000;
-
-        this.sortIfChanged();
     }
 
     /**
@@ -523,7 +490,8 @@ class BookmarkSorter {
         let comparator;
 
         /**
-         * Check for corrupted and order flags
+         * Check for corrupted and order flags.
+         * 
          * @param bookmark1
          * @param bookmark2
          * @returns {number}
@@ -546,7 +514,8 @@ class BookmarkSorter {
         }
 
         /**
-         * Add reverse URLs
+         * Add reverse URLs.
+         * 
          * @param bookmark1
          * @param bookmark2
          * @param criteria
@@ -700,6 +669,7 @@ class BookmarkSorter {
 
     /**
      * Set the sort criteria.
+     * 
      * @param {string} firstSortCriteria The first sort criteria attribute.
      * @param {boolean} firstReverse Whether the first sort is reversed.
      * @param {string} secondReverse The second sort criteria attribute.
@@ -725,31 +695,27 @@ class BookmarkSorter {
 
     /**
      * Sort and save a folder.
+     * 
      * @param {Folder} folder The folder to sort and save.
      */
     sortAndSave(folder) {
         log("BookmarkSorter.sortAndSave");
 
         if (folder.canBeSorted()) {
-            let self = this;
-            self.sortFolder(folder);
-            // browser.bookmarks.runInBatchMode({
-            //     runBatched() {
-            //         folder.save();
-            //     },
-            // }, null);
+            this.sortFolder(folder);
             folder.save();
         }
     }
 
     /**
      * Sort the `folder` children.
+     * 
      * @param {Folder} folder The folder to sort.
      */
     sortFolder(folder) {
         log("BookmarkSorter.sortFolder");
 
-        folder.getChildren();
+        folder.setChildren();
 
         let delta = 0;
         let length;
@@ -767,6 +733,7 @@ class BookmarkSorter {
 
     /**
      * Sort the `folders`.
+     * 
      * @param folders The folders to sort.
      */
     sortFolders(folders) {
@@ -793,36 +760,17 @@ class BookmarkSorter {
         Promise.all(promiseAry).then(bool => {
             if (bool) {
                 self.sorting = false;
-                self.changed = false;
             }
         });
     }
 
     /**
-     * Set flag to trigger sorting.
+     * Sort if not already sorting.
      */
-    setChanged() {
-        log("BookmarkSorter.setChanged");
-
-        this.changed = true;
-    }
-
-    /**
-     * Perform sorting only if there was a change and not already sorting.
-     */
-    sortIfChanged() {
-        log("BookmarkSorter.sortIfChanged");
-
-        if (this.changed && !this.sorting) {
-            this.sorting = true;
+    sortIfNotSorting() {
+        if (!this.sorting) {
             this.sortAllBookmarks();
         }
-
-        let self = this;
-
-        setTimeout(function () {
-            self.sortIfChanged();
-        }, this.delay);
     }
 }
 
@@ -833,7 +781,7 @@ class BookmarkSorter {
 /**
  * If enabled, send message to console for debugging.
  *
- * @param {*} o
+ * @param {string} o Text to display on console.
  */
 function log(o) {
     if (asb.log) {
@@ -842,12 +790,21 @@ function log(o) {
 }
 
 /**
+ * Convert a string to an integer.
+ * 
+ * @param {string} val String value to convert.
+ */
+function parseInteger(val) {
+    return parseInt(val, 10);
+}
+
+/**
  * Sort all bookmarks.
  */
 function sortAllBookmarks() {
     log("sortAllBookmarks");
 
-    bookmarkSorter.setChanged();
+    bookmarkSorter.sortIfNotSorting();
 }
 
 /**
@@ -870,11 +827,12 @@ function adjustSortCriteria() {
     let differentFolderOrder = weh.prefs["folder_sort_order"] !== weh.prefs["livemark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["smart_bookmark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["bookmark_sort_order"];
 
     bookmarkSorter.setCriteria(sortCriterias[weh.prefs["sort_by"]], weh.prefs["inverse"],
-        sortCriterias[parseInt(weh.prefs["then_sort_by"])] || undefined, weh.prefs["then_inverse"],
-        sortCriterias[parseInt(weh.prefs["folder_sort_by"])], weh.prefs["folder_inverse"],
+        sortCriterias[parseInteger(weh.prefs["then_sort_by"])] || undefined, weh.prefs["then_inverse"],
+        sortCriterias[parseInteger(weh.prefs["folder_sort_by"])], weh.prefs["folder_inverse"],
         differentFolderOrder, weh.prefs["case_insensitive"]
     );
 
+    // TODO; sort when criteria changes, otherwise, this is sorting on startup
     sortIfAuto();
 }
 
@@ -943,7 +901,7 @@ function installOrUpgradePrefs() {
  * @return {*} The item description.
  */
 function getDescription(item) {
-    log("getDescription, item=" + item);
+    log("getDescription(item=" + item + ")");
 
     let description;
     try {
@@ -961,12 +919,12 @@ function getDescription(item) {
 /**
  * Get an item annotation.
  *
- * @param itemID The item ID.
- * @param name The item name.
+ * @param {string} itemID The item ID.
+ * @param {string} name The item name.
  * @returns {*} The item annotation.
  */
 function getItemAnnotation(itemID, name) {
-    log("getItemAnnotation, itemID=" + itemID);
+    log("getItemAnnotation(itemID=" + itemID + ")");
 
     let annotation;
     try {
@@ -982,11 +940,11 @@ function getItemAnnotation(itemID, name) {
 /**
  * Check if an item has a do not sort annotation.
  *
- * @param itemID
- * @return {boolean}
+ * @param {string} itemID The item ID.
+ * @return {boolean} Whether the item has a do not sort annotation.
  */
 function hasDoNotSortAnnotation(itemID) {
-    log("hasDoNotSortAnnotation, itemID=" + itemID);
+    log("hasDoNotSortAnnotation(itemID=" + itemID + ")");
 
     let annotation = getItemAnnotation(itemID, "autosortbookmarks/donotsort");
     return annotation !== undefined;
@@ -995,11 +953,11 @@ function hasDoNotSortAnnotation(itemID) {
 /**
  * Check if an item has a recursive annotation.
  *
- * @param itemID
- * @return {boolean}
+ * @param {string} itemID The item ID.
+ * @return {boolean} Whether the item has a recursive annotation.
  */
 function hasRecursiveAnnotation(itemID) {
-    log("hasRecursiveAnnotation, itemID=" + itemID);
+    log("hasRecursiveAnnotation(itemID=" + itemID + ")");
 
     let annotation = getItemAnnotation(itemID, "autosortbookmarks/recursive");
     return annotation !== undefined;
@@ -1008,11 +966,11 @@ function hasRecursiveAnnotation(itemID) {
 /**
  * Check if an item is recursively excluded.
  *
- * @param itemID
- * @return {boolean}
+ * @param {string} itemID The item ID.
+ * @return {boolean} Whether the item is recursively excluded.
  */
 function isRecursivelyExcluded(itemID) {
-    log("isRecursivelyExcluded, itemID=" + itemID);
+    log("isRecursivelyExcluded(itemID=" + itemID + ")");
 
     return hasDoNotSortAnnotation(itemID) && hasRecursiveAnnotation(itemID);
 }
@@ -1020,35 +978,39 @@ function isRecursivelyExcluded(itemID) {
 /**
  * Check whether `itemID` is a livemark.
  *
- * @param {int} itemID The item ID.
+ * @param {string} itemID The item ID.
  * @return {*} Whether the item is a livemark or not.
  */
 function isLivemark(itemID) {
-    log("isLivemark, itemID=" + itemID);
+    log("isLivemark(itemID=" + itemID + ")");
 
-    return annotationService.itemHasAnnotation(itemID, livemarkAnnotation);
+    // TODO does Livemark exist under chrome?
+    // return annotationService.itemHasAnnotation(itemID, livemarkAnnotation);
+    return false;
 }
 
 /**
  * Check whether `itemID` is a smart bookmark.
  *
- * @param {int} itemID The item ID.
+ * @param {string} itemID The item ID.
  * @return {boolean} Whether the item is a smart bookmark or not.
  */
 function isSmartBookmark(itemID) {
-    log("isSmartBookmark, itemID=" + itemID);
+    log("isSmartBookmark(itemID=" + itemID + ")");
 
-    return annotationService.itemHasAnnotation(itemID, smartBookmarkAnnotation);
+    // TODO does SmartBookmark exist under chrome?
+    // return annotationService.itemHasAnnotation(itemID, smartBookmarkAnnotation);
+    return false;
 }
 
 /**
  * Remove an item annotation.
  *
- * @param itemID
- * @param name
+ * @param {string} itemID The item ID.
+ * @param {string} name The item name.
  */
 function removeItemAnnotation(itemID, name) {
-    log("removeItemAnnotation, itemID=" + itemID);
+    log("removeItemAnnotation(itemID=" + itemID + ")");
 
     annotationService.removeItemAnnotation(itemID, name);
 }
@@ -1056,10 +1018,10 @@ function removeItemAnnotation(itemID, name) {
 /**
  * Remove the do not sort annotation on an item.
  *
- * @param itemID
+ * @param {string} itemID The item ID.
  */
 function removeDoNotSortAnnotation(itemID) {
-    log("removeDoNotSortAnnotation, itemID=" + itemID);
+    log("removeDoNotSortAnnotation(itemID=" + itemID + ")");
 
     removeItemAnnotation(itemID, "autosortbookmarks/donotsort");
 }
@@ -1067,10 +1029,10 @@ function removeDoNotSortAnnotation(itemID) {
 /**
  * Remove the recursive annotation on an item.
  *
- * @param itemID
+ * @param {string} itemID The item ID.
  */
 function removeRecursiveAnnotation(itemID) {
-    log("removeRecursiveAnnotation, itemID=" + itemID);
+    log("removeRecursiveAnnotation(itemID=" + itemID + ")");
 
     removeItemAnnotation(itemID, "autosortbookmarks/recursive");
 }
@@ -1078,12 +1040,12 @@ function removeRecursiveAnnotation(itemID) {
 /**
  * Set an item annotation.
  *
- * @param itemID
- * @param name
- * @param value
+ * @param {string} itemID The item ID.
+ * @param name The item name.
+ * @param value The item value.
  */
 function setItemAnnotation(itemID, name, value) {
-    log("setItemAnnotation, itemID=" + itemID);
+    log("setItemAnnotation(itemID=" + itemID + ")");
 
     if (Bookmark.exists(itemID)) {
         annotationService.setItemAnnotation(itemID, name, value, 0, annotationService.EXPIRE_NEVER);
@@ -1092,20 +1054,21 @@ function setItemAnnotation(itemID, name, value) {
 
 /**
  * Set the do not sort annotation on an item.
- * @param itemID
+ * 
+ * @param {string} itemID The item ID.
  */
 function setDoNotSortAnnotation(itemID) {
-    log("setDoNotSortAnnotation, itemID=" + itemID);
+    log("setDoNotSortAnnotation(itemID=" + itemID + ")");
 
     setItemAnnotation(itemID, "autosortbookmarks/donotsort", true);
 }
 
 /**
  * Set the recursive annotation on an item.
- * @param itemID
+ * @param {string} itemID The item ID.
  */
 function setRecursiveAnnotation(itemID) {
-    log("setRecursiveAnnotation, itemID=" + itemID);
+    log("setRecursiveAnnotation(itemID=" + itemID + ")");
 
     setItemAnnotation(itemID, "autosortbookmarks/recursive", true);
 }
@@ -1113,11 +1076,11 @@ function setRecursiveAnnotation(itemID) {
 /**
  * Reverse the base of an URL to do a better sorting.
  *
- * @param str
- * @return {*}
+ * @param str The URL to be reversed.
+ * @return {*} The reversed URL.
  */
 function reverseBaseUrl(str) {
-    log("reverseBaseUrl, url=" + str);
+    log("reverseBaseUrl(url=" + str + ")");
 
     if (!str) {
         return "";
@@ -1144,9 +1107,10 @@ function reverseBaseUrl(str) {
 /**
  * Create an item from the `type`.
  *
- * @param {int} type The item type.
- * @param {int} itemID The item ID.
- * @param {int} parentID The parent ID.
+ * @param {string} type The item type.
+ * @param {string} itemID The item ID.
+ * @param {int} index The item index.
+ * @param {string} parentID The parent ID.
  * @param {string} title The item title.
  * @param {string} url The item URL.
  * @param {int} lastVisited The timestamp of the last visit.
@@ -1154,34 +1118,28 @@ function reverseBaseUrl(str) {
  * @param {int} dateAdded The timestamp of the date added.
  * @param {int} lastModified The timestamp of the last modified date.
  * @return {*} The new item.
- * @param index
  */
 function createItem(type, itemID, index, parentID, title, url, lastVisited, accessCount, dateAdded, lastModified) {
-    log("createItem");
+    log("createItem(itemID=" + itemID + ")");
 
     let item;
-    switch (type) {
-        case browser.bookmarks.TYPE_BOOKMARK:
-            if (isSmartBookmark(itemID)) {
-                item = new SmartBookmark(itemID, index, parentID, title);
-            }
-            else {
-                item = new Bookmark(itemID, index, parentID, title, dateAdded, lastModified, url, lastVisited, accessCount);
-            }
 
-            break;
-        case browser.bookmarks.TYPE_FOLDER:
-            if (isLivemark(itemID)) {
-                item = new Livemark(itemID, index, parentID, title, dateAdded, lastModified);
-            }
-            else {
-                item = new Folder(itemID, index, parentID, title, dateAdded, lastModified);
-            }
-
-            break;
-        case browser.bookmarks.TYPE_SEPARATOR:
-            item = new Separator(itemID, index, parentID);
-            break;
+    if (type === "bookmark") {
+        if (isSmartBookmark(itemID)) {
+            item = new SmartBookmark(itemID, index, parentID, title);
+        }
+        else {
+            item = new Bookmark(itemID, index, parentID, title, dateAdded, lastModified, url, lastVisited, accessCount);
+        }
+    } else if (type === "folder") {
+        if (isLivemark(itemID)) {
+            item = new Livemark(itemID, index, parentID, title, dateAdded, lastModified);
+        }
+        else {
+            item = new Folder(itemID, index, parentID, title, dateAdded, lastModified);
+        }
+    } else if (type === "separator") {
+        item = new Separator(itemID, index, parentID);
     }
 
     return item;
@@ -1190,40 +1148,24 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
 /**
  * Create an item from the `node` type.
  *
- * @param {object} node The node item.
- * @param {int} parentID The parent ID.
+ * @param {bookmarks.BookmarkTreeNode} node The node item.
+ * @param {string} parentID The parent ID.
  * @return {Item} The new item.
  */
 function createItemFromNode(node, parentID) {
-    log("createItemFromNode, node=" + node + ", parentID=" + parentID);
+    log("createItemFromNode(parentID=" + parentID + ")");
 
-    let type;
-    switch (node.type) {
-        case node.RESULT_TYPE_URI:
-            type = browser.bookmarks.TYPE_BOOKMARK;
-            break;
-        case node.RESULT_TYPE_FOLDER:
-            type = browser.bookmarks.TYPE_FOLDER;
-            break;
-        case node.RESULT_TYPE_SEPARATOR:
-            type = browser.bookmarks.TYPE_SEPARATOR;
-            break;
-        case node.RESULT_TYPE_QUERY:
-            type = browser.bookmarks.TYPE_BOOKMARK;
-            break;
-    }
-
-    return createItem(type, node.itemId, node.bookmarkIndex, parentID, node.title, node.uri, node.time, node.accessCount, node.dateAdded, node.lastModified);
+    return createItem(node.type, node.itemId, node.bookmarkIndex, parentID, node.title, node.uri, node.time, node.accessCount, node.dateAdded, node.lastModified);
 }
 
 /**
  * Get the children folders of a folder.
  *
- * @param parentID
+ * @param {string} parentID The parent ID.
  * @return {Array}
  */
 function getChildrenFolders(parentID) {
-    log("getChildrenFolders, parentID=" + parentID);
+    log("getChildrenFolders(parentID=" + parentID + ")");
 
     let children = [];
 
@@ -1267,9 +1209,11 @@ function getChildrenFolders(parentID) {
 
 /**
  * Get the root folders.
+ * 
+ * @return {Array}
  */
 function getRootFolders() {
-    log("getFolders");
+    log("getRootFolders");
 
     let folders = [];
     for (let folder of [menuFolder, toolbarFolder, unsortedFolder]) {
@@ -1310,13 +1254,13 @@ function showConfigureFoldersToExclude() {
          * Handle onRemove event.
          * @param item
          */
-        function onRemove(item) {
-            if (worker && item instanceof Folder) {
-                worker.port.emit("remove-folder", item.id);
-            }
-        }
+        // function onRemove(item) {
+        //     if (worker && item instanceof Folder) {
+        //         worker.port.emit("remove-folder", item.id);
+        //     }
+        // }
 
-        bookmarkManager.on("remove", onRemove);
+        // bookmarkManager.on("remove", onRemove);
 
         browser.tabs.open({
             url: data.url("configureFolders.html"),
@@ -1383,29 +1327,13 @@ const sortCriterias = [
     "revurl"
 ];
 
-/**
- * The bookmarks menu folder.
- *
- * @type {Folder}
- */
-let menuFolder = new Folder(browser.bookmarks.menuFolder);
-
-/**
- * The bookmarks toolbar folder.
- *
- * @type {Folder}
- */
-let toolbarFolder = new Folder(browser.bookmarks.toolbarFolder);
-
-/**
- * The unsorted bookmarks folder.
- *
- * @type {Folder}
- */
-let unsortedFolder = new Folder(browser.bookmarks.unsortedFolder);
+let toolbarFolder = new Folder(asb.rootID.bookmarks_bar);
+let menuFolder = new Folder(asb.rootID.other_bookmarks);
+let unsortedFolder = new Folder(asb.rootID.mobile_bookmarks);
 
 var bookmarkSorter = new BookmarkSorter();
-var bookmarkManager = new BookmarkManager();
+
+new BookmarkManager();
 
 installOrUpgradePrefs();
 registerUserEvents();
