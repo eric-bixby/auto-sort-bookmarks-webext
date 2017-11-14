@@ -280,14 +280,16 @@ class Folder extends Bookmark {
 
     /**
      * Set the immediate children.
+     * 
+     * @param {*} callback The callback.
      */
-    setChildren() {
+    setChildren(callback, compare) {
         log("Folder.setChildren");
 
         this.children = [[]];
         var self = this;
 
-        browser.bookmarks.getChildren("" + this.id, function (o) {
+        browser.bookmarks.getChildren(this.id, function (o) {
             let index = 0;
 
             for (let node of o) {
@@ -300,6 +302,10 @@ class Folder extends Bookmark {
                 else if (item !== undefined) {
                     self.children[index].push(item);
                 }
+            }
+
+            if (typeof(callback) === "function") {
+                callback(self, compare);
             }
         });
     }
@@ -702,8 +708,7 @@ class BookmarkSorter {
         log("BookmarkSorter.sortAndSave");
 
         if (folder.canBeSorted()) {
-            this.sortFolder(folder);
-            folder.save();
+            folder.setChildren(this.sortFolder, this.compare);
         }
     }
 
@@ -712,16 +717,14 @@ class BookmarkSorter {
      * 
      * @param {Folder} folder The folder to sort.
      */
-    sortFolder(folder) {
+    sortFolder(folder, compare) {
         log("BookmarkSorter.sortFolder");
-
-        folder.setChildren();
 
         let delta = 0;
         let length;
 
         for (let i = 0; i < folder.children.length; ++i) {
-            folder.children[i].sort(this.compare);
+            folder.children[i].sort(compare);
             length = folder.children[i].length;
             for (let j = 0; j < length; ++j) {
                 folder.children[i][j].setIndex(j + delta);
@@ -729,6 +732,8 @@ class BookmarkSorter {
 
             delta += length + 1;
         }
+
+        folder.save();
     }
 
     /**
