@@ -19,13 +19,7 @@
 
 /* global weh */
 
-// TODO: port excluded folders feature
-/* global annotationService */
-/* global descriptionAnnotation */
 /* exported showConfigureFoldersToExclude */
-
-// TODO: port historyService
-/* exported createItemFromNode */
 
 // =======
 // CLASSES
@@ -135,12 +129,7 @@ class Item {
     saveIndex() {
         log("Item.saveIndex");
 
-        try {
-            browser.bookmarks.setItemIndex(this.id, this.index);
-        }
-        catch (exception) {
-            log("failed to move " + this.id + ". " + this.title + " to " + this.index + " (" + this.url + ")");
-        }
+        browser.bookmarks.move(this.id, { index: this.index });
     }
 
     /**
@@ -304,7 +293,7 @@ class Folder extends Bookmark {
                 }
             }
 
-            if (typeof(callback) === "function") {
+            if (typeof (callback) === "function") {
                 callback(self, compare);
             }
         });
@@ -313,48 +302,32 @@ class Folder extends Bookmark {
     /**
      * Get folders recursively.
      */
-    getFolders() {
+    getFolders(callback) {
         log("Folder.getFolders");
 
-        let folders = [];
+        browser.bookmarks.getChildren(this.id, function (o) {
+            let folders = [];
+            let folder;
 
-        // let folder;
-        // let node;
+            for (let node of o) {
+                if (!isRecursivelyExcluded(node.id)) {
+                    // TODO: get chrome equivilant of node.dateAdded, node.lastModified
+                    folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
-        // TODO: port to browser.bookmarks.getChildren()
+                    if (!isLivemark(folder.id)) {
+                        folders.push(folder);
 
-        // let options = historyService.getNewQueryOptions();
-        // options.excludeItems = true;
-        // options.excludeQueries = true;
-        // options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
+                        for (let f of folder.getFolders()) {
+                            folders.push(f);
+                        }
+                    }
+                }
+            }
 
-        // let query = historyService.getNewQuery();
-        // query.setFolders([this.id], 1);
-
-        // let result = historyService.executeQuery(query, options);
-
-        // let rootNode = result.root;
-        // rootNode.containerOpen = true;
-
-        // for (let i = 0; i < rootNode.childCount; ++i) {
-        //     node = rootNode.getChild(i);
-
-        //     if (!isRecursivelyExcluded(node.itemId)) {
-        //         folder = new Folder(node.itemId, node.bookmarkIndex, this.id, node.title, node.dateAdded, node.lastModified);
-
-        //         if (!isLivemark(folder.id)) {
-        //             folders.push(folder);
-
-        //             for (let f of folder.getFolders()) {
-        //                 folders.push(f);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // rootNode.containerOpen = false;
-
-        return folders;
+            if (typeof (callback) === "function") {
+                callback(folders);
+            }
+        });
     }
 
     /**
@@ -630,6 +603,7 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(menuFolder.id)) {
                 folders.push(menuFolder);
 
+                // TODO: add callback
                 for (let f of menuFolder.getFolders()) {
                     folders.push(f);
                 }
@@ -644,6 +618,7 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(toolbarFolder.id)) {
                 folders.push(toolbarFolder);
 
+                // TODO: add callback
                 for (let f of toolbarFolder.getFolders()) {
                     folders.push(f);
                 }
@@ -658,6 +633,7 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(unsortedFolder.id)) {
                 folders.push(unsortedFolder);
 
+                // TODO: add callback
                 for (let f of unsortedFolder.getFolders()) {
                     folders.push(f);
                 }
@@ -837,7 +813,7 @@ function adjustSortCriteria() {
         differentFolderOrder, weh.prefs["case_insensitive"]
     );
 
-    // TODO; sort when criteria changes, otherwise, this is sorting on startup
+    // TODO: need to only sort when criteria changes, otherwise, this is sorting on startup
     sortIfAuto();
 }
 
@@ -906,11 +882,12 @@ function installOrUpgradePrefs() {
  * @return {*} The item description.
  */
 function getDescription(item) {
-    log("getDescription(item=" + item + ")");
+    log("getDescription(itemID=" + item.id + ")");
 
     let description;
     try {
-        description = annotationService.getItemAnnotation(item.id, descriptionAnnotation);
+        // TODO: chrome bookmarks do not have descriptions
+        description = "";
     }
     catch (exception) {
         description = "";
@@ -929,11 +906,11 @@ function getDescription(item) {
  * @returns {*} The item annotation.
  */
 function getItemAnnotation(itemID, name) {
-    log("getItemAnnotation(itemID=" + itemID + ")");
+    log("getItemAnnotation(itemID=" + itemID + ",name=" + name + ")");
 
     let annotation;
     try {
-        annotation = annotationService.getItemAnnotation(itemID, name);
+        // TODO: chrome bookmarks do not have annotations, what about tags?
     }
     catch (exception) {
         // Do nothing.
@@ -989,7 +966,7 @@ function isRecursivelyExcluded(itemID) {
 function isLivemark(itemID) {
     log("isLivemark(itemID=" + itemID + ")");
 
-    // TODO does Livemark exist under chrome?
+    // TODO: does Livemark exist under chrome?
     // return annotationService.itemHasAnnotation(itemID, livemarkAnnotation);
     return false;
 }
@@ -1003,7 +980,7 @@ function isLivemark(itemID) {
 function isSmartBookmark(itemID) {
     log("isSmartBookmark(itemID=" + itemID + ")");
 
-    // TODO does SmartBookmark exist under chrome?
+    // TODO: does SmartBookmark exist under chrome?
     // return annotationService.itemHasAnnotation(itemID, smartBookmarkAnnotation);
     return false;
 }
@@ -1015,9 +992,9 @@ function isSmartBookmark(itemID) {
  * @param {string} name The item name.
  */
 function removeItemAnnotation(itemID, name) {
-    log("removeItemAnnotation(itemID=" + itemID + ")");
+    log("removeItemAnnotation(itemID=" + itemID + ",name=" + name + ")");
 
-    annotationService.removeItemAnnotation(itemID, name);
+    // TODO: chrome does not have annotations, what about tags?
 }
 
 /**
@@ -1050,10 +1027,10 @@ function removeRecursiveAnnotation(itemID) {
  * @param value The item value.
  */
 function setItemAnnotation(itemID, name, value) {
-    log("setItemAnnotation(itemID=" + itemID + ")");
+    log("setItemAnnotation(itemID=" + itemID + ",name=" + name + ",value=" + value + ")");
 
     if (Bookmark.exists(itemID)) {
-        annotationService.setItemAnnotation(itemID, name, value, 0, annotationService.EXPIRE_NEVER);
+        // TODO: chrome does not have annotations, what about tags?
     }
 }
 
@@ -1125,7 +1102,7 @@ function reverseBaseUrl(str) {
  * @return {*} The new item.
  */
 function createItem(type, itemID, index, parentID, title, url, lastVisited, accessCount, dateAdded, lastModified) {
-    log("createItem(itemID=" + itemID + ")");
+    log("createItem(type=" + type + ",itemID=" + itemID + ",title=" + title + ")");
 
     let item;
 
@@ -1160,7 +1137,20 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
 function createItemFromNode(node, parentID) {
     log("createItemFromNode(parentID=" + parentID + ")");
 
-    return createItem(node.type, node.itemId, node.bookmarkIndex, parentID, node.title, node.uri, node.time, node.accessCount, node.dateAdded, node.lastModified);
+    // chrome doesn't have a type, so we have to guess
+    var nodeType = "bookmark";
+    if (node.url === undefined) {
+        nodeType = "folder";
+    }
+
+    // TODO: need to detect separator
+
+    // TODO: map from MDN to chrome attributes:
+    // node.time
+    // node.accessCount
+    // node.dateAdded
+    // node.lastModified
+    return createItem(nodeType, node.id, node.index, node.parentId, node.title, node.url, node.time, node.accessCount, node.dateAdded, node.lastModified);
 }
 
 /**
@@ -1169,47 +1159,31 @@ function createItemFromNode(node, parentID) {
  * @param {string} parentID The parent ID.
  * @return {Array}
  */
-function getChildrenFolders(parentID) {
+function getChildrenFolders(parentID, callback) {
     log("getChildrenFolders(parentID=" + parentID + ")");
 
-    let children = [];
+    browser.bookmarks.getChildren(parentID, function (o) {
+        let children = [];
+        let folder;
 
-    // let folder;
-    // let node;
+        for (let node of o) {
+            // TODO: need to map MDN to chrome: node.dateAdded, node.lastModified
+            folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
-    // TODO: port to browser.bookmarks.getChildren()
+            if (!isLivemark(folder.id)) {
+                children.push({
+                    id: folder.id,
+                    title: folder.title,
+                    excluded: hasDoNotSortAnnotation(folder.id),
+                    recursivelyExcluded: hasRecursiveAnnotation(folder.id),
+                });
+            }
+        }
 
-    // let options = historyService.getNewQueryOptions();
-    // options.excludeItems = true;
-    // options.excludeQueries = true;
-    // options.queryType = historyService.QUERY_TYPE_BOOKMARKS;
-
-    // let query = historyService.getNewQuery();
-    // query.setFolders([parentID], 1);
-
-    // let result = historyService.executeQuery(query, options);
-
-    // let rootNode = result.root;
-    // rootNode.containerOpen = true;
-
-    // for (let i = 0; i < rootNode.childCount; ++i) {
-    //     node = rootNode.getChild(i);
-
-    //     folder = new Folder(node.itemId, node.bookmarkIndex, parentID, node.title, node.dateAdded, node.lastModified);
-
-    //     if (!isLivemark(folder.id)) {
-    //         children.push({
-    //             id: folder.id,
-    //             title: folder.title,
-    //             excluded: hasDoNotSortAnnotation(folder.id),
-    //             recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-    //         });
-    //     }
-    // }
-
-    // rootNode.containerOpen = false;
-
-    return children;
+        if (typeof (callback) === "function") {
+            callback(children);
+        }
+    });
 }
 
 /**
@@ -1248,8 +1222,9 @@ function showConfigureFoldersToExclude() {
          */
         function sendChildren(worker) {
             return function (parentID) {
-                let children = getChildrenFolders(parentID);
-                worker.port.emit("children", parentID, children);
+                getChildrenFolders(parentID, function (children) {
+                    worker.port.emit("children", parentID, children);
+                });
             };
         }
 
