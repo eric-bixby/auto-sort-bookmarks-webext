@@ -603,12 +603,15 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(menuFolder.id)) {
                 folders.push(menuFolder);
 
-                // TODO: add callback
-                for (let f of menuFolder.getFolders()) {
-                    folders.push(f);
-                }
-            }
+                // TODO: fix callback
 
+                // menuFolder.getFolders(function(subfolders) {
+                //     for (let f of subfolders) {
+                //         folders.push(f);
+                //     }
+                //     resolve(folders);
+                // });
+            }
             resolve(folders);
         });
 
@@ -618,12 +621,15 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(toolbarFolder.id)) {
                 folders.push(toolbarFolder);
 
-                // TODO: add callback
-                for (let f of toolbarFolder.getFolders()) {
-                    folders.push(f);
-                }
-            }
+                // TODO: fix callback
 
+                // toolbarFolder.getFolders(function(subfolders) {
+                //     for (let f of subfolders) {
+                //         folders.push(f);
+                //     }
+                //     resolve(folders);
+                // });
+            }
             resolve(folders);
         });
 
@@ -633,12 +639,13 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(unsortedFolder.id)) {
                 folders.push(unsortedFolder);
 
-                // TODO: add callback
-                for (let f of unsortedFolder.getFolders()) {
-                    folders.push(f);
-                }
+                // unsortedFolder.getFolders(function(subfolders) {
+                //     for (let f of subfolders) {
+                //         folders.push(f);
+                //     }
+                //     resolve(folders);
+                // });
             }
-
             resolve(folders);
         });
 
