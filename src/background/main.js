@@ -325,16 +325,16 @@ class Folder extends Bookmark {
                 let folder;
 
                 for (let node of o) {
-                    if (!isRecursivelyExcluded(node.id)) {
+                    if (node.url === undefined && !isRecursivelyExcluded(node.id)) {
                         // TODO: get chrome equivilant of node.dateAdded, node.lastModified
                         folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
                         if (!isLivemark(folder.id)) {
                             folders.push(folder);
 
-                            for (let f of folder.getFolders()) {
+                            folder.getFolders(function (f) {
                                 folders.push(f);
-                            }
+                            });
                         }
                     }
                 }
@@ -619,16 +619,15 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(menuFolder.id)) {
                 folders.push(menuFolder);
 
-                // TODO: fix callback
-
-                // menuFolder.getFolders(function(subfolders) {
-                //     for (let f of subfolders) {
-                //         folders.push(f);
-                //     }
-                //     resolve(folders);
-                // });
+                menuFolder.getFolders(function (subfolders) {
+                    for (let f of subfolders) {
+                        folders.push(f);
+                    }
+                    resolve(folders);
+                });
+            } else {
+                resolve(folders);
             }
-            resolve(folders);
         });
 
         let p2 = new Promise((resolve) => {
@@ -637,16 +636,15 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(toolbarFolder.id)) {
                 folders.push(toolbarFolder);
 
-                // TODO: fix callback
-
-                // toolbarFolder.getFolders(function(subfolders) {
-                //     for (let f of subfolders) {
-                //         folders.push(f);
-                //     }
-                //     resolve(folders);
-                // });
+                toolbarFolder.getFolders(function (subfolders) {
+                    for (let f of subfolders) {
+                        folders.push(f);
+                    }
+                    resolve(folders);
+                });
+            } else {
+                resolve(folders);
             }
-            resolve(folders);
         });
 
         let p3 = new Promise((resolve) => {
@@ -655,16 +653,15 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(unsortedFolder.id)) {
                 folders.push(unsortedFolder);
 
-                // TODO: fix callback
-
-                // unsortedFolder.getFolders(function(subfolders) {
-                //     for (let f of subfolders) {
-                //         folders.push(f);
-                //     }
-                //     resolve(folders);
-                // });
+                unsortedFolder.getFolders(function (subfolders) {
+                    for (let f of subfolders) {
+                        folders.push(f);
+                    }
+                    resolve(folders);
+                });
+            } else {
+                resolve(folders);
             }
-            resolve(folders);
         });
 
         Promise.all([p1, p2, p3]).then(folders => {
@@ -1226,14 +1223,16 @@ function getRootFolders() {
     for (let folder of [menuFolder, toolbarFolder, unsortedFolder]) {
         folders.push({
             id: folder.id,
+            title: folder.title,
             excluded: hasDoNotSortAnnotation(folder.id),
             recursivelyExcluded: hasRecursiveAnnotation(folder.id),
         });
     }
 
-    folders[0].title = "Bookmarks Menu";
-    folders[1].title = "Bookmarks Toolbar";
-    folders[2].title = "Unsorted Bookmarks";
+    // TODO: do these need to be translated into other languages?
+    // folders[0].title = "Bookmarks Menu";
+    // folders[1].title = "Bookmarks Toolbar";
+    // folders[2].title = "Unsorted Bookmarks";
 
     return folders;
 }

@@ -2,6 +2,7 @@
 
 NAME=auto-sort_bookmarks-3.0
 
+echo Building...
 ./build.sh
 
 cd build
@@ -10,6 +11,7 @@ cd build
 #grep -v version_name manifest.json | sed -e "s/\"3.0\",/\"3.0\"/" > manifest.tmp
 #mv manifest.tmp manifest.json
 
+echo Creating XPI...
 web-ext build -a ..
 
 cd ..
