@@ -325,7 +325,7 @@ class Folder extends Bookmark {
                 let folder;
 
                 for (let node of o) {
-                    if (node.url === undefined && !isRecursivelyExcluded(node.id)) {
+                    if (!isRecursivelyExcluded(node.id)) {
                         // TODO: get chrome equivilant of node.dateAdded, node.lastModified
                         folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
@@ -753,6 +753,7 @@ class BookmarkSorter {
                 setTimeout((function (arg1) {
                     return function () {
                         self.sortAndSave(arg1);
+                        // return true to indicate that sorting is finished
                         resolve(true);
                     };
                 }(folder)), 0);
@@ -772,6 +773,7 @@ class BookmarkSorter {
      */
     sortIfNotSorting() {
         if (!this.sorting) {
+            this.sorting = true;
             this.sortAllBookmarks();
         }
     }
