@@ -25,16 +25,28 @@
 // CLASSES
 // =======
 
+// mapping chrome to mdn bookmark id:
+// 0 = "root________"
+// 1 = "toolbar_____"
+// 2 = "menu________"
+// 3 = "mobile______" (undef)
+// undef = "unfiled_____"
+
 /**
  * Various settings.
  */
 let asb = {
     // only set to true while debugging, set to false when released
     "log": true,
+    // "rootID": {
+    //     "bookmarks_bar": "1",
+    //     "other_bookmarks": "2",
+    //     "mobile_bookmarks": "3"
+    // },
     "rootID": {
-        "bookmarks_bar": "1",
-        "other_bookmarks": "2",
-        "mobile_bookmarks": "3"
+        "bookmarks_bar": "toolbar_____",
+        "other_bookmarks": "menu________",
+        "mobile_bookmarks": "mobile______"
     },
     "version": {
         "current": function () {
@@ -268,33 +280,35 @@ class Folder extends Bookmark {
     }
 
     /**
-     * Set the immediate children.
+     * Get the immediate children.
      * 
      * @param {*} callback The callback.
      */
-    setChildren(callback, compare) {
-        log("Folder.setChildren");
+    getChildren(callback, compare) {
+        log("Folder.getChildren");
 
         this.children = [[]];
         var self = this;
 
         browser.bookmarks.getChildren(this.id, function (o) {
-            let index = 0;
+            if (o !== undefined) {
+                let index = 0;
 
-            for (let node of o) {
-                let item = createItemFromNode(node, this.id);
-                if (item instanceof Separator) {
-                    // create sub-array to store nodes after separator
-                    self.children.push([]);
-                    ++index;
+                for (let node of o) {
+                    let item = createItemFromNode(node);
+                    if (item instanceof Separator) {
+                        // create sub-array to store nodes after separator
+                        self.children.push([]);
+                        ++index;
+                    }
+                    else if (item !== undefined) {
+                        self.children[index].push(item);
+                    }
                 }
-                else if (item !== undefined) {
-                    self.children[index].push(item);
-                }
-            }
 
-            if (typeof (callback) === "function") {
-                callback(self, compare);
+                if (typeof (callback) === "function") {
+                    callback(self, compare);
+                }
             }
         });
     }
@@ -306,26 +320,28 @@ class Folder extends Bookmark {
         log("Folder.getFolders");
 
         browser.bookmarks.getChildren(this.id, function (o) {
-            let folders = [];
-            let folder;
+            if (o !== undefined) {
+                let folders = [];
+                let folder;
 
-            for (let node of o) {
-                if (!isRecursivelyExcluded(node.id)) {
-                    // TODO: get chrome equivilant of node.dateAdded, node.lastModified
-                    folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
+                for (let node of o) {
+                    if (!isRecursivelyExcluded(node.id)) {
+                        // TODO: get chrome equivilant of node.dateAdded, node.lastModified
+                        folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
-                    if (!isLivemark(folder.id)) {
-                        folders.push(folder);
+                        if (!isLivemark(folder.id)) {
+                            folders.push(folder);
 
-                        for (let f of folder.getFolders()) {
-                            folders.push(f);
+                            for (let f of folder.getFolders()) {
+                                folders.push(f);
+                            }
                         }
                     }
                 }
-            }
 
-            if (typeof (callback) === "function") {
-                callback(folders);
+                if (typeof (callback) === "function") {
+                    callback(folders);
+                }
             }
         });
     }
@@ -360,7 +376,7 @@ class Folder extends Bookmark {
     isRoot() {
         log("Folder.isRoot");
 
-        return this.id === browser.bookmarks.placesRoot;
+        return this.parentID === "0";
     }
 
     /**
@@ -639,6 +655,8 @@ class BookmarkSorter {
             if (!isRecursivelyExcluded(unsortedFolder.id)) {
                 folders.push(unsortedFolder);
 
+                // TODO: fix callback
+
                 // unsortedFolder.getFolders(function(subfolders) {
                 //     for (let f of subfolders) {
                 //         folders.push(f);
@@ -691,7 +709,7 @@ class BookmarkSorter {
         log("BookmarkSorter.sortAndSave");
 
         if (folder.canBeSorted()) {
-            folder.setChildren(this.sortFolder, this.compare);
+            folder.getChildren(this.sortFolder, this.compare);
         }
     }
 
@@ -801,9 +819,11 @@ function sortAllBookmarks() {
 function sortIfAuto() {
     log("sortIfAuto");
 
-    if (weh.prefs["auto_sort"]) {
-        sortAllBookmarks();
-    }
+    // TODO: always sorting until preferences are working
+    sortAllBookmarks();
+    // if (weh.prefs["auto_sort"]) {
+    //     sortAllBookmarks();
+    // }
 }
 
 /**
@@ -1138,11 +1158,10 @@ function createItem(type, itemID, index, parentID, title, url, lastVisited, acce
  * Create an item from the `node` type.
  *
  * @param {bookmarks.BookmarkTreeNode} node The node item.
- * @param {string} parentID The parent ID.
  * @return {Item} The new item.
  */
-function createItemFromNode(node, parentID) {
-    log("createItemFromNode(parentID=" + parentID + ")");
+function createItemFromNode(node) {
+    log("createItemFromNode(nodeID=" + node.id + ")");
 
     // chrome doesn't have a type, so we have to guess
     var nodeType = "bookmark";
@@ -1170,25 +1189,27 @@ function getChildrenFolders(parentID, callback) {
     log("getChildrenFolders(parentID=" + parentID + ")");
 
     browser.bookmarks.getChildren(parentID, function (o) {
-        let children = [];
-        let folder;
+        if (o !== undefined) {
+            let children = [];
+            let folder;
 
-        for (let node of o) {
-            // TODO: need to map MDN to chrome: node.dateAdded, node.lastModified
-            folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
+            for (let node of o) {
+                // TODO: need to map MDN to chrome: node.dateAdded, node.lastModified
+                folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
-            if (!isLivemark(folder.id)) {
-                children.push({
-                    id: folder.id,
-                    title: folder.title,
-                    excluded: hasDoNotSortAnnotation(folder.id),
-                    recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-                });
+                if (!isLivemark(folder.id)) {
+                    children.push({
+                        id: folder.id,
+                        title: folder.title,
+                        excluded: hasDoNotSortAnnotation(folder.id),
+                        recursivelyExcluded: hasRecursiveAnnotation(folder.id),
+                    });
+                }
             }
-        }
 
-        if (typeof (callback) === "function") {
-            callback(children);
+            if (typeof (callback) === "function") {
+                callback(children);
+            }
         }
     });
 }
@@ -1295,11 +1316,28 @@ function showConfigureFoldersToExclude() {
     };
 }
 
+/**
+ * Print bookmarks.
+ * 
+ * @param {*} bookmarks 
+ */
+function printBookmarks(bookmarks) {
+    bookmarks.forEach(function (bookmark) {
+        console.debug(bookmark.id + " - " + bookmark.title + " - " + bookmark.url);
+        if (bookmark.children)
+            printBookmarks(bookmark.children);
+    });
+}
+
 // ====
 // MAIN
 // ====
 
 log("main:begin");
+
+// chrome.bookmarks.getTree(function (bookmarks) {
+//     printBookmarks(bookmarks);
+// });
 
 const data = self.data;
 const sortCriterias = [
