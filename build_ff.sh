@@ -11,7 +11,8 @@ cd build
 #grep -v version_name manifest.json | sed -e "s/\"3.0\",/\"3.0\"/" > manifest.tmp
 #mv manifest.tmp manifest.json
 
-echo Creating XPI...
+echo
+echo Building XPI...
 web-ext build -a ..
 
 cd ..

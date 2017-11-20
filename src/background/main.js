@@ -68,30 +68,48 @@ class BookmarkManager {
         this.createChangeListeners();
     }
 
+    handleChanged(id, changeInfo) {
+        log("onChanged id = " + id + " " + changeInfo);
+        sortIfAuto();
+    }
+
+    handleCreated(id, bookmark) {
+        log("onCreated id = " + id + " " + bookmark);
+        sortIfAuto();
+    }
+
+    handleMoved(id, moveInfo) {
+        log("onMoved id = " + id);
+        log("parentId=" + moveInfo.parentId);
+        log("index=" + moveInfo.index);
+        log("oldParentId=" + moveInfo.oldParentId);
+        log("oldIndex=" + moveInfo.oldIndex);
+        sortIfAuto();
+    }
+
+    handleRemoved(id, removeInfo) {
+        // TODO: check if item is separator, sort if true
+        log("onRemoved id = " + id + " " + removeInfo);
+        sortIfAuto();
+    }
+
     /**
      * Create bookmark change listeners.
      */
     createChangeListeners() {
-        browser.bookmarks.onChanged.addListener(function (id, changeInfo) {
-            log("onChanged id = " + id + " " + changeInfo);
-            sortIfAuto();
-        });
+        log("createChangeListener");
+        browser.bookmarks.onChanged.addListener(this.handleChanged);
+        browser.bookmarks.onCreated.addListener(this.handleCreated);
+        browser.bookmarks.onMoved.addListener(this.handleMoved);
+        browser.bookmarks.onRemoved.addListener(this.handleRemoved);
+    }
 
-        browser.bookmarks.onCreated.addListener(function (id, bookmark) {
-            log("onCreated id = " + id + " " + bookmark);
-            sortIfAuto();
-        });
-
-        browser.bookmarks.onMoved.addListener(function (id, moveInfo) {
-            log("onMoved id = " + id + " " + moveInfo);
-            sortIfAuto();
-        });
-
-        browser.bookmarks.onRemoved.addListener(function (id, removeInfo) {
-            // TODO: check if item is separator, sort if true
-            log("onRemoved id = " + id + " " + removeInfo);
-            sortIfAuto();
-        });
+    removeChangeListeners() {
+        log("removeChangeListeners");
+        browser.bookmarks.onChanged.removeListener(this.handleChanged);
+        browser.bookmarks.onCreated.removeListener(this.handleCreated);
+        browser.bookmarks.onMoved.removeListener(this.handleMoved);
+        browser.bookmarks.onRemoved.removeListener(this.handleRemoved);
     }
 }
 
@@ -266,31 +284,42 @@ class Folder extends Bookmark {
      * @param {*} callback The callback function.
      */
     getFolders(callback) {
-        browser.bookmarks.getChildren(this.id, function (o) {
-            if (o !== undefined) {
-                let folders = [];
-                let folder;
+        this.folders = [];
+        var self = this;
 
-                for (let node of o) {
-                    // if (!isRecursivelyExcluded(node.id)) {
-                    // TODO: get chrome equivilant of node.dateAdded, node.lastModified
-                    folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
+        browser.bookmarks.getSubTree(this.id, (function () {
+            /**
+             * Get sub folders. Defined locally so that it can be called recursively and not blow the stack.
+             */
+            function getSubFolders(o) {
+                if (o !== undefined) {
+                    let folder;
+                    let isTop = false;
 
-                    // if (!isLivemark(folder.id)) {
-                    folders.push(folder);
+                    for (let node of o) {
+                        // if (!isRecursivelyExcluded(node.id)) {
+                        if (node.url === undefined) {
+                            // TODO: get chrome equivilant of node.dateAdded, node.lastModified
+                            folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
+                            if (self.id === node.id) {
+                                isTop = true;
+                            }
 
-                    folder.getFolders(function (f) {
-                        folders.push(f);
-                    });
-                    // }
-                    // }
-                }
+                            // if (!isLivemark(folder.id)) {
+                            self.folders.push(folder);
+                            getSubFolders(node.children);
+                            // }
+                        }
+                    }
 
-                if (typeof (callback) === "function") {
-                    callback(folders);
+                    // only return the complete list if this is the top interition
+                    if (isTop && typeof (callback) === "function") {
+                        callback(self.folders);
+                    }
                 }
             }
-        });
+            return getSubFolders;
+        })());
     }
 
     /**
@@ -399,6 +428,11 @@ class BookmarkSorter {
          * Indicates if sorting is in progress.
          */
         this.sorting = false;
+
+        /**
+         * Last time checked for change
+         */
+        this.lastCheck = Date.now();
     }
 
     /**
@@ -676,7 +710,13 @@ class BookmarkSorter {
 
         Promise.all(promiseAry).then(bool => {
             if (bool) {
+                log("sorting:end");
                 self.sorting = false;
+                self.lastCheck = Date.now();
+                // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
+                setTimeout(function () {
+                    bookmarkManager.createChangeListeners();
+                }, 2000, "Javascript");
             }
         });
     }
@@ -686,8 +726,31 @@ class BookmarkSorter {
      */
     sortIfNotSorting() {
         if (!this.sorting) {
-            this.sorting = true;
-            this.sortAllBookmarks();
+            this.lastCheck = Date.now();
+            this.sortIfNoChanges();
+        }
+    }
+
+    /**
+     * Sort if no recent changes.
+     */
+    sortIfNoChanges() {
+        if (!this.sorting) {
+            // wait for a period of no activity before sorting
+            var now = Date.now();
+            var diff = now - this.lastCheck;
+            if (diff < 3000) {
+                var self = this;
+                setTimeout(function () {
+                    log("waiting one second");
+                    self.sortIfNoChanges();
+                }, 1000, "Javascript");
+            } else {
+                this.sorting = true;
+                bookmarkManager.removeChangeListeners();
+                log("sorting:begin");
+                this.sortAllBookmarks();
+            }
         }
     }
 }
@@ -1204,7 +1267,7 @@ let unsortedFolder = new Folder(asb.rootID.mobile_bookmarks);
 
 var bookmarkSorter = new BookmarkSorter();
 
-new BookmarkManager();
+var bookmarkManager = new BookmarkManager();
 
 installOrUpgradePrefs();
 registerUserEvents();
