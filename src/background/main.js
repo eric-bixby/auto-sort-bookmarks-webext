@@ -430,6 +430,11 @@ class BookmarkSorter {
         this.sorting = false;
 
         /**
+         * Indicates if waiting for activity to stop.
+         */
+        this.isWaiting = false;
+
+        /**
          * Last time checked for change
          */
         this.lastCheck = Date.now();
@@ -726,8 +731,12 @@ class BookmarkSorter {
      */
     sortIfNotSorting() {
         if (!this.sorting) {
+            // restart clock everytime there is an event triggered
             this.lastCheck = Date.now();
-            this.sortIfNoChanges();
+            // if already waiting, then don't wait again or there will be multiple loops
+            if (!this.isWaiting) {
+                this.sortIfNoChanges();
+            }
         }
     }
 
@@ -740,13 +749,15 @@ class BookmarkSorter {
             var now = Date.now();
             var diff = now - this.lastCheck;
             if (diff < 3000) {
+                this.isWaiting = true;
                 var self = this;
                 setTimeout(function () {
-                    log("waiting one second");
+                    log("waiting one second for activity to stop");
                     self.sortIfNoChanges();
                 }, 1000, "Javascript");
             } else {
                 this.sorting = true;
+                this.isWaiting = false;
                 bookmarkManager.removeChangeListeners();
                 log("sorting:begin");
                 this.sortAllBookmarks();
