@@ -17,30 +17,32 @@
 
 "use strict";
 
-/* global weh, angular */
+class Link extends React.Component {
 
-// initialize list
-angular.module("skeleton", []);
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
 
-// register directive factory
-angular.module("skeleton").directive("skelLink", function () {
-    return {
-        template: function (elem, attr) {
-            return `
-                <a
-                    ng-click="post({type: '${attr.messagetype}' })">
-                    ${attr.label}
-                </a>
-            `;
-        }
-    };
-});
+    handleClick() {
+        weh.post({
+            type: this.props.messageType
+        });
+    }
 
-// register controller
-angular.module("skeleton").controller("SkelCtrl", ["$scope", function ($scope) {
-    // in case you need a controller to do stuff
-    console.log($scope);
-}]);
+    render() {
+        return (
+            <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
+        )
+    }
+}
 
-// bootstrap angular
-weh.ngBootstrap("skeleton");
+ReactDOM.render(
+    <div>
+        <div className="asb-toolbar">
+            <Link messageType={"sort"} label={"sort"} />
+            <Link messageType={"open-settings"} label={"settings"} />
+        </div>
+    </div>,
+    document.getElementById('root')
+)

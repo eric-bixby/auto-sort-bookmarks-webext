@@ -17,10 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-
-<html ng-controller="WehCtrl">
+<html>
 
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
     <!-- build:css settings.css -->
     <link href="bootstrap.css" type="text/css" rel="stylesheet">
     <link href="styles.css" type="text/css" rel="stylesheet">
@@ -28,24 +29,16 @@
 </head>
 
 <body class="container-fluid">
+    <div id="root"></div>
+
     <!-- build:js vendor-bundle.js -->
     <!-- weh:js weh-all -->
     <!-- endbuild -->
 
     <!-- build:js settings-bundle.js -->
-    <script src="settings.js"></script>
+    <script src="settings.jsx"></script>
     <!-- endbuild -->
 
-    <div id="root" ng-controller="wehParams">
-        <h1 class="text-center">{{_("title")}} :: {{_("settings")}}</h1>
-        <br/>
-        <div>
-            <weh-version></weh-version>
-            <weh-param-set params="auto_sort,delay,folder_delay,case_insensitive,sort_by,inverse,then_sort_by,then_inverse,folder_sort_by,folder_inverse,folder_sort_order,livemark_sort_order,smart_bookmark_sort_order,bookmark_sort_order">
-            </weh-param-set>
-        </div>
-        <weh-pref-buttons></weh-pref-buttons>
-    </div>
 </body>
 
 </html>

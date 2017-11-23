@@ -29,7 +29,7 @@
 // mapping chrome to FF bookmark id (chrome-id, ff-id, ff-title):
 // "0"   = "root________" = "?"
 // "1"   = "toolbar_____" = "Bookmarks Toolbar"
-// "2"   = "menu________" = "?"
+// "2"   = "menu________" = "Bookmarks Menu"
 // "3"   = "mobile______" = "Mobile Bookmarks" (not used by FF)
 // undef = "unfiled_____" = "Other Bookmarks" (not used by chrome)
 
@@ -691,6 +691,7 @@ class BookmarkSorter {
             delta += length + 1;
         }
 
+        log("saving folder: " + folder.title);
         folder.save();
     }
 
@@ -710,6 +711,7 @@ class BookmarkSorter {
                 // Not obvious but arg1 = folder
                 setTimeout((function (arg1) {
                     return function () {
+                        log("sorting folder: " + arg1.title);
                         self.sortAndSave(arg1);
                         // return true to indicate that sorting is finished
                         resolve(true);
@@ -721,13 +723,14 @@ class BookmarkSorter {
 
         Promise.all(promiseAry).then(bool => {
             if (bool) {
-                log("sorting:end");
+                log("sort:end");
                 self.sorting = false;
                 self.lastCheck = Date.now();
                 // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
+                // TODO: make the delay a user pref
                 setTimeout(function () {
                     bookmarkManager.createChangeListeners();
-                }, 2000, "Javascript");
+                }, 3000, "Javascript");
             }
         });
     }
@@ -754,7 +757,8 @@ class BookmarkSorter {
             // wait for a period of no activity before sorting
             var now = Date.now();
             var diff = now - this.lastCheck;
-            if (diff < 3000) {
+            var delay = parseInteger(getPref("delay")) * 1000;
+            if (diff < delay) {
                 this.isWaiting = true;
                 var self = this;
                 setTimeout(function () {
@@ -765,7 +769,7 @@ class BookmarkSorter {
                 this.sorting = true;
                 this.isWaiting = false;
                 bookmarkManager.removeChangeListeners();
-                log("sorting:begin");
+                log("sort:begin");
                 this.sortAllBookmarks();
             }
         }
@@ -803,7 +807,10 @@ function parseInteger(val) {
  */
 function getPref(param) {
     let defaultValue = weh.prefs.$specs[param].defaultValue;
-    let value = weh.prefs[param] || defaultValue;
+    let value = weh.prefs[param];
+    if (value === undefined) {
+        value = defaultValue;
+    }
     return value;
 }
 
@@ -834,9 +841,6 @@ function adjustSortCriteria() {
         sortCriterias[parseInteger(getPref("folder_sort_by"))], getPref("folder_inverse"),
         differentFolderOrder, getPref("case_insensitive")
     );
-
-    // TODO: need to only sort when criteria is changed, otherwise, this is sorting on startup
-    //sortIfAuto();
 }
 
 /**
@@ -853,6 +857,13 @@ function registerUserEvents() {
                 case "open-settings":
                     weh.ui.close("default");
                     weh.ui.open("settings");
+                    break;
+                case "sort":
+                    weh.ui.close("default");
+                    sortAllBookmarks();
+                    break;
+                default:
+                    log("unknown message: " + message.type);
                     break;
             }
         }
@@ -1218,6 +1229,18 @@ function showConfigureFoldersToExclude() {
 }
 
 /**
+ * Reigster listener for pref changes.
+ */
+function registerPrefListener() {
+    weh.prefs.on("", function () {
+        log("auto_sort=" + getPref("auto_sort"));
+
+        // adjustSortCriteria();
+        // sortIfAuto();
+    });
+}
+
+/**
  * Print bookmarks.
  * 
  * @param {*} bookmarks 
@@ -1256,5 +1279,6 @@ var bookmarkManager = new BookmarkManager();
 installOrUpgradePrefs();
 registerUserEvents();
 adjustSortCriteria();
+registerPrefListener();
 
 log("main:end");

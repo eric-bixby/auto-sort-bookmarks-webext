@@ -18,29 +18,27 @@
  */
 -->
 
-<html ng-controller="WehCtrl">
+<html>
 
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
     <!-- build:css styles.css -->
     <link href="styles.css" type="text/css" rel="stylesheet">
     <!-- endbuild -->
 </head>
 
-<body ng-controller="SkelCtrl">
+<body>
+    <div id="root"></div>
+
     <!-- build:js vendor-bundle.js -->
     <!-- weh:js weh-all -->
     <!-- endbuild -->
 
     <!-- build:js popup-bundle.js -->
-    <script src="popup.js"></script>
+    <script src="popup.jsx"></script>
     <!-- endbuild -->
 
-    <div id="root">
-        <div class="toolbar">
-            <skel-link messageType="open-settings" label="{{_('settings')}}"></skel-link>
-            <skel-link messageType="open-settings" label="{{_('sort')}}"></skel-link>
-        </div>
-    </div>
 </body>
 
 </html>

@@ -17,8 +17,24 @@
 
 "use strict";
 
-/* global weh */
+function Prefs() {
+    return (
+        <WehParams>
+            <WehVersion />
+            <WehParamSet wehPrefs={["auto_sort", "delay", "folder_delay", "case_insensitive", "sort_by", "inverse", "then_sort_by", "then_inverse", "folder_sort_by", "folder_inverse", "folder_sort_order", "livemark_sort_order", "smart_bookmark_sort_order", "bookmark_sort_order"]}>
+                <WehParam />
+            </WehParamSet>
+        </WehParams>
+    )
+}
 
-weh.ngBootstrap("weh.prefs");
+ReactDOM.render(
+    <div>
+        <h1 className="text-center">{weh._("title")} :: {weh._("settings")}</h1>
+        <br />
+        <Prefs />
+    </div>,
+    document.getElementById('root')
+)
 
 weh.setPageTitle(weh._("settings"));
