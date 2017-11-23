@@ -1,93 +1,78 @@
 {
-  "title": {
-    "message": "Auto-Sort Bookmarks"
-  },
   "weh_prefs_label_auto_sort": {
-    "message": "Auto-sort"
+    "message": "Auto-sort:"
   },
   "weh_prefs_description_auto_sort": {
-    "message": "If this option is enabled, the bookmarks will be sorted when Firefox is opened, when this option is activated and when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
+    "message": "If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
   },
   "weh_prefs_label_delay": {
-    "message": "Delay"
+    "message": "Auto-sort Delay:"
   },
   "weh_prefs_description_delay": {
-    "message": "Specifies a delay (in seconds) before automatically sorting bookmarks."
-  },
-  "weh_prefs_label_folder_delay": {
-    "message": "Delay for Folders"
-  },
-  "weh_prefs_description_folder_delay": {
-    "message": "Specifies a delay (in seconds) before automatically sorting folders. This is to avoid that a new folder is sorted before you can choose it when adding a new bookmark."
+    "message": "Specifies a delay (in seconds) before automatically sorting bookmarks. Value from 1 to 200."
   },
   "weh_prefs_label_case_insensitive": {
-    "message": "Case Insensitive"
+    "message": "Case Insensitive:"
   },
   "weh_prefs_description_case_insensitive": {
     "message": "If this option is enabled, the bookmarks will be sorted without considering the letter case."
   },
   "weh_prefs_label_sort_by": {
-    "message": "Sort By"
+    "message": "Sort By:"
   },
   "weh_prefs_description_sort_by": {
-    "message": "Specifies the first sort criteria, that is to say, the order that will be used to sort the bookmarks. The choices are : name, url, description, keyword, date added, last modified, last visited, visited count and reversed base-URL."
+    "message": "Specifies the first sort criteria to sort the bookmarks. The choices are : name and url."
   },
   "weh_prefs_label_inverse": {
-    "message": "Inverse Order"
+    "message": "Inverse Order:"
   },
   "weh_prefs_description_inverse": {
     "message": "if this option is enabled, the order specified in 'Sort By' will be reversed. So the order will be descending."
   },
   "weh_prefs_label_then_sort_by": {
-    "message": "Then Sort By"
+    "message": "Then Sort By:"
   },
   "weh_prefs_description_then_sort_by": {
-    "message": "Specifies a second sort criteria (optional). For instance, if the first sort criteria is the name, it is possible to choose a second sort criteria to sort bookmarks with the same name."
+    "message": "Specifies the second sort criteria to sort the bookmarks. The choices are : node, name and url."
   },
   "weh_prefs_label_then_inverse": {
-    "message": "Inverse Second Order"
+    "message": "Inverse Second Order:"
   },
   "weh_prefs_description_then_inverse": {
     "message": "If this option is enabled, the order specified in 'Then Sort By' will be reversed."
   },
   "weh_prefs_label_folder_sort_by": {
-    "message": "Sort Folder By"
+    "message": "Sort Folder By:"
   },
   "weh_prefs_description_folder_sort_by": {
-    "message": "Specifies a different sort criteria for folders. For instance, you might want to sort folders by name and other kinds of bookmarks by last visited."
+    "message": "Specifies a sort criteria to sort folders."
   },
   "weh_prefs_label_folder_inverse": {
-    "message": "Inverse Folder Order"
+    "message": "Inverse Folder Order:"
   },
   "weh_prefs_description_folder_inverse": {
     "message": "If this option is enabled, the order speficied in 'Sort Folder By' will be reversed."
   },
   "weh_prefs_label_folder_sort_order": {
-    "message": "Folder Sort Order"
+    "message": "Folder Sort Order:"
   },
   "weh_prefs_description_folder_sort_order": {
-    "message": "Specifies the order in which the folders are sorted. For instance, it is possible to sort folders before livemarks, smart bookmarks and bookmarks. To do this, the folder sort order should be lesser than the other sort orders. If the sort order of two types are at the same level, the bookmarks from these types will be sorted together."
-  },
-  "weh_prefs_label_livemark_sort_order": {
-    "message": "Livemark Sort Order"
-  },
-  "weh_prefs_description_livemark_sort_order": {
-    "message": "Specifies the sort order of livemarks."
-  },
-  "weh_prefs_label_smart_bookmark_sort_order": {
-    "message": "Smart Bookmark Sort Order"
-  },
-  "weh_prefs_description_smart_bookmark_sort_order": {
-    "message": "Specifies the sort order of smart bookmarks."
+    "message": "Specifies the folder sort order. Value from 1 to 2."
   },
   "weh_prefs_label_bookmark_sort_order": {
-    "message": "Bookmark Sort Order"
+    "message": "Bookmark Sort Order:"
   },
   "weh_prefs_description_bookmark_sort_order": {
-    "message": "Specifies the bookmark sort order."
+    "message": "Specifies the bookmark sort order. Value from 1 to 2."
+  },
+  "title": {
+    "message": "Auto-Sort Bookmarks"
   },
   "settings": {
     "message": "Settings"
+  },
+  "version": {
+    "message": "Version:"
   },
   "sort": {
     "message": "Sort"
@@ -100,8 +85,5 @@
   },
   "default": {
     "message": "Default"
-  },
-  "version": {
-    "message": "Version"
   }
 }

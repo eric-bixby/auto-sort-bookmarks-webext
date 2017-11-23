@@ -22,15 +22,13 @@
 weh.prefs.declare([{
     name: "auto_sort",
     type: "boolean",
-    defaultValue: false
+    defaultValue: true
 }, {
     name: "delay",
     type: "integer",
-    defaultValue: 0
-}, {
-    name: "folder_delay",
-    type: "integer",
-    defaultValue: 30
+    defaultValue: 3,
+    minimum: 1,
+    maximum: 200
 }, {
     name: "case_insensitive",
     type: "boolean",
@@ -45,27 +43,6 @@ weh.prefs.declare([{
     }, {
         name: "URL",
         value: "1"
-    }, {
-        name: "Description",
-        value: "2"
-    }, {
-        name: "Keyword",
-        value: "3"
-    }, {
-        name: "Date Added",
-        value: "4"
-    }, {
-        name: "Last Modified",
-        value: "5"
-    }, {
-        name: "Last visited",
-        value: "6"
-    }, {
-        name: "Visited count",
-        value: "7"
-    }, {
-        name: "Reversed URL",
-        value: "8"
     }]
 }, {
     name: "inverse",
@@ -84,27 +61,6 @@ weh.prefs.declare([{
     }, {
         name: "URL",
         value: "1"
-    }, {
-        name: "Description",
-        value: "2"
-    }, {
-        name: "Keyword",
-        value: "3"
-    }, {
-        name: "Date Added",
-        value: "4"
-    }, {
-        name: "Last Modified",
-        value: "5"
-    }, {
-        name: "Last visited",
-        value: "6"
-    }, {
-        name: "Visited count",
-        value: "7"
-    }, {
-        name: "Reversed URL",
-        value: "8"
     }]
 }, {
     name: "then_inverse",
@@ -120,15 +76,6 @@ weh.prefs.declare([{
     }, {
         name: "Name",
         value: "0"
-    }, {
-        name: "Description",
-        value: "2"
-    }, {
-        name: "Date Added",
-        value: "4"
-    }, {
-        name: "Last Modified",
-        value: "5"
     }]
 }, {
     name: "folder_inverse",
@@ -137,17 +84,13 @@ weh.prefs.declare([{
 }, {
     name: "folder_sort_order",
     type: "integer",
-    defaultValue: 1
-}, {
-    name: "livemark_sort_order",
-    type: "integer",
-    defaultValue: 2
-}, {
-    name: "smart_bookmark_sort_order",
-    type: "integer",
-    defaultValue: 3
+    defaultValue: 1,
+    minimum: 1,
+    maximum: 2
 }, {
     name: "bookmark_sort_order",
     type: "integer",
-    defaultValue: 4
+    defaultValue: 2,
+    minimum: 1,
+    maximum: 2
 }]);

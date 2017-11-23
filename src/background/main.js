@@ -25,12 +25,13 @@
 // CLASSES
 // =======
 
-// mapping chrome to mdn bookmark id:
-// "0" = "root________"
-// "1" = "toolbar_____"
-// "2" = "menu________"
-// "3" = "mobile______" (undef)
-// undef = "unfiled_____"
+// TODO: add a mapping function so works for both browsers
+// mapping chrome to FF bookmark id (chrome-id, ff-id, ff-title):
+// "0"   = "root________" = "?"
+// "1"   = "toolbar_____" = "Bookmarks Toolbar"
+// "2"   = "menu________" = "?"
+// "3"   = "mobile______" = "Mobile Bookmarks" (not used by FF)
+// undef = "unfiled_____" = "Other Bookmarks" (not used by chrome)
 
 /**
  * Various settings.
@@ -59,53 +60,87 @@ let asb = {
 
 /**
  * Bookmark manager class.
+ * 
+ * @class BookmarkManager
  */
 class BookmarkManager {
     /**
-     * Create bookmark listeners.
+     * Creates an instance of BookmarkManager.
+     * 
+     * @memberof BookmarkManager
      */
     constructor() {
         this.createChangeListeners();
     }
 
+    /**
+     * Changed event handler.
+     * 
+     * @param {any} id 
+     * @param {any} changeInfo 
+     * @memberof BookmarkManager
+     */
     handleChanged(id, changeInfo) {
         log("onChanged id = " + id + " " + changeInfo);
         sortIfAuto();
     }
 
+    /**
+     * Created event handler.
+     * 
+     * @param {any} id 
+     * @param {any} bookmark 
+     * @memberof BookmarkManager
+     */
     handleCreated(id, bookmark) {
         log("onCreated id = " + id + " " + bookmark);
         sortIfAuto();
     }
 
+    /**
+     * Moved event handler.
+     * 
+     * @param {any} id 
+     * @param {any} moveInfo 
+     * @memberof BookmarkManager
+     */
     handleMoved(id, moveInfo) {
-        log("onMoved id = " + id);
-        log("parentId=" + moveInfo.parentId);
-        log("index=" + moveInfo.index);
-        log("oldParentId=" + moveInfo.oldParentId);
-        log("oldIndex=" + moveInfo.oldIndex);
-        sortIfAuto();
-    }
-
-    handleRemoved(id, removeInfo) {
-        // TODO: check if item is separator, sort if true
-        log("onRemoved id = " + id + " " + removeInfo);
+        log("onMoved id = " + id + " " + moveInfo);
         sortIfAuto();
     }
 
     /**
+     * Removed event handler.
+     * 
+     * @param {any} id 
+     * @param {any} removeInfo 
+     * @memberof BookmarkManager
+     */
+    handleRemoved(id, removeInfo) {
+        log("onRemoved id = " + id + " " + removeInfo);
+        if (removeInfo.node.type === "separator") {
+            sortIfAuto();
+        }
+    }
+
+    /**
      * Create bookmark change listeners.
+     * 
+     * @memberof BookmarkManager
      */
     createChangeListeners() {
-        log("createChangeListener");
         browser.bookmarks.onChanged.addListener(this.handleChanged);
         browser.bookmarks.onCreated.addListener(this.handleCreated);
         browser.bookmarks.onMoved.addListener(this.handleMoved);
         browser.bookmarks.onRemoved.addListener(this.handleRemoved);
     }
 
+    /**
+     * Remove bookmark change listeners.
+     * 
+     * @memberof BookmarkManager
+     */
     removeChangeListeners() {
-        log("removeChangeListeners");
         browser.bookmarks.onChanged.removeListener(this.handleChanged);
         browser.bookmarks.onCreated.removeListener(this.handleCreated);
         browser.bookmarks.onMoved.removeListener(this.handleMoved);
@@ -115,14 +150,17 @@ class BookmarkManager {
 
 /**
  * Item class.
+ * 
+ * @class Item
  */
 class Item {
     /**
-     * Get an item.
-     *
-     * @param {string} id
-     * @param {int} index
-     * @param {string} parentId
+     * Creates an instance of Item.
+     * 
+     * @param {string} id 
+     * @param {number} index 
+     * @param {string} parentId 
+     * @memberof Item
      */
     constructor(id, index, parentId) {
         this.id = id;
@@ -132,6 +170,8 @@ class Item {
 
     /**
      * Save the new index.
+     * 
+     * @memberof Item
      */
     saveIndex() {
         browser.bookmarks.move(this.id, { index: this.index });
@@ -141,6 +181,7 @@ class Item {
      * Set the new index and save the old index.
      *
      * @param {int} index The new index.
+     * @memberof Item
      */
     setIndex(index) {
         this.oldIndex = this.index || index;
@@ -179,8 +220,8 @@ class Bookmark extends Item {
         this.accessCount = accessCount || 0;
         this.dateAdded = dateAdded || 0;
         this.lastModified = lastModified || 0;
-        this.order = weh.prefs["bookmark_sort_order"] || 4;
-        // TODO: get description; chrome doesn't have but where does MDN keep it?
+        this.order = getPref("bookmark_sort_order");
+        // TODO: get description; chrome doesn't have but where does FF keep it?
         // this.description = getDescription(this) || "";
         this.description = "";
         this.setKeyword();
@@ -229,7 +270,7 @@ class Folder extends Bookmark {
     constructor(id, index, parentId, title, dateAdded, lastModified) {
         super(id, index, parentId, title, dateAdded, lastModified);
 
-        this.order = weh.prefs["folder_sort_order"] || 1;
+        this.order = getPref("folder_sort_order");
     }
 
     /**
@@ -290,6 +331,9 @@ class Folder extends Bookmark {
         browser.bookmarks.getSubTree(this.id, (function () {
             /**
              * Get sub folders. Defined locally so that it can be called recursively and not blow the stack.
+             * 
+             * @param {*} List of bookmarks.
+             * @returns {*} Callback.
              */
             function getSubFolders(o) {
                 if (o !== undefined) {
@@ -305,10 +349,8 @@ class Folder extends Bookmark {
                                 isTop = true;
                             }
 
-                            // if (!isLivemark(folder.id)) {
                             self.folders.push(folder);
                             getSubFolders(node.children);
-                            // }
                         }
                     }
 
@@ -324,6 +366,8 @@ class Folder extends Bookmark {
 
     /**
      * Check if this folder has an ancestor that is recursively excluded.
+     *
+     * @returns {boolean} Whether this node has ancestor excluded or not.
      */
     hasAncestorExcluded() {
         // if (isRecursivelyExcluded(this.id)) {
@@ -377,46 +421,6 @@ class Folder extends Bookmark {
 }
 
 /**
- * Livemark class.
- */
-// class Livemark extends Bookmark {
-//     /**
-//      * Get an existing smart bookmark.
-//      *
-//      * @param {string} id The folder identifier.
-//      * @param {int} index The folder position.
-//      * @param {string} parentId The folder parent identifier.
-//      * @param {string} title The folder title.
-//      * @param {int} dateAdded The timestamp of the date added.
-//      * @param {int} lastModified The timestamp of the last modified date.
-//      */
-//     constructor(id, index, parentId, title, dateAdded, lastModified) {
-//         super(id, index, parentId, title, dateAdded, lastModified);
-
-//         this.order = weh.prefs["livemark_sort_order"] || 2;
-//     }
-// }
-
-/**
- * Smart bookmark class.
- */
-// class SmartBookmark extends Bookmark {
-//     /**
-//      * Get an existing smart bookmark.
-//      *
-//      * @param {string} id The folder identifier.
-//      * @param {int} index The folder position.
-//      * @param {string} parentId The folder parent identifier.
-//      * @param {string} title The folder title.
-//      */
-//     constructor(id, index, parentId, title) {
-//         super(id, index, parentId, title);
-
-//         this.order = weh.prefs["smart_bookmark_sort_order"] || 3;
-//     }
-// }
-
-/**
  * Bookmark sorter class.
  */
 class BookmarkSorter {
@@ -442,6 +446,8 @@ class BookmarkSorter {
 
     /**
      * Create a bookmark comparator.
+     * 
+     * @returns {*} The comparator.
      */
     createCompare() {
         let comparator;
@@ -783,9 +789,22 @@ function log(o) {
  * Convert a string to an integer.
  * 
  * @param {string} val String value to convert.
+ * @returns {number}
  */
 function parseInteger(val) {
     return parseInt(val, 10);
+}
+
+/**
+ * Get current preference value or it's default value if not set.
+ * 
+ * @param {string} param Name of preference.
+ * @returns {*} Value or default value of preference.
+ */
+function getPref(param) {
+    let defaultValue = weh.prefs.$specs[param].defaultValue;
+    let value = weh.prefs[param] || defaultValue;
+    return value;
 }
 
 /**
@@ -799,27 +818,25 @@ function sortAllBookmarks() {
  * Sort if the auto sort option is on.
  */
 function sortIfAuto() {
-    // TODO: always sorting until preferences are working
-    sortAllBookmarks();
-    // if (weh.prefs["auto_sort"]) {
-    //     sortAllBookmarks();
-    // }
+    if (getPref("auto_sort")) {
+        sortAllBookmarks();
+    }
 }
 
 /**
  * Adjust the sort criteria of the bookmark sorter.
  */
 function adjustSortCriteria() {
-    let differentFolderOrder = weh.prefs["folder_sort_order"] !== weh.prefs["livemark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["smart_bookmark_sort_order"] && weh.prefs["folder_sort_order"] !== weh.prefs["bookmark_sort_order"];
+    let differentFolderOrder = getPref("folder_sort_order") !== getPref("bookmark_sort_order");
 
-    bookmarkSorter.setCriteria(sortCriterias[weh.prefs["sort_by"]], weh.prefs["inverse"],
-        sortCriterias[parseInteger(weh.prefs["then_sort_by"])] || undefined, weh.prefs["then_inverse"],
-        sortCriterias[parseInteger(weh.prefs["folder_sort_by"])], weh.prefs["folder_inverse"],
-        differentFolderOrder, weh.prefs["case_insensitive"]
+    bookmarkSorter.setCriteria(sortCriterias[getPref("sort_by")], getPref("inverse"),
+        sortCriterias[parseInteger(getPref("then_sort_by"))] || undefined, getPref("then_inverse"),
+        sortCriterias[parseInteger(getPref("folder_sort_by"))], getPref("folder_inverse"),
+        differentFolderOrder, getPref("case_insensitive")
     );
 
-    // TODO: need to only sort when criteria changes, otherwise, this is sorting on startup
-    sortIfAuto();
+    // TODO: need to only sort when criteria is changed, otherwise, this is sorting on startup
+    //sortIfAuto();
 }
 
 /**
@@ -856,17 +873,10 @@ function registerUserEvents() {
 function installOrUpgradePrefs() {
     let local_version = asb.version.local();
 
-    // check if this is a first install
+    // check if this is a first install or upgrade
     if (local_version !== asb.version.current()) {
         if (local_version === undefined) {
-            // first install
             log("First install");
-            for (var param in weh.prefs.getAll()) {
-                let value = weh.prefs.$specs[param].defaultValue;
-                log("param=" + param + ", defaultValue=" + value);
-                weh.prefs[param] = value;
-            }
-            // TODO: save to localStorage
         } else {
             log("Upgrade");
         }
@@ -931,28 +941,6 @@ function installOrUpgradePrefs() {
  */
 // function isRecursivelyExcluded(id) {
 //     return hasDoNotSortAnnotation(id) && hasRecursiveAnnotation(id);
-// }
-
-/**
- * Check whether a livemark.
- *
- * @param {string} id The item ID.
- * @return {*} Whether the item is a livemark or not.
- */
-// function isLivemark(id) {
-//     // TODO: does Livemark exist under chrome?
-//     return false;
-// }
-
-/**
- * Check whether a smart bookmark.
- *
- * @param {string} id The item ID.
- * @return {boolean} Whether the item is a smart bookmark or not.
- */
-// function isSmartBookmark(id) {
-//     // TODO: does SmartBookmark exist under chrome?
-//     return false;
 // }
 
 /**
@@ -1059,19 +1047,9 @@ function createItem(type, id, index, parentId, title, url, lastVisited, accessCo
     let item;
 
     if (type === "bookmark") {
-        // if (isSmartBookmark(id)) {
-        //     item = new SmartBookmark(id, index, parentId, title);
-        // }
-        // else {
         item = new Bookmark(id, index, parentId, title, dateAdded, lastModified, url, lastVisited, accessCount);
-        // }
     } else if (type === "folder") {
-        // if (isLivemark(id)) {
-        //     item = new Livemark(id, index, parentId, title, dateAdded, lastModified);
-        // }
-        // else {
         item = new Folder(id, index, parentId, title, dateAdded, lastModified);
-        // }
     } else if (type === "separator") {
         item = new Separator(id, index, parentId);
     }
@@ -1086,15 +1064,19 @@ function createItem(type, id, index, parentId, title, url, lastVisited, accessCo
  * @return {Item} The new item.
  */
 function createItemFromNode(node) {
-    // chrome doesn't have a type, so we have to guess
+    // FF has a type attribute, but chrome doesn't, so we have to guess
     var nodeType = "bookmark";
-    if (node.url === undefined) {
-        nodeType = "folder";
+    if (node.type !== undefined) {
+        nodeType = node.type;
+    } else {
+        if (node.url === undefined) {
+            nodeType = "folder";
+        } else if (node.url === "data:") {
+            nodeType = "separator";
+        }
     }
 
-    // TODO: need to detect separator
-
-    // TODO: map from MDN to chrome attributes:
+    // TODO: map from FF to chrome attributes:
     // node.time
     // node.accessCount
     // node.dateAdded
@@ -1115,17 +1097,15 @@ function getChildrenFolders(parentId, callback) {
             let folder;
 
             for (let node of o) {
-                // TODO: need to map MDN to chrome: node.dateAdded, node.lastModified
+                // TODO: need to map FF to chrome: node.dateAdded, node.lastModified
                 folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
 
-                // if (!isLivemark(folder.id)) {
                 children.push({
                     id: folder.id,
                     title: folder.title
                     // excluded: hasDoNotSortAnnotation(folder.id),
                     // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
                 });
-                // }
             }
 
             if (typeof (callback) === "function") {
@@ -1262,14 +1242,7 @@ log("main:begin");
 const data = self.data;
 const sortCriterias = [
     "title",
-    "url",
-    "description",
-    "keyword",
-    "dateAdded",
-    "lastModified",
-    "lastVisited",
-    "accessCount",
-    "revurl"
+    "url"
 ];
 
 let toolbarFolder = new Folder(asb.rootID.bookmarks_bar);
