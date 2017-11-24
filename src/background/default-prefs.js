@@ -27,8 +27,8 @@ weh.prefs.declare([{
     name: "delay",
     type: "integer",
     defaultValue: 3,
-    minimum: 1,
-    maximum: 200
+    minimum: 3,
+    maximum: 255
 }, {
     name: "case_insensitive",
     type: "boolean",

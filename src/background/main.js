@@ -19,8 +19,6 @@
 
 /* global weh */
 
-/* exported showConfigureFoldersToExclude */
-
 // =======
 // CLASSES
 // =======
@@ -312,7 +310,7 @@ class Folder extends Bookmark {
                     }
                 }
 
-                if (typeof (callback) === "function") {
+                if (typeof callback === "function") {
                     callback(self, compare);
                 }
             }
@@ -355,7 +353,7 @@ class Folder extends Bookmark {
                     }
 
                     // only return the complete list if this is the top interition
-                    if (isTop && typeof (callback) === "function") {
+                    if (isTop && typeof callback === "function") {
                         callback(self.folders);
                     }
                 }
@@ -666,9 +664,11 @@ class BookmarkSorter {
      * 
      * @param {Folder} folder The folder to sort and save.
      */
-    sortAndSave(folder) {
+    sortAndSave(folder, resolve) {
         if (folder.canBeSorted()) {
-            folder.getChildren(this.sortFolder, this.compare);
+            folder.getChildren(this.sortFolder, this.compare, resolve);
+        } else {
+            resolve();
         }
     }
 
@@ -677,7 +677,7 @@ class BookmarkSorter {
      * 
      * @param {Folder} folder The folder to sort.
      */
-    sortFolder(folder, compare) {
+    sortFolder(folder, compare, resolve) {
         let delta = 0;
         let length;
 
@@ -691,8 +691,12 @@ class BookmarkSorter {
             delta += length + 1;
         }
 
-        log("saving folder: " + folder.title);
+        log("saving folder: " + folder.title + " - " + folder.id);
         folder.save();
+
+        if (typeof resolve === "function") {
+            resolve();
+        }
     }
 
     /**
@@ -707,32 +711,27 @@ class BookmarkSorter {
         let promiseAry = [];
 
         for (let folder of folders) {
+            // create an array of promises
             let p = new Promise((resolve) => {
-                // Not obvious but arg1 = folder
-                setTimeout((function (arg1) {
-                    return function () {
-                        log("sorting folder: " + arg1.title);
-                        self.sortAndSave(arg1);
-                        // return true to indicate that sorting is finished
-                        resolve(true);
-                    };
-                }(folder)), 0);
+                log("folder=" + folder.title);
+                self.sortAndSave(folder, resolve);
+                //resolve();
             });
+
             promiseAry.push(p);
         }
 
-        Promise.all(promiseAry).then(bool => {
-            if (bool) {
-                log("sort:end");
-                self.sorting = false;
-                self.lastCheck = Date.now();
-                // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
-                // TODO: make the delay a user pref
-                setTimeout(function () {
-                    bookmarkManager.createChangeListeners();
-                }, 3000, "Javascript");
-            }
+        Promise.all(promiseAry).then(function () {
+            log("sort:end");
+            self.sorting = false;
+            self.lastCheck = Date.now();
+            // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
+            // TODO: make the delay a user pref
+            setTimeout(function () {
+                bookmarkManager.createChangeListeners();
+            }, 2000, "Javascript");
         });
+
     }
 
     /**
@@ -841,6 +840,30 @@ function adjustSortCriteria() {
         sortCriterias[parseInteger(getPref("folder_sort_by"))], getPref("folder_inverse"),
         differentFolderOrder, getPref("case_insensitive")
     );
+}
+
+/**
+ * Reigster listener for pref changes.
+ */
+function registerPrefListener() {
+    weh.prefs.on("auto_sort", sortIfAuto);
+
+    let preferences = ["folder_sort_order", "bookmark_sort_order"];
+    for (let preference of preferences) {
+        weh.prefs.on(preference, sortIfAuto);
+    }
+
+    weh.prefs.on("case_insensitive", adjustSortCriteria);
+    weh.prefs.on("sort_by", adjustSortCriteria);
+    weh.prefs.on("then_sort_by", adjustSortCriteria);
+    weh.prefs.on("folder_sort_by", adjustSortCriteria);
+    weh.prefs.on("inverse", adjustSortCriteria);
+    weh.prefs.on("then_inverse", adjustSortCriteria);
+    weh.prefs.on("folder_inverse", adjustSortCriteria);
+    weh.prefs.on("folder_sort_order", adjustSortCriteria);
+    weh.prefs.on("bookmark_sort_order", adjustSortCriteria);
+
+    weh.prefs.on("exclude_folders", showConfigureFoldersToExclude(sortIfAuto));
 }
 
 /**
@@ -1119,7 +1142,7 @@ function getChildrenFolders(parentId, callback) {
                 });
             }
 
-            if (typeof (callback) === "function") {
+            if (typeof callback === "function") {
                 callback(children);
             }
         }
@@ -1226,18 +1249,6 @@ function showConfigureFoldersToExclude() {
             },
         });
     };
-}
-
-/**
- * Reigster listener for pref changes.
- */
-function registerPrefListener() {
-    weh.prefs.on("", function () {
-        log("auto_sort=" + getPref("auto_sort"));
-
-        // adjustSortCriteria();
-        // sortIfAuto();
-    });
 }
 
 /**
