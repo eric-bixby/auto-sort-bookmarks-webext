@@ -35,6 +35,7 @@
  * Various settings.
  */
 let asb = {
+    "log": true,
     "rootID": {
         "root": "root________",
         "bookmarks_bar": "toolbar_____",
@@ -79,7 +80,7 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleChanged(id, changeInfo) {
-        log("onChanged id = " + id + " " + changeInfo);
+        log("onChanged: " + id, changeInfo);
         sortIfAuto();
     }
 
@@ -91,7 +92,7 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleCreated(id, bookmark) {
-        log("onCreated id = " + id + " " + bookmark);
+        log("onCreated: " + id, bookmark);
         sortIfAuto();
     }
 
@@ -103,7 +104,7 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleMoved(id, moveInfo) {
-        log("onMoved id = " + id + " " + moveInfo);
+        log("onMoved: " + id, moveInfo);
         sortIfAuto();
     }
 
@@ -115,7 +116,7 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleRemoved(id, removeInfo) {
-        log("onRemoved id = " + id + " " + removeInfo);
+        log("onRemoved: " + id, removeInfo);
         if (removeInfo.node.type === "separator") {
             sortIfAuto();
         }
@@ -127,6 +128,7 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     createChangeListeners() {
+        log("listening for changes");
         browser.bookmarks.onChanged.addListener(this.handleChanged);
         browser.bookmarks.onCreated.addListener(this.handleCreated);
         browser.bookmarks.onMoved.addListener(this.handleMoved);
@@ -139,6 +141,7 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     removeChangeListeners() {
+        log("stopped listening for changes");
         browser.bookmarks.onChanged.removeListener(this.handleChanged);
         browser.bookmarks.onCreated.removeListener(this.handleCreated);
         browser.bookmarks.onMoved.removeListener(this.handleMoved);
@@ -172,7 +175,7 @@ class Item {
      * @memberof Item
      */
     saveIndex() {
-        browser.bookmarks.move(this.id, { index: this.index });
+        return browser.bookmarks.move(this.id, { index: this.index });
     }
 
     /**
@@ -208,7 +211,7 @@ class Bookmark extends Item {
         super(id, index, parentId);
 
         if (title === null || dateAdded === null || lastModified === null || url === null || lastVisited === null || accessCount === null) {
-            log("Corrupted bookmark found. ID: " + id + " - Title: " + title + " - URL: " + url);
+            log("ERROR: Corrupted bookmark found. ID: " + id + " - Title: " + title + " - URL: " + url);
             this.corrupted = true;
         }
 
@@ -290,7 +293,7 @@ class Folder extends Bookmark {
      * @param {*} callback The callback function.
      * @param {*} compare The compare function.
      */
-    getChildren(callback, compare) {
+    getChildren(callback, compare, resolve) {
         this.children = [[]];
         var self = this;
 
@@ -311,8 +314,11 @@ class Folder extends Bookmark {
                 }
 
                 if (typeof callback === "function") {
-                    callback(self, compare);
+                    callback(self, compare, resolve);
                 }
+            } else {
+                log("resolve:noChildren");
+                resolve();
             }
         });
     }
@@ -406,14 +412,27 @@ class Folder extends Bookmark {
     /**
      * Save the new children positions.
      */
-    save() {
+    save(resolve) {
         if (this.hasMove()) {
+            let promiseAry = [];
+
             for (let i = 0; i < this.children.length; ++i) {
                 let length = this.children[i].length;
                 for (let j = 0; j < length; ++j) {
-                    this.children[i][j].saveIndex();
+                    let p = this.children[i][j].saveIndex();
+                    promiseAry.push(p);
                 }
             }
+
+            Promise.all(promiseAry).then(function () {
+                if (typeof resolve === "function") {
+                    log("resolve:saveChildren");
+                    resolve();
+                }
+            });
+        } else {
+            log("resolve:hasNoMove");
+            resolve();
         }
     }
 }
@@ -668,6 +687,7 @@ class BookmarkSorter {
         if (folder.canBeSorted()) {
             folder.getChildren(this.sortFolder, this.compare, resolve);
         } else {
+            log("resolve:canNotBeSorted");
             resolve();
         }
     }
@@ -691,12 +711,7 @@ class BookmarkSorter {
             delta += length + 1;
         }
 
-        log("saving folder: " + folder.title + " - " + folder.id);
-        folder.save();
-
-        if (typeof resolve === "function") {
-            resolve();
-        }
+        folder.save(resolve);
     }
 
     /**
@@ -713,9 +728,8 @@ class BookmarkSorter {
         for (let folder of folders) {
             // create an array of promises
             let p = new Promise((resolve) => {
-                log("folder=" + folder.title);
+                log("folder");
                 self.sortAndSave(folder, resolve);
-                //resolve();
             });
 
             promiseAry.push(p);
@@ -726,10 +740,10 @@ class BookmarkSorter {
             self.sorting = false;
             self.lastCheck = Date.now();
             // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
-            // TODO: make the delay a user pref
+            // TODO: make the delay a user pref or use existing
             setTimeout(function () {
                 bookmarkManager.createChangeListeners();
-            }, 2000, "Javascript");
+            }, 3000, "Javascript");
         });
 
     }
@@ -782,10 +796,17 @@ class BookmarkSorter {
 /**
  * If enabled, send message to console for debugging.
  *
- * @param {string} o Text to display on console.
+ * @param {string} txt Text to display on console.
+ * @param {*} obj Object to display on console.
  */
-function log(o) {
-    console.log(o);
+function log(txt, obj) {
+    if (asb.log) {
+        if (obj !== undefined && window.JSON && window.JSON.stringify) {
+            console.log(txt + " - " + JSON.stringify(obj));
+        } else {
+            console.log(txt);
+        }
+    }
 }
 
 /**
@@ -886,7 +907,7 @@ function registerUserEvents() {
                     sortAllBookmarks();
                     break;
                 default:
-                    log("unknown message: " + message.type);
+                    log("ERROR: Unknown message: " + message.type);
                     break;
             }
         }
