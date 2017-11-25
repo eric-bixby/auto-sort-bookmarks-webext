@@ -17,9 +17,7 @@
 
 "use strict";
 
-/* global weh */
-
-weh.prefs.declare([{
+module.exports = [{
     name: "auto_sort",
     type: "boolean",
     defaultValue: true
@@ -93,4 +91,4 @@ weh.prefs.declare([{
     defaultValue: 2,
     minimum: 1,
     maximum: 2
-}]);
+}];

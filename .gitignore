@@ -5,3 +5,4 @@
 bookmarks*.html
 test-*.txt
 build/**
+build-tmp/**

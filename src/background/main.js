@@ -17,8 +17,6 @@
 
 "use strict";
 
-/* global weh */
-
 // =======
 // CLASSES
 // =======
@@ -35,7 +33,7 @@
  * Various settings.
  */
 let asb = {
-    "log": true,
+    "log": false,
     "rootID": {
         "root": "root________",
         "bookmarks_bar": "toolbar_____",
@@ -518,7 +516,7 @@ class BookmarkSorter {
         }
 
         let firstComparator;
-        if (["title", "url", "revurl", "description", "keyword"].indexOf(BookmarkSorter.prototype.firstSortCriteria) !== -1) {
+        if (["title", "url"].indexOf(BookmarkSorter.prototype.firstSortCriteria) !== -1) {
             firstComparator = function (bookmark1, bookmark2) {
                 addReverseUrls(bookmark1, bookmark2, BookmarkSorter.prototype.firstSortCriteria);
                 return bookmark1[BookmarkSorter.prototype.firstSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.firstSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.firstReverse;
@@ -532,7 +530,7 @@ class BookmarkSorter {
 
         let secondComparator;
         if (BookmarkSorter.prototype.secondSortCriteria !== undefined) {
-            if (["title", "url", "revurl", "description", "keyword"].indexOf(BookmarkSorter.prototype.secondSortCriteria) !== -1) {
+            if (["title", "url"].indexOf(BookmarkSorter.prototype.secondSortCriteria) !== -1) {
                 secondComparator = function (bookmark1, bookmark2) {
                     addReverseUrls(bookmark1, bookmark2, BookmarkSorter.prototype.secondSortCriteria);
                     return bookmark1[BookmarkSorter.prototype.secondSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.secondSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.secondReverse;
@@ -596,6 +594,10 @@ class BookmarkSorter {
      * Sort all bookmarks.
      */
     sortAllBookmarks() {
+        let toolbarFolder = new Folder(asb.rootID.bookmarks_bar);
+        let menuFolder = new Folder(asb.rootID.other_bookmarks);
+        let unsortedFolder = new Folder(asb.rootID.mobile_bookmarks);
+
         let p1 = new Promise((resolve) => {
             let folders = [];
 
@@ -655,16 +657,17 @@ class BookmarkSorter {
     }
 
     /**
-     * Set the sort criteria.
+     * Set sort criteria.
      * 
-     * @param {string} firstSortCriteria The first sort criteria attribute.
-     * @param {boolean} firstReverse Whether the first sort is reversed.
-     * @param {string} secondReverse The second sort criteria attribute.
-     * @param secondSortCriteria
-     * @param folderSortCriteria
-     * @param folderReverse
-     * @param differentFolderOrder
-     * @param caseInsensitive
+     * @param {any} firstSortCriteria 
+     * @param {any} firstReverse 
+     * @param {any} secondSortCriteria 
+     * @param {any} secondReverse 
+     * @param {any} folderSortCriteria 
+     * @param {any} folderReverse 
+     * @param {any} differentFolderOrder 
+     * @param {any} caseInsensitive 
+     * @memberof BookmarkSorter
      */
     setCriteria(firstSortCriteria, firstReverse, secondSortCriteria, secondReverse, folderSortCriteria, folderReverse, differentFolderOrder, caseInsensitive) {
         BookmarkSorter.prototype.firstReverse = firstReverse ? -1 : 1;
@@ -701,8 +704,11 @@ class BookmarkSorter {
         let delta = 0;
         let length;
 
+        // children is an array of arrays where a separator node is used to separate lists
         for (let i = 0; i < folder.children.length; ++i) {
+            // sort each array of nodes
             folder.children[i].sort(compare);
+            // assign new index to each node
             length = folder.children[i].length;
             for (let j = 0; j < length; ++j) {
                 folder.children[i][j].setIndex(j + delta);
@@ -711,6 +717,7 @@ class BookmarkSorter {
             delta += length + 1;
         }
 
+        // move nodes based on new index
         folder.save(resolve);
     }
 
@@ -856,7 +863,7 @@ function sortIfAuto() {
 function adjustSortCriteria() {
     let differentFolderOrder = getPref("folder_sort_order") !== getPref("bookmark_sort_order");
 
-    bookmarkSorter.setCriteria(sortCriterias[getPref("sort_by")], getPref("inverse"),
+    bookmarkSorter.setCriteria(sortCriterias[parseInteger(getPref("sort_by"))], getPref("inverse"),
         sortCriterias[parseInteger(getPref("then_sort_by"))] || undefined, getPref("then_inverse"),
         sortCriterias[parseInteger(getPref("folder_sort_by"))], getPref("folder_inverse"),
         differentFolderOrder, getPref("case_insensitive")
@@ -1294,15 +1301,14 @@ function showConfigureFoldersToExclude() {
 
 log("main:begin");
 
+var weh = require('weh-background');
+weh.prefs.declare(require('default-prefs'));
+
 const data = self.data;
 const sortCriterias = [
     "title",
     "url"
 ];
-
-let toolbarFolder = new Folder(asb.rootID.bookmarks_bar);
-let menuFolder = new Folder(asb.rootID.other_bookmarks);
-let unsortedFolder = new Folder(asb.rootID.mobile_bookmarks);
 
 var bookmarkSorter = new BookmarkSorter();
 
