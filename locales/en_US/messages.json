@@ -71,9 +71,6 @@
   "settings": {
     "message": "Settings"
   },
-  "version": {
-    "message": "Version:"
-  },
   "sort": {
     "message": "Sort"
   },

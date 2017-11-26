@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-"use strict";
+import React from 'react';
+import { render } from 'react-dom';
+
+import weh from 'weh-content';
 
 class Link extends React.Component {
 
@@ -25,23 +28,21 @@ class Link extends React.Component {
     }
 
     handleClick() {
-        weh.post({
-            type: this.props.messageType
-        });
+        weh.rpc.call(this.props.messageCall);
     }
 
     render() {
         return (
-            <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
+            <a onClick={this.handleClick}>{weh._(this.props.label)}</a>
         )
     }
 }
 
-ReactDOM.render(
-    <div>
+render(
+    <div className="asb-popup">
         <div className="asb-toolbar">
-            <Link messageType={"sort"} label={"sort"} />
-            <Link messageType={"open-settings"} label={"settings"} />
+            <Link messageCall={"sort"} label={"sort"} />
+            <Link messageCall={"openSettings"} label={"settings"} />
         </div>
     </div>,
     document.getElementById('root')

@@ -15,25 +15,88 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-"use strict";
+import React from 'react'
+import { render } from 'react-dom'
+import { Provider } from 'react-redux'
+import { applyMiddleware, createStore, combineReducers } from 'redux'
+import {
+    reducer as prefsSettingsReducer,
+    App as PrefsSettingsApp,
+    WehParam,
+    WehPrefsControls,
+    listenPrefs
+} from 'react/weh-prefs-settings'
+import logger from 'redux-logger'
+import WehHeader from 'react/weh-header';
 
-function Prefs() {
+import weh from 'weh-content';
+
+import bootstrapStyles from 'bootstrap/dist/css/bootstrap.css'
+
+let reducers = combineReducers({
+    prefs: prefsSettingsReducer,
+});
+let store = createStore(reducers, applyMiddleware(logger));
+
+listenPrefs(store);
+
+function RenderControls() {
     return (
-        <WehParams>
-            <WehVersion />
-            <WehParamSet wehPrefs={["auto_sort", "delay", "folder_delay", "case_insensitive", "sort_by", "inverse", "then_sort_by", "then_inverse", "folder_sort_by", "folder_inverse", "folder_sort_order", "livemark_sort_order", "smart_bookmark_sort_order", "bookmark_sort_order"]}>
-                <WehParam />
-            </WehParamSet>
-        </WehParams>
+        <div className="btn-toolbar justify-content-between">
+            <button type="button"
+                className="btn btn-default pull-left">
+                Disabled
+            </button>
+            <div className="btn-group pull-right">
+                <button type="button"
+                    onClick={this.props.cancel}
+                    className={"btn btn-default " + (this.props.flags.isModified ? "" : "disabled")}>
+                    {weh._("cancel")}
+                </button>
+                <button type="button"
+                    onClick={this.props.reset}
+                    className={"btn btn-warning " + (!this.props.flags.isDefault ? "" : "disabled")}>
+                    {weh._("default")}
+                </button>
+                <button type="button"
+                    onClick={this.props.save}
+                    className={"btn btn-primary " + (this.props.flags.isModified && this.props.flags.isValid ? "" : "disabled")}>
+                    {weh._("save")}
+                </button>
+            </div>
+        </div>
     )
 }
 
-ReactDOM.render(
-    <div>
-        <h1 className="text-center">{weh._("title")} :: {weh._("settings")}</h1>
-        <br />
-        <Prefs />
-    </div>,
+render(
+    <Provider store={store}>
+        <PrefsSettingsApp>
+            <WehHeader />
+            <main>
+                <div className="container">
+                    <section>
+                        <WehParam prefName="auto_sort" />
+                        <WehParam prefName="delay" />
+                        <WehParam prefName="folder_delay" />
+                        <WehParam prefName="case_insensitive" />
+                        <WehParam prefName="sort_by" />
+                        <WehParam prefName="inverse" />
+                        <WehParam prefName="then_sort_by" />
+                        <WehParam prefName="then_inverse" />
+                        <WehParam prefName="folder_sort_by" />
+                        <WehParam prefName="folder_inverse" />
+                        <WehParam prefName="folder_sort_order" />
+                        <WehParam prefName="livemark_sort_order" />
+                        <WehParam prefName="smart_bookmark_sort_order" />
+                        <WehParam prefName="bookmark_sort_order" />
+                    </section>
+                </div>
+            </main>
+            <footer>
+                <WehPrefsControls render={RenderControls} />
+            </footer>
+        </PrefsSettingsApp>
+    </Provider>,
     document.getElementById('root')
 )
 

@@ -16,7 +16,7 @@
     "default_icon": {
       "40": "content/images/icon-40.png"
     },
-    "default_popup": "content/popup.html",
+    "default_popup": "content/popup.html?panel=main",
     "default_title": "Auto-Sort Bookmarks"
   },
   "default_locale": "en_US",

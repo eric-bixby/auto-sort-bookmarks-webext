@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-"use strict";
-
 // =======
 // CLASSES
 // =======
@@ -898,34 +896,18 @@ function registerPrefListener() {
  * Register user events.
  */
 function registerUserEvents() {
-    /*
-    * Popup panel that opens from a toolbar button.
-    */
-    weh.ui.update("default", {
-        type: "popup",
-        onMessage: function (message) {
-            switch (message.type) {
-                case "open-settings":
-                    weh.ui.close("default");
-                    weh.ui.open("settings");
-                    break;
-                case "sort":
-                    weh.ui.close("default");
-                    sortAllBookmarks();
-                    break;
-                default:
-                    log("ERROR: Unknown message: " + message.type);
-                    break;
-            }
-        }
-    });
-
-    /*
-    * Tab for settings.
-    */
-    weh.ui.update("settings", {
-        type: "tab",
-        contentURL: "content/settings.html"
+    weh.rpc.listen({
+        openSettings: () => {
+            weh.ui.open("settings", {
+                type: "tab",
+                url: "content/settings.html"
+            });
+            weh.ui.close("main");
+        },
+        sort: () => {
+            sortAllBookmarks();
+            weh.ui.close("main");
+        },
     });
 }
 
@@ -1302,6 +1284,7 @@ function showConfigureFoldersToExclude() {
 log("main:begin");
 
 var weh = require('weh-background');
+
 weh.prefs.declare(require('default-prefs'));
 
 const data = self.data;
