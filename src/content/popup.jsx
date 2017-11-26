@@ -33,7 +33,7 @@ class Link extends React.Component {
 
     render() {
         return (
-            <a onClick={this.handleClick}>{weh._(this.props.label)}</a>
+            <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
         )
     }
 }

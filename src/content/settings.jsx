@@ -45,7 +45,7 @@ function RenderControls() {
         <div className="btn-toolbar justify-content-between">
             <button type="button"
                 className="btn btn-default pull-left">
-                Disabled
+                Translation (TBD)
             </button>
             <div className="btn-group pull-right">
                 <button type="button"
