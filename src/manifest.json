@@ -2,13 +2,12 @@
   "applications": {
     "gecko": {
       "id": "sortbookmarks@bouanto",
-      "strict_min_version": "52.0"
+      "strict_min_version": "57.0"
     }
   },
   "author": "Antoni Boucher",
   "background": {
     "scripts": [
-      "background/default-prefs.js",
       "background/main.js"
     ]
   },
@@ -17,7 +16,8 @@
       "40": "content/images/icon-40.png"
     },
     "default_popup": "content/popup.html?panel=main",
-    "default_title": "Auto-Sort Bookmarks"
+    "default_title": "Auto-Sort Bookmarks",
+    "browser_style": true
   },
   "default_locale": "en_US",
   "description": "Sort bookmarks by multiple criteria.",
@@ -32,12 +32,12 @@
   "name": "Auto-Sort Bookmarks",
   "options_ui": {
     "open_in_tab": true,
-    "page": "content/settings.html?panel=settings"
+    "page": "content/settings.html?panel=settings",
+    "browser_style": true
   },
   "permissions": [
     "bookmarks",
     "tabs"
   ],
-  "version": "3.0",
-  "version_name": "3.0beta6"
+  "version": "3.0"
 }
