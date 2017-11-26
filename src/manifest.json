@@ -5,7 +5,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "author": "Antoni Boucher",
+  "author": "Eric Bixby",
   "background": {
     "scripts": [
       "background/main.js"
