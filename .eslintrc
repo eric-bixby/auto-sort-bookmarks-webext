@@ -5,7 +5,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "webextensions": true
+    "webextensions": true,
+    "amd": true
   },
   "extends": "eslint:recommended",
   "rules": {

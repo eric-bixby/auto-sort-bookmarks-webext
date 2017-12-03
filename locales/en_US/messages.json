@@ -6,10 +6,10 @@
     "message": "If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
   },
   "weh_prefs_label_delay": {
-    "message": "Auto-sort Delay:"
+    "message": "Inactivity Wait:"
   },
   "weh_prefs_description_delay": {
-    "message": "Specifies a delay (in seconds) before automatically sorting bookmarks. Minimum value of 3 and maximum of 255."
+    "message": "Specifies how long to wait (in seconds) for inactivity before sorting bookmarks. This applies to automatic and manual sorting. Minimum value of 3 and maximum of 255."
   },
   "weh_prefs_label_case_insensitive": {
     "message": "Case Insensitive:"

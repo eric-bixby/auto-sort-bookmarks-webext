@@ -2,7 +2,7 @@
   "applications": {
     "gecko": {
       "id": "sortbookmarks@bouanto",
-      "strict_min_version": "57.0"
+      "strict_min_version": "52.0"
     }
   },
   "author": "Eric Bixby",
@@ -37,7 +37,8 @@
   },
   "permissions": [
     "bookmarks",
+    "history",
     "tabs"
   ],
-  "version": "3.0"
+  "version": "3.1"
 }

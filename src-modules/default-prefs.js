@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* global module */
+
 module.exports = [{
     name: "auto_sort",
     type: "boolean",
@@ -32,13 +34,34 @@ module.exports = [{
 }, {
     name: "sort_by",
     type: "choice",
-    defaultValue: "0",
+    defaultValue: "title",
     choices: [{
-        name: "Name",
-        value: "0"
+        name: "Title",
+        value: "title"
     }, {
         name: "URL",
-        value: "1"
+        value: "url"
+    }, {
+        name: "Description",
+        value: "description"
+    }, {
+        name: "Keyword",
+        value: "keyword"
+    }, {
+        name: "Date Added",
+        value: "dateAdded"
+    }, {
+        name: "Last Modified",
+        value: "lastModified"
+    }, {
+        name: "Last Visited",
+        value: "lastVisited"
+    }, {
+        name: "Access Count",
+        value: "accessCount"
+    }, {
+        name: "Reverse URL",
+        value: "revurl"
     }]
 }, {
     name: "inverse",
@@ -47,16 +70,37 @@ module.exports = [{
 }, {
     name: "then_sort_by",
     type: "choice",
-    defaultValue: "-1",
+    defaultValue: "none",
     choices: [{
         name: "None",
-        value: "-1"
+        value: "none"
     }, {
-        name: "Name",
-        value: "0"
+        name: "Title",
+        value: "title"
     }, {
         name: "URL",
-        value: "1"
+        value: "url"
+    }, {
+        name: "Description",
+        value: "description"
+    }, {
+        name: "Keyword",
+        value: "keyword"
+    }, {
+        name: "Date Added",
+        value: "dateAdded"
+    }, {
+        name: "Last Modified",
+        value: "lastModified"
+    }, {
+        name: "Last Visited",
+        value: "lastVisited"
+    }, {
+        name: "Access Count",
+        value: "accessCount"
+    }, {
+        name: "Reverse URL",
+        value: "revurl"
     }]
 }, {
     name: "then_inverse",
@@ -65,13 +109,13 @@ module.exports = [{
 }, {
     name: "folder_sort_by",
     type: "choice",
-    defaultValue: "0",
+    defaultValue: "title",
     choices: [{
         name: "None",
-        value: "-1"
+        value: "none"
     }, {
-        name: "Name",
-        value: "0"
+        name: "Title",
+        value: "title"
     }]
 }, {
     name: "folder_inverse",

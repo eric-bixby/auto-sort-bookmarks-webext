@@ -32,12 +32,13 @@
  */
 let asb = {
     "log": false,
-    "rootID": {
-        "root": "root________",
-        "bookmarks_bar": "toolbar_____",
-        "other_bookmarks": "menu________",
-        "mobile_bookmarks": "mobile______"
-    },
+    "rootID": "root________",
+    "rootFolders": [
+        "toolbar_____",
+        "menu________",
+        "mobile______",
+        "unfiled_____"
+    ],
     "version": {
         "current": function () {
             var manifest = browser.runtime.getManifest();
@@ -76,7 +77,8 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleChanged(id, changeInfo) {
-        log("onChanged: " + id, changeInfo);
+        log("onChanged: " + id);
+        log(changeInfo);
         sortIfAuto();
     }
 
@@ -88,7 +90,8 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleCreated(id, bookmark) {
-        log("onCreated: " + id, bookmark);
+        log("onCreated: " + id);
+        log(bookmark);
         sortIfAuto();
     }
 
@@ -100,7 +103,8 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleMoved(id, moveInfo) {
-        log("onMoved: " + id, moveInfo);
+        log("onMoved: " + id);
+        log(moveInfo);
         sortIfAuto();
     }
 
@@ -112,36 +116,53 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     handleRemoved(id, removeInfo) {
-        log("onRemoved: " + id, removeInfo);
-        if (removeInfo.node.type === "separator") {
+        log("onRemoved: " + id);
+        log(removeInfo);
+        if (getNodeType(removeInfo.node) === "separator") {
             sortIfAuto();
         }
     }
 
     /**
-     * Create bookmark change listeners.
+     * Visited event handler.
+     * 
+     * @param {any} historyItem 
+     * @memberof BookmarkManager
+     */
+    handleVisited(historyItem) {
+        log("onVisited");
+        log(historyItem);
+        if (!historyItem.url.startsWith("moz-extension:")) {
+            sortIfAuto();
+        }
+    }
+
+    /**
+     * Add listeners.
      * 
      * @memberof BookmarkManager
      */
     createChangeListeners() {
-        log("listening for changes");
         browser.bookmarks.onChanged.addListener(this.handleChanged);
         browser.bookmarks.onCreated.addListener(this.handleCreated);
         browser.bookmarks.onMoved.addListener(this.handleMoved);
         browser.bookmarks.onRemoved.addListener(this.handleRemoved);
+        browser.history.onVisited.addListener(this.handleVisited);
+        log("added listeners");
     }
 
     /**
-     * Remove bookmark change listeners.
+     * Remove listeners.
      * 
      * @memberof BookmarkManager
      */
     removeChangeListeners() {
-        log("stopped listening for changes");
         browser.bookmarks.onChanged.removeListener(this.handleChanged);
         browser.bookmarks.onCreated.removeListener(this.handleCreated);
         browser.bookmarks.onMoved.removeListener(this.handleMoved);
         browser.bookmarks.onRemoved.removeListener(this.handleRemoved);
+        browser.history.onVisited.removeListener(this.handleVisited);
+        log("removed listeners");
     }
 }
 
@@ -295,25 +316,51 @@ class Folder extends Bookmark {
 
         browser.bookmarks.getChildren(this.id, function (o) {
             if (o !== undefined) {
-                let index = 0;
+                let promiseAry = [];
 
                 for (let node of o) {
-                    let item = createItemFromNode(node);
-                    if (item instanceof Separator) {
-                        // create sub-array to store nodes after separator
-                        self.children.push([]);
-                        ++index;
-                    }
-                    else if (item !== undefined) {
-                        self.children[index].push(item);
+                    node.type = getNodeType(node);
+                    if (node.type === "bookmark") {
+                        // history.getVisits() is faster than history.search() because
+                        // history.search() checks title and url, plus does not match url exactly, so it takes longer.
+                        var p = browser.history.getVisits({
+                            url: node.url
+                        });
+                        promiseAry.push(p);
+                    } else {
+                        promiseAry.push(Promise.resolve());
                     }
                 }
 
-                if (typeof callback === "function") {
-                    callback(self, compare, resolve);
-                }
+                Promise.all(promiseAry).then(values => {
+                    // populate nodes with visit information
+                    for (var i = 0; i < values.length; i++) {
+                        if (values[i] !== undefined && values[i].length > 0) {
+                            o[i].accessCount = values[i].length;
+                            o[i].lastVisited = values[i][0].visitTime;
+                        }
+                    }
+
+                    let index = 0;
+
+                    for (let node of o) {
+                        let item = createItemFromNode(node);
+                        if (item instanceof Separator) {
+                            // create sub-array to store nodes after separator
+                            self.children.push([]);
+                            ++index;
+                        }
+                        else if (item !== undefined) {
+                            self.children[index].push(item);
+                        }
+                    }
+
+                    if (typeof callback === "function") {
+                        callback(self, compare, resolve);
+                    }
+                });
+
             } else {
-                log("resolve:noChildren");
                 resolve();
             }
         });
@@ -343,8 +390,7 @@ class Folder extends Bookmark {
                     for (let node of o) {
                         // if (!isRecursivelyExcluded(node.id)) {
                         if (node.url === undefined) {
-                            // TODO: get chrome equivilant of node.dateAdded, node.lastModified
-                            folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
+                            folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, 0);
                             if (self.id === node.id) {
                                 isTop = true;
                             }
@@ -384,7 +430,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.parentId === asb.rootID.root;
+        return this.parentId === asb.rootID;
     }
 
     /**
@@ -422,12 +468,10 @@ class Folder extends Bookmark {
 
             Promise.all(promiseAry).then(function () {
                 if (typeof resolve === "function") {
-                    log("resolve:saveChildren");
                     resolve();
                 }
             });
         } else {
-            log("resolve:hasNoMove");
             resolve();
         }
     }
@@ -514,50 +558,56 @@ class BookmarkSorter {
         }
 
         let firstComparator;
-        if (["title", "url"].indexOf(BookmarkSorter.prototype.firstSortCriteria) !== -1) {
+        if (["title", "url", "revurl", "description", "keyword"].indexOf(BookmarkSorter.prototype.firstSortCriteria) !== -1) {
             firstComparator = function (bookmark1, bookmark2) {
                 addReverseUrls(bookmark1, bookmark2, BookmarkSorter.prototype.firstSortCriteria);
                 return bookmark1[BookmarkSorter.prototype.firstSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.firstSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.firstReverse;
             };
         }
         else {
+            // sort numerically: dateAdded, lastModified, accessCount, lastVisited
             firstComparator = function (bookmark1, bookmark2) {
                 return (bookmark1[BookmarkSorter.prototype.firstSortCriteria] - bookmark2[BookmarkSorter.prototype.firstSortCriteria]) * BookmarkSorter.prototype.firstReverse;
             };
         }
 
         let secondComparator;
-        if (BookmarkSorter.prototype.secondSortCriteria !== undefined) {
-            if (["title", "url"].indexOf(BookmarkSorter.prototype.secondSortCriteria) !== -1) {
+        if (BookmarkSorter.prototype.secondSortCriteria !== undefined && BookmarkSorter.prototype.secondSortCriteria !== "none") {
+            if (["title", "url", "revurl", "description", "keyword"].indexOf(BookmarkSorter.prototype.secondSortCriteria) !== -1) {
                 secondComparator = function (bookmark1, bookmark2) {
                     addReverseUrls(bookmark1, bookmark2, BookmarkSorter.prototype.secondSortCriteria);
                     return bookmark1[BookmarkSorter.prototype.secondSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.secondSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.secondReverse;
                 };
             }
             else {
+                // sort numerically: dateAdded, lastModified, accessCount, lastVisited
                 secondComparator = function (bookmark1, bookmark2) {
                     return (bookmark1[BookmarkSorter.prototype.secondSortCriteria] - bookmark2[BookmarkSorter.prototype.secondSortCriteria]) * BookmarkSorter.prototype.secondReverse;
                 };
             }
         }
         else {
+            // no sorting
             secondComparator = function () {
                 return 0;
             };
         }
 
+        // combine the first and second comparators
         let itemComparator = function (bookmark1, bookmark2) {
             return firstComparator(bookmark1, bookmark2) || secondComparator(bookmark1, bookmark2);
         };
 
         if (BookmarkSorter.prototype.differentFolderOrder) {
-            if (BookmarkSorter.prototype.folderSortCriteria !== undefined) {
+            if (BookmarkSorter.prototype.folderSortCriteria !== undefined && BookmarkSorter.prototype.folderSortCriteria !== "none") {
+                // sort folders, then sort bookmarks
                 comparator = function (bookmark1, bookmark2) {
                     if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
                         if (["title", "description"].indexOf(BookmarkSorter.prototype.folderSortCriteria) !== -1) {
                             return bookmark1[BookmarkSorter.prototype.folderSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.folderSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.folderReverse;
                         }
 
+                        // numeric sort
                         return (bookmark1[BookmarkSorter.prototype.folderSortCriteria] - bookmark2[BookmarkSorter.prototype.folderSortCriteria]) * BookmarkSorter.prototype.folderReverse;
                     }
 
@@ -565,6 +615,7 @@ class BookmarkSorter {
                 };
             }
             else {
+                // no sorting
                 comparator = function (bookmark1, bookmark2) {
                     if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
                         return 0;
@@ -575,6 +626,7 @@ class BookmarkSorter {
             }
         }
         else {
+            // sort bookmarks and folders with same order
             comparator = itemComparator;
         }
 
@@ -592,62 +644,32 @@ class BookmarkSorter {
      * Sort all bookmarks.
      */
     sortAllBookmarks() {
-        let toolbarFolder = new Folder(asb.rootID.bookmarks_bar);
-        let menuFolder = new Folder(asb.rootID.other_bookmarks);
-        let unsortedFolder = new Folder(asb.rootID.mobile_bookmarks);
+        let promiseAry = [];
 
-        let p1 = new Promise((resolve) => {
-            let folders = [];
+        for (let id of asb.rootFolders) {
+            let folder = new Folder(id);
 
-            // if (!isRecursivelyExcluded(menuFolder.id)) {
-            folders.push(menuFolder);
+            let p = new Promise((resolve) => {
+                let folders = [];
 
-            menuFolder.getFolders(function (subfolders) {
-                for (let f of subfolders) {
-                    folders.push(f);
-                }
-                resolve(folders);
+                // if (!isRecursivelyExcluded(id)) {
+                folders.push(folder);
+
+                folder.getFolders(function (subfolders) {
+                    for (let f of subfolders) {
+                        folders.push(f);
+                    }
+                    resolve(folders);
+                });
+                // } else {
+                //     resolve(folders);
+                // }
             });
-            // } else {
-            //     resolve(folders);
-            // }
-        });
 
-        let p2 = new Promise((resolve) => {
-            let folders = [];
+            promiseAry.push(p);
+        }
 
-            // if (!isRecursivelyExcluded(toolbarFolder.id)) {
-            folders.push(toolbarFolder);
-
-            toolbarFolder.getFolders(function (subfolders) {
-                for (let f of subfolders) {
-                    folders.push(f);
-                }
-                resolve(folders);
-            });
-            // } else {
-            //     resolve(folders);
-            // }
-        });
-
-        let p3 = new Promise((resolve) => {
-            let folders = [];
-
-            // if (!isRecursivelyExcluded(unsortedFolder.id)) {
-            folders.push(unsortedFolder);
-
-            unsortedFolder.getFolders(function (subfolders) {
-                for (let f of subfolders) {
-                    folders.push(f);
-                }
-                resolve(folders);
-            });
-            // } else {
-            //     resolve(folders);
-            // }
-        });
-
-        Promise.all([p1, p2, p3]).then(folders => {
+        Promise.all(promiseAry).then(folders => {
             // Flatten array of arrays into array
             let merged = [].concat.apply([], folders);
             this.sortFolders(merged);
@@ -688,7 +710,6 @@ class BookmarkSorter {
         if (folder.canBeSorted()) {
             folder.getChildren(this.sortFolder, this.compare, resolve);
         } else {
-            log("resolve:canNotBeSorted");
             resolve();
         }
     }
@@ -733,7 +754,6 @@ class BookmarkSorter {
         for (let folder of folders) {
             // create an array of promises
             let p = new Promise((resolve) => {
-                log("folder");
                 self.sortAndSave(folder, resolve);
             });
 
@@ -802,15 +822,13 @@ class BookmarkSorter {
  * If enabled, send message to console for debugging.
  *
  * @param {string} txt Text to display on console.
- * @param {*} obj Object to display on console.
  */
-function log(txt, obj) {
+function log(txt) {
     if (asb.log) {
-        if (obj !== undefined && window.JSON && window.JSON.stringify) {
-            console.log(txt + " - " + JSON.stringify(obj));
-        } else {
-            console.log(txt);
-        }
+        console.log(txt);
+        // if (obj !== undefined && window.JSON && window.JSON.stringify) {
+        //     console.log(JSON.stringify(obj));
+        // }
     }
 }
 
@@ -836,6 +854,7 @@ function getPref(param) {
     if (value === undefined) {
         value = defaultValue;
     }
+    // log("pref " + param + " = " + value);
     return value;
 }
 
@@ -861,10 +880,15 @@ function sortIfAuto() {
 function adjustSortCriteria() {
     let differentFolderOrder = getPref("folder_sort_order") !== getPref("bookmark_sort_order");
 
-    bookmarkSorter.setCriteria(sortCriterias[parseInteger(getPref("sort_by"))], getPref("inverse"),
-        sortCriterias[parseInteger(getPref("then_sort_by"))] || undefined, getPref("then_inverse"),
-        sortCriterias[parseInteger(getPref("folder_sort_by"))], getPref("folder_inverse"),
-        differentFolderOrder, getPref("case_insensitive")
+    bookmarkSorter.setCriteria(
+        getPref("sort_by"),
+        getPref("inverse"),
+        getPref("then_sort_by"),
+        getPref("then_inverse"),
+        getPref("folder_sort_by"),
+        getPref("folder_inverse"),
+        differentFolderOrder,
+        getPref("case_insensitive")
     );
 }
 
@@ -889,7 +913,7 @@ function registerPrefListener() {
     weh.prefs.on("folder_sort_order", adjustSortCriteria);
     weh.prefs.on("bookmark_sort_order", adjustSortCriteria);
 
-    weh.prefs.on("exclude_folders", showConfigureFoldersToExclude(sortIfAuto));
+    // weh.prefs.on("exclude_folders", showConfigureFoldersToExclude(sortIfAuto));
 }
 
 /**
@@ -921,8 +945,10 @@ function installOrUpgradePrefs() {
     if (local_version !== asb.version.current()) {
         if (local_version === undefined) {
             log("First install");
+            // do nothing
         } else {
             log("Upgrade");
+            localStorage.removeItem("weh-prefs");
         }
 
         // update the localStorage version for next time
@@ -1108,24 +1134,29 @@ function createItem(type, id, index, parentId, title, url, lastVisited, accessCo
  * @return {Item} The new item.
  */
 function createItemFromNode(node) {
-    // FF has a type attribute, but chrome doesn't, so we have to guess
-    var nodeType = "bookmark";
+    //log(node);
+    return createItem(node.type, node.id, node.index, node.parentId, node.title, node.url, node.lastVisited, node.accessCount, node.dateAdded, node.dateGroupModified);
+}
+
+/**
+ * Get the type of node.
+ * 
+ * @param {any} node 
+ * @returns 
+ */
+function getNodeType(node) {
+    let type = "bookmark";
     if (node.type !== undefined) {
-        nodeType = node.type;
+        type = node.type;
     } else {
         if (node.url === undefined) {
-            nodeType = "folder";
+            type = "folder";
         } else if (node.url === "data:") {
-            nodeType = "separator";
+            type = "separator";
         }
     }
-
-    // TODO: map from FF to chrome attributes:
-    // node.time
-    // node.accessCount
-    // node.dateAdded
-    // node.lastModified
-    return createItem(nodeType, node.id, node.index, node.parentId, node.title, node.url, node.time, node.accessCount, node.dateAdded, node.lastModified);
+    log("node.type=" + type);
+    return type;
 }
 
 /**
@@ -1134,148 +1165,131 @@ function createItemFromNode(node) {
  * @param {string} parentId The parent ID.
  * @return {Array}
  */
-function getChildrenFolders(parentId, callback) {
-    browser.bookmarks.getChildren(parentId, function (o) {
-        if (o !== undefined) {
-            let children = [];
-            let folder;
+// function getChildrenFolders(parentId, callback) {
+//     browser.bookmarks.getChildren(parentId, function (o) {
+//         if (o !== undefined) {
+//             let children = [];
+//             let folder;
 
-            for (let node of o) {
-                // TODO: need to map FF to chrome: node.dateAdded, node.lastModified
-                folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, node.lastModified);
+//             for (let node of o) {
+//                 folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, 0);
 
-                children.push({
-                    id: folder.id,
-                    title: folder.title
-                    // excluded: hasDoNotSortAnnotation(folder.id),
-                    // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-                });
-            }
+//                 children.push({
+//                     id: folder.id,
+//                     title: folder.title
+//                     // excluded: hasDoNotSortAnnotation(folder.id),
+//                     // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
+//                 });
+//             }
 
-            if (typeof callback === "function") {
-                callback(children);
-            }
-        }
-    });
-}
+//             if (typeof callback === "function") {
+//                 callback(children);
+//             }
+//         }
+//     });
+// }
 
 /**
  * Get the root folders.
  * 
  * @return {Array}
  */
-function getRootFolders() {
-    let folders = [];
-    for (let folder of [menuFolder, toolbarFolder, unsortedFolder]) {
-        folders.push({
-            id: folder.id,
-            title: folder.title
-            // excluded: hasDoNotSortAnnotation(folder.id),
-            // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-        });
-    }
+// function getRootFolders() {
+//     let folders = [];
+//     for (let folder of [menuFolder, toolbarFolder, unsortedFolder]) {
+//         folders.push({
+//             id: folder.id,
+//             title: folder.title
+//             // excluded: hasDoNotSortAnnotation(folder.id),
+//             // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
+//         });
+//     }
 
-    // TODO: do these need to be translated into other languages?
-    // folders[0].title = "Bookmarks Menu";
-    // folders[1].title = "Bookmarks Toolbar";
-    // folders[2].title = "Unsorted Bookmarks";
+//     // TODO: do these need to be translated into other languages?
+//     // folders[0].title = "Bookmarks Menu";
+//     // folders[1].title = "Bookmarks Toolbar";
+//     // folders[2].title = "Unsorted Bookmarks";
 
-    return folders;
-}
+//     return folders;
+// }
 
 /**
  * Show the page to configure the folders to exclude.
  */
-function showConfigureFoldersToExclude() {
-    return function () {
-        /**
-         * Send children.
-         * @param worker
-         * @returns {Function}
-         */
-        function sendChildren(worker) {
-            return function (parentId) {
-                getChildrenFolders(parentId, function (children) {
-                    worker.port.emit("children", parentId, children);
-                });
-            };
-        }
+// function showConfigureFoldersToExclude() {
+//     return function () {
+//         /**
+//          * Send children.
+//          * @param worker
+//          * @returns {Function}
+//          */
+//         function sendChildren(worker) {
+//             return function (parentId) {
+//                 getChildrenFolders(parentId, function (children) {
+//                     worker.port.emit("children", parentId, children);
+//                 });
+//             };
+//         }
 
-        let worker;
+//         let worker;
 
-        /**
-         * Handle onRemove event.
-         * @param item
-         */
-        // function onRemove(item) {
-        //     if (worker && item instanceof Folder) {
-        //         worker.port.emit("remove-folder", item.id);
-        //     }
-        // }
+//         /**
+//          * Handle onRemove event.
+//          * @param item
+//          */
+//         // function onRemove(item) {
+//         //     if (worker && item instanceof Folder) {
+//         //         worker.port.emit("remove-folder", item.id);
+//         //     }
+//         // }
 
-        // bookmarkManager.on("remove", onRemove);
+//         // bookmarkManager.on("remove", onRemove);
 
-        browser.tabs.open({
-            url: data.url("configureFolders.html"),
-            onOpen: function (tab) {
-                tab.on("ready", function () {
-                    worker = tab.attach({
-                        contentScriptFile: data.url("configureFolders.js")
-                    });
+//         browser.tabs.open({
+//             url: data.url("configureFolders.html"),
+//             onOpen: function (tab) {
+//                 tab.on("ready", function () {
+//                     worker = tab.attach({
+//                         contentScriptFile: data.url("configureFolders.js")
+//                     });
 
-                    // worker.port.on("sort-checkbox-change", function (folderID, activated) {
-                    //     if (activated) {
-                    //         removeDoNotSortAnnotation(folderID);
-                    //     }
-                    //     else {
-                    //         setDoNotSortAnnotation(folderID);
-                    //     }
-                    // });
+//                     // worker.port.on("sort-checkbox-change", function (folderID, activated) {
+//                     //     if (activated) {
+//                     //         removeDoNotSortAnnotation(folderID);
+//                     //     }
+//                     //     else {
+//                     //         setDoNotSortAnnotation(folderID);
+//                     //     }
+//                     // });
 
-                    // worker.port.on("recursive-checkbox-change", function (folderID, activated) {
-                    //     if (activated) {
-                    //         setRecursiveAnnotation(folderID);
-                    //     }
-                    //     else {
-                    //         removeRecursiveAnnotation(folderID);
-                    //     }
-                    // });
+//                     // worker.port.on("recursive-checkbox-change", function (folderID, activated) {
+//                     //     if (activated) {
+//                     //         setRecursiveAnnotation(folderID);
+//                     //     }
+//                     //     else {
+//                     //         removeRecursiveAnnotation(folderID);
+//                     //     }
+//                     // });
 
-                    worker.port.on("query-children", sendChildren(worker));
+//                     worker.port.on("query-children", sendChildren(worker));
 
-                    const texts = {
-                        recursiveText: "Recursive",
-                        messageText: "The sub-folders are recursively excluded.",
-                        loadingText: "Loading...",
-                    };
+//                     const texts = {
+//                         recursiveText: "Recursive",
+//                         messageText: "The sub-folders are recursively excluded.",
+//                         loadingText: "Loading...",
+//                     };
 
-                    worker.port.emit("init", getRootFolders(), data.url("add.png"), data.url("remove.png"), texts);
-                });
-            },
+//                     worker.port.emit("init", getRootFolders(), data.url("add.png"), data.url("remove.png"), texts);
+//                 });
+//             },
 
-            onClose: function () {
-                worker = null;
-                //bookmarkManager.removeListener("remove", onRemove);
-            },
-        });
-    };
-}
-
-/**
- * Print bookmarks.
- * 
- * @param {*} bookmarks 
- */
-// function printBookmarks(bookmarks) {
-//     bookmarks.forEach(function (bookmark) {
-//         console.debug(bookmark.id + " - " + bookmark.title + " - " + bookmark.url);
-//         if (bookmark.children)
-//             printBookmarks(bookmark.children);
-//     });
+//             onClose: function () {
+//                 worker = null;
+//                 //bookmarkManager.removeListener("remove", onRemove);
+//             },
+//         });
+//     };
 // }
-// browser.bookmarks.getTree(function (bookmarks) {
-//     printBookmarks(bookmarks);
-// });
 
 // ====
 // MAIN
@@ -1283,23 +1297,17 @@ function showConfigureFoldersToExclude() {
 
 log("main:begin");
 
-var weh = require('weh-background');
-
-weh.prefs.declare(require('default-prefs'));
-
-const data = self.data;
-const sortCriterias = [
-    "title",
-    "url"
-];
+var weh = require("weh-background");
+// if upgrade, then clear localStorage
+installOrUpgradePrefs();
+// load prefs from localStorage
+weh.prefs.declare(require("default-prefs"));
 
 var bookmarkSorter = new BookmarkSorter();
+adjustSortCriteria();
 
 var bookmarkManager = new BookmarkManager();
-
-installOrUpgradePrefs();
 registerUserEvents();
-adjustSortCriteria();
 registerPrefListener();
 
 log("main:end");

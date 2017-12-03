@@ -1,6 +1,6 @@
 #!/bin/sh
 
-NAME=auto-sort_bookmarks-3.0
+NAME=auto-sort_bookmarks-3.1
 
 echo
 echo Building...
