@@ -1,0 +1,86 @@
+{
+  "weh_prefs_label_auto_sort": {
+    "message": "自动排序:"
+  },
+  "weh_prefs_description_auto_sort": {
+    "message": "如果启用此选项，书签被添加、更改、移动或删除时将被排序。这意味着您不能在同一个文件夹内移动书签，除非借助分割条。"
+  },
+  "weh_prefs_label_delay": {
+    "message": "执行前等待:"
+  },
+  "weh_prefs_description_delay": {
+    "message": "指定排序书签前等待的不活动时间（单位：秒）。这适用于自动与手动排序。最小为3秒，最大为255秒。"
+  },
+  "weh_prefs_label_case_insensitive": {
+    "message": "不区分大小写:"
+  },
+  "weh_prefs_description_case_insensitive": {
+    "message": "如果启用此选项，书签排序时不考虑大小写。"
+  },
+  "weh_prefs_label_sort_by": {
+    "message": "排序方式:"
+  },
+  "weh_prefs_description_sort_by": {
+    "message": "指定书签排序的第一标准。"
+  },
+  "weh_prefs_label_inverse": {
+    "message": "反转顺序:"
+  },
+  "weh_prefs_description_inverse": {
+    "message": "如果启用此选项，将翻转按“排序方式”排序的结果，使其形成倒序。"
+  },
+  "weh_prefs_label_then_sort_by": {
+    "message": "次要排序方式:"
+  },
+  "weh_prefs_description_then_sort_by": {
+    "message": "指定书签排序的第二标准。"
+  },
+  "weh_prefs_label_then_inverse": {
+    "message": "次要反转顺序:"
+  },
+  "weh_prefs_description_then_inverse": {
+    "message": "如果启用此选项，将翻转按“次要排序方式”排序的结果，使其形成倒序。"
+  },
+  "weh_prefs_label_folder_sort_by": {
+    "message": "文件夹排序方式:"
+  },
+  "weh_prefs_description_folder_sort_by": {
+    "message": "指定排序文件夹的标准。"
+  },
+  "weh_prefs_label_folder_inverse": {
+    "message": "反转文件夹顺序:"
+  },
+  "weh_prefs_description_folder_inverse": {
+    "message": "如果启用此选项，将翻转按“文件夹排序方式”排序的结果，使其形成倒序。"
+  },
+  "weh_prefs_label_folder_sort_order": {
+    "message": "文件夹优先级:"
+  },
+  "weh_prefs_description_folder_sort_order": {
+    "message": "指定排序时文件夹的次序。最小1，最大2。"
+  },
+  "weh_prefs_label_bookmark_sort_order": {
+    "message": "书签优先级:"
+  },
+  "weh_prefs_description_bookmark_sort_order": {
+    "message": "指定排序时书签的次序。最小1，最大2。"
+  },
+  "title": {
+    "message": "自动排序书签"
+  },
+  "settings": {
+    "message": "设置"
+  },
+  "sort": {
+    "message": "排序"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "cancel": {
+    "message": "取消"
+  },
+  "default": {
+    "message": "默认"
+  }
+}
