@@ -77,7 +77,6 @@ render(
                     <section>
                         <WehParam prefName="auto_sort" />
                         <WehParam prefName="delay" />
-                        <WehParam prefName="folder_delay" />
                         <WehParam prefName="case_insensitive" />
                         <WehParam prefName="sort_by" />
                         <WehParam prefName="inverse" />
@@ -86,8 +85,6 @@ render(
                         <WehParam prefName="folder_sort_by" />
                         <WehParam prefName="folder_inverse" />
                         <WehParam prefName="folder_sort_order" />
-                        <WehParam prefName="livemark_sort_order" />
-                        <WehParam prefName="smart_bookmark_sort_order" />
                         <WehParam prefName="bookmark_sort_order" />
                     </section>
                 </div>
