@@ -945,10 +945,13 @@ function installOrUpgradePrefs() {
     if (local_version !== asb.version.current()) {
         if (local_version === undefined) {
             log("First install");
-            // do nothing
+            weh.ui.open("settings", {
+                type: "tab",
+                url: "content/settings.html"
+            });
         } else {
             log("Upgrade");
-            localStorage.removeItem("weh-prefs");
+            // TODO convert 3.0 preference to 3.1
         }
 
         // update the localStorage version for next time
