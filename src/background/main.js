@@ -31,7 +31,6 @@
  * Various settings.
  */
 let asb = {
-    "log": false,
     "rootID": "root________",
     "rootFolders": [
         "toolbar_____",
@@ -811,11 +810,8 @@ class BookmarkSorter {
  * @param {string} txt Text to display on console.
  */
 function log(txt) {
-    if (asb.log) {
+    if (getPref("logging")) {
         console.log(txt);
-        // if (obj !== undefined && window.JSON && window.JSON.stringify) {
-        //     console.log(JSON.stringify(obj));
-        // }
     }
 }
 
@@ -1273,13 +1269,16 @@ function getNodeType(node) {
 // MAIN
 // ====
 
+var weh = require("weh-background");
+
+// declare default values
+weh.prefs.declare(require("default-prefs"));
+
+// log depends on weh being defined
 log("main:begin");
 
-var weh = require("weh-background");
 // if upgrade, then clear localStorage
 installOrUpgradePrefs();
-// load prefs from localStorage
-weh.prefs.declare(require("default-prefs"));
 
 var bookmarkSorter = new BookmarkSorter();
 adjustSortCriteria();

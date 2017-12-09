@@ -65,6 +65,12 @@
   "weh_prefs_description_bookmark_sort_order": {
     "message": "Specifies the bookmark sort order. Minimum value of 1 and maximum of 2."
   },
+  "weh_prefs_label_logging": {
+    "message": "Logging:"
+  },
+  "weh_prefs_description_logging": {
+    "message": "If this option is enabled, debug information will be shown in the browser console."
+  },
   "title": {
     "message": "Auto-Sort Bookmarks"
   },

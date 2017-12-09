@@ -86,6 +86,7 @@ render(
                         <WehParam prefName="folder_inverse" />
                         <WehParam prefName="folder_sort_order" />
                         <WehParam prefName="bookmark_sort_order" />
+                        <WehParam prefName="logging" />
                     </section>
                 </div>
             </main>
