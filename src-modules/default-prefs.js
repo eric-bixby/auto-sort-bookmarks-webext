@@ -20,7 +20,7 @@
 module.exports = [{
     name: "auto_sort",
     type: "boolean",
-    defaultValue: true
+    defaultValue: false
 }, {
     name: "delay",
     type: "integer",
