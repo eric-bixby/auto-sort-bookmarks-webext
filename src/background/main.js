@@ -239,19 +239,6 @@ class Bookmark extends Item {
         this.dateAdded = dateAdded || 0;
         this.lastModified = lastModified || 0;
         this.order = getPref("bookmark_sort_order");
-        // TODO: get description; chrome doesn't have but where does FF keep it?
-        // this.description = getDescription(this) || "";
-        this.description = "";
-        this.setKeyword();
-    }
-
-    /**
-     * Fetch the keyword and set it to the current bookmark.
-     */
-    setKeyword() {
-        let keyword = "";
-        // TODO: chrome does not support keyword
-        this.keyword = keyword;
     }
 }
 
@@ -558,7 +545,7 @@ class BookmarkSorter {
         }
 
         let firstComparator;
-        if (["title", "url", "revurl", "description", "keyword"].indexOf(BookmarkSorter.prototype.firstSortCriteria) !== -1) {
+        if (["title", "url", "revurl"].indexOf(BookmarkSorter.prototype.firstSortCriteria) !== -1) {
             firstComparator = function (bookmark1, bookmark2) {
                 addReverseUrls(bookmark1, bookmark2, BookmarkSorter.prototype.firstSortCriteria);
                 return bookmark1[BookmarkSorter.prototype.firstSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.firstSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.firstReverse;
@@ -573,7 +560,7 @@ class BookmarkSorter {
 
         let secondComparator;
         if (BookmarkSorter.prototype.secondSortCriteria !== undefined && BookmarkSorter.prototype.secondSortCriteria !== "none") {
-            if (["title", "url", "revurl", "description", "keyword"].indexOf(BookmarkSorter.prototype.secondSortCriteria) !== -1) {
+            if (["title", "url", "revurl"].indexOf(BookmarkSorter.prototype.secondSortCriteria) !== -1) {
                 secondComparator = function (bookmark1, bookmark2) {
                     addReverseUrls(bookmark1, bookmark2, BookmarkSorter.prototype.secondSortCriteria);
                     return bookmark1[BookmarkSorter.prototype.secondSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.secondSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.secondReverse;
@@ -603,7 +590,7 @@ class BookmarkSorter {
                 // sort folders, then sort bookmarks
                 comparator = function (bookmark1, bookmark2) {
                     if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
-                        if (["title", "description"].indexOf(BookmarkSorter.prototype.folderSortCriteria) !== -1) {
+                        if (["title"].indexOf(BookmarkSorter.prototype.folderSortCriteria) !== -1) {
                             return bookmark1[BookmarkSorter.prototype.folderSortCriteria].localeCompare(bookmark2[BookmarkSorter.prototype.folderSortCriteria], undefined, compareOptions) * BookmarkSorter.prototype.folderReverse;
                         }
 
@@ -958,18 +945,6 @@ function installOrUpgradePrefs() {
         asb.version.local("set");
     }
 }
-
-/**
- * Get the item description.
- *
- * @param {Bookmark} item The item.
- * @return {*} The item description.
- */
-// function getDescription(item) {
-//     let description = "";
-//     // TODO: chrome bookmarks do not have descriptions
-//     return description;
-// }
 
 /**
  * Get an item annotation.
