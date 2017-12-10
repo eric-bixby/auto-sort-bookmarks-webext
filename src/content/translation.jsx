@@ -15,37 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from "react";
+//import React from "react";
 import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { applyMiddleware, createStore, combineReducers } from "redux";
+import logger from "redux-logger";
+import { reducer as translateReducer, WehTranslationForm } from "react/weh-translation";
 
 import weh from "weh-content";
 
-class Link extends React.Component {
+let reducers = combineReducers({
+    translate: translateReducer
+});
 
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
+let store = createStore(reducers, applyMiddleware(logger));
 
-    handleClick() {
-        weh.rpc.call(this.props.messageCall);
-    }
-
-    render() {
-        return (
-            <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
-        );
-    }
-}
-
+/**
+ * Render.
+ */
 render(
-    <div className="asb-popup">
-        <div className="asb-toolbar">
-            <Link messageCall={"openSettings"} label={"settings"} />
-            <Link messageCall={"openConfigureFolders"} label={"configure_folders"} />
-            <Link messageCall={"openTranslation"} label={"translation"} />
-            <Link messageCall={"sort"} label={"sort"} />
-        </div>
-    </div>,
+    <Provider store={store}>
+        <WehTranslationForm />
+    </Provider>,
     document.getElementById("root")
 );
+
+weh.setPageTitle(weh._("translation"));

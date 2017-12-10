@@ -77,6 +77,12 @@
   "settings": {
     "message": "Settings"
   },
+  "translation": {
+    "message": "Translation"
+  },
+  "configure_folders": {
+    "message": "Configure Folders"
+  },
   "sort": {
     "message": "Sort"
   },

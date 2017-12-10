@@ -31,8 +31,8 @@
  * Various settings.
  */
 let asb = {
-    "rootID": "root________",
-    "rootFolders": [
+    "rootId": "root________",
+    "rootFolderIds": [
         "toolbar_____",
         "menu________",
         "mobile______",
@@ -374,8 +374,7 @@ class Folder extends Bookmark {
                     let isTop = false;
 
                     for (let node of o) {
-                        // if (!isRecursivelyExcluded(node.id)) {
-                        if (node.url === undefined) {
+                        if (node.url === undefined && !tags.isRecursivelyExcluded(node.id)) {
                             folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, 0);
                             if (self.id === node.id) {
                                 isTop = true;
@@ -397,15 +396,20 @@ class Folder extends Bookmark {
     }
 
     /**
-     * Check if this folder has an ancestor that is recursively excluded.
+     * Check if this folder is excluded because ancestor is set to recursively exclude.
      *
-     * @returns {boolean} Whether this node has ancestor excluded or not.
+     * @returns {boolean} Whether this folder is excluded or not.
      */
     hasAncestorExcluded() {
-        // if (isRecursivelyExcluded(this.id)) {
-        //     return true;
-        // }
-        // TODO: do this check recursively
+        if (tags.isRecursivelyExcluded(this.id)) {
+            return true;
+        }
+        else {
+            if (!this.isRoot()) {
+                let parentFolder = createItem("folder", this.parentId);
+                return parentFolder.hasAncestorExcluded();
+            }
+        }
 
         return false;
     }
@@ -416,7 +420,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.parentId === asb.rootID;
+        return this.parentId === asb.rootId;
     }
 
     /**
@@ -632,24 +636,24 @@ class BookmarkSorter {
     sortAllBookmarks() {
         let promiseAry = [];
 
-        for (let id of asb.rootFolders) {
+        for (let id of asb.rootFolderIds) {
             let folder = new Folder(id);
 
             let p = new Promise((resolve) => {
                 let folders = [];
 
-                // if (!isRecursivelyExcluded(id)) {
-                folders.push(folder);
+                if (!tags.isRecursivelyExcluded(id)) {
+                    folders.push(folder);
 
-                folder.getFolders(function (subfolders) {
-                    for (let f of subfolders) {
-                        folders.push(f);
-                    }
+                    folder.getFolders(function (subfolders) {
+                        for (let f of subfolders) {
+                            folders.push(f);
+                        }
+                        resolve(folders);
+                    });
+                } else {
                     resolve(folders);
-                });
-                // } else {
-                //     resolve(folders);
-                // }
+                }
             });
 
             promiseAry.push(p);
@@ -751,7 +755,6 @@ class BookmarkSorter {
             self.sorting = false;
             self.lastCheck = Date.now();
             // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
-            // TODO: make the delay a user pref or use existing
             setTimeout(function () {
                 bookmarkManager.createChangeListeners();
             }, 3000, "Javascript");
@@ -876,9 +879,9 @@ function adjustSortCriteria() {
 }
 
 /**
- * Reigster listener for pref changes.
+ * Reigster listeners for pref changes.
  */
-function registerPrefListener() {
+function registerPrefListeners() {
     weh.prefs.on("auto_sort", sortIfAuto);
 
     let preferences = ["folder_sort_order", "bookmark_sort_order"];
@@ -908,6 +911,20 @@ function registerUserEvents() {
             weh.ui.open("settings", {
                 type: "tab",
                 url: "content/settings.html"
+            });
+            weh.ui.close("main");
+        },
+        openTranslation: () => {
+            weh.ui.open("translation", {
+                type: "tab",
+                url: "content/translation.html"
+            });
+            weh.ui.close("main");
+        },
+        openConfigureFolders: () => {
+            weh.ui.open("configure-folders", {
+                type: "tab",
+                url: "content/configure-folders.html"
             });
             weh.ui.close("main");
         },
@@ -941,107 +958,6 @@ function installOrUpgradePrefs() {
         asb.version.local("set");
     }
 }
-
-/**
- * Get an item annotation.
- *
- * @param {string} id The item ID.
- * @param {string} name The item name.
- * @returns {*} The item annotation.
- */
-// function getItemAnnotation(id, name) {
-//     let annotation;
-//     // TODO: chrome bookmarks do not have annotations, what about tags?
-//     return annotation;
-// }
-
-/**
- * Check if an item has a do not sort annotation.
- *
- * @param {string} id The item ID.
- * @return {boolean} Whether the item has a do not sort annotation.
- */
-// function hasDoNotSortAnnotation(id) {
-//     let annotation = getItemAnnotation(id, "autosortbookmarks/donotsort");
-//     return annotation !== undefined;
-// }
-
-/**
- * Check if an item has a recursive annotation.
- *
- * @param {string} id The item ID.
- * @return {boolean} Whether the item has a recursive annotation.
- */
-// function hasRecursiveAnnotation(id) {
-//     let annotation = getItemAnnotation(id, "autosortbookmarks/recursive");
-//     return annotation !== undefined;
-// }
-
-/**
- * Check if an item is recursively excluded.
- *
- * @param {string} id The item ID.
- * @return {boolean} Whether the item is recursively excluded.
- */
-// function isRecursivelyExcluded(id) {
-//     return hasDoNotSortAnnotation(id) && hasRecursiveAnnotation(id);
-// }
-
-/**
- * Remove an item annotation.
- *
- * @param {string} id The item ID.
- * @param {string} name The item name.
- */
-// function removeItemAnnotation(id, name) {
-//     // TODO: chrome does not have annotations, what about tags?
-// }
-
-/**
- * Remove the do not sort annotation on an item.
- *
- * @param {string} id The item ID.
- */
-// function removeDoNotSortAnnotation(id) {
-//     removeItemAnnotation(id, "autosortbookmarks/donotsort");
-// }
-
-/**
- * Remove the recursive annotation on an item.
- *
- * @param {string} id The item ID.
- */
-// function removeRecursiveAnnotation(id) {
-//     removeItemAnnotation(id, "autosortbookmarks/recursive");
-// }
-
-/**
- * Set an item annotation.
- *
- * @param {string} id The item ID.
- * @param name The item name.
- * @param value The item value.
- */
-// function setItemAnnotation(id, name, value) {
-//     // TODO: chrome does not have annotations, what about tags?
-// }
-
-/**
- * Set the do not sort annotation on an item.
- * 
- * @param {string} id The item ID.
- */
-// function setDoNotSortAnnotation(id) {
-//     setItemAnnotation(id, "autosortbookmarks/donotsort", true);
-// }
-
-/**
- * Set the recursive annotation on an item.
- * @param {string} id The item ID.
- */
-// function setRecursiveAnnotation(id) {
-//     setItemAnnotation(id, "autosortbookmarks/recursive", true);
-// }
 
 /**
  * Reverse the base of an URL to do a better sorting.
@@ -1108,7 +1024,6 @@ function createItem(type, id, index, parentId, title, url, lastVisited, accessCo
  * @return {Item} The new item.
  */
 function createItemFromNode(node) {
-    //log(node);
     return createItem(node.type, node.id, node.index, node.parentId, node.title, node.url, node.lastVisited, node.accessCount, node.dateAdded, node.dateGroupModified);
 }
 
@@ -1133,151 +1048,20 @@ function getNodeType(node) {
     return type;
 }
 
-/**
- * Get the children folders of a folder.
- *
- * @param {string} parentId The parent ID.
- * @return {Array}
- */
-// function getChildrenFolders(parentId, callback) {
-//     browser.bookmarks.getChildren(parentId, function (o) {
-//         if (o !== undefined) {
-//             let children = [];
-//             let folder;
-
-//             for (let node of o) {
-//                 folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, 0);
-
-//                 children.push({
-//                     id: folder.id,
-//                     title: folder.title
-//                     // excluded: hasDoNotSortAnnotation(folder.id),
-//                     // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-//                 });
-//             }
-
-//             if (typeof callback === "function") {
-//                 callback(children);
-//             }
-//         }
-//     });
-// }
-
-/**
- * Get the root folders.
- * 
- * @return {Array}
- */
-// function getRootFolders() {
-//     let folders = [];
-//     for (let folder of [menuFolder, toolbarFolder, unsortedFolder]) {
-//         folders.push({
-//             id: folder.id,
-//             title: folder.title
-//             // excluded: hasDoNotSortAnnotation(folder.id),
-//             // recursivelyExcluded: hasRecursiveAnnotation(folder.id),
-//         });
-//     }
-
-//     // TODO: do these need to be translated into other languages?
-//     // folders[0].title = "Bookmarks Menu";
-//     // folders[1].title = "Bookmarks Toolbar";
-//     // folders[2].title = "Unsorted Bookmarks";
-
-//     return folders;
-// }
-
-/**
- * Show the page to configure the folders to exclude.
- */
-// function showConfigureFoldersToExclude() {
-//     return function () {
-//         /**
-//          * Send children.
-//          * @param worker
-//          * @returns {Function}
-//          */
-//         function sendChildren(worker) {
-//             return function (parentId) {
-//                 getChildrenFolders(parentId, function (children) {
-//                     worker.port.emit("children", parentId, children);
-//                 });
-//             };
-//         }
-
-//         let worker;
-
-//         /**
-//          * Handle onRemove event.
-//          * @param item
-//          */
-//         // function onRemove(item) {
-//         //     if (worker && item instanceof Folder) {
-//         //         worker.port.emit("remove-folder", item.id);
-//         //     }
-//         // }
-
-//         // bookmarkManager.on("remove", onRemove);
-
-//         browser.tabs.open({
-//             url: data.url("configureFolders.html"),
-//             onOpen: function (tab) {
-//                 tab.on("ready", function () {
-//                     worker = tab.attach({
-//                         contentScriptFile: data.url("configureFolders.js")
-//                     });
-
-//                     // worker.port.on("sort-checkbox-change", function (folderID, activated) {
-//                     //     if (activated) {
-//                     //         removeDoNotSortAnnotation(folderID);
-//                     //     }
-//                     //     else {
-//                     //         setDoNotSortAnnotation(folderID);
-//                     //     }
-//                     // });
-
-//                     // worker.port.on("recursive-checkbox-change", function (folderID, activated) {
-//                     //     if (activated) {
-//                     //         setRecursiveAnnotation(folderID);
-//                     //     }
-//                     //     else {
-//                     //         removeRecursiveAnnotation(folderID);
-//                     //     }
-//                     // });
-
-//                     worker.port.on("query-children", sendChildren(worker));
-
-//                     const texts = {
-//                         recursiveText: "Recursive",
-//                         messageText: "The sub-folders are recursively excluded.",
-//                         loadingText: "Loading...",
-//                     };
-
-//                     worker.port.emit("init", getRootFolders(), data.url("add.png"), data.url("remove.png"), texts);
-//                 });
-//             },
-
-//             onClose: function () {
-//                 worker = null;
-//                 //bookmarkManager.removeListener("remove", onRemove);
-//             },
-//         });
-//     };
-// }
-
 // ====
 // MAIN
 // ====
+
+var tags = require("annotations");
 
 var weh = require("weh-background");
 
 // declare default values
 weh.prefs.declare(require("default-prefs"));
 
-// log depends on weh being defined
+// log() depends on weh being defined and declare() being called
 log("main:begin");
 
-// if upgrade, then clear localStorage
 installOrUpgradePrefs();
 
 var bookmarkSorter = new BookmarkSorter();
@@ -1285,6 +1069,6 @@ adjustSortCriteria();
 
 var bookmarkManager = new BookmarkManager();
 registerUserEvents();
-registerPrefListener();
+registerPrefListeners();
 
 log("main:end");

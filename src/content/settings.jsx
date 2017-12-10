@@ -15,38 +15,64 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import { render } from 'react-dom'
-import { Provider } from 'react-redux'
-import { applyMiddleware, createStore, combineReducers } from 'redux'
+//import React from "react";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { applyMiddleware, createStore, combineReducers } from "redux";
 import {
     reducer as prefsSettingsReducer,
     App as PrefsSettingsApp,
     WehParam,
     WehPrefsControls,
     listenPrefs
-} from 'react/weh-prefs-settings'
-import logger from 'redux-logger'
-import WehHeader from 'react/weh-header';
+} from "react/weh-prefs-settings";
+import logger from "redux-logger";
+import WehHeader from "react/weh-header";
 
-import weh from 'weh-content';
+import weh from "weh-content";
 
-import bootstrapStyles from 'bootstrap/dist/css/bootstrap.css'
+//import bootstrapStyles from "bootstrap/dist/css/bootstrap.css";
 
 let reducers = combineReducers({
     prefs: prefsSettingsReducer,
 });
+
 let store = createStore(reducers, applyMiddleware(logger));
 
 listenPrefs(store);
 
+/**
+ * Open tab for translation.
+ */
+function openTranslation() {
+    weh.rpc.call("openTranslation");
+}
+
+/**
+ * Open tab for configure folders.
+ */
+function openConfigureFolders() {
+    weh.rpc.call("openConfigureFolders");
+}
+
+/**
+ * Render controls.
+ */
 function RenderControls() {
     return (
         <div className="btn-toolbar justify-content-between">
-            <button type="button"
-                className="btn btn-default pull-left">
-                Translation (TBD)
-            </button>
+            <div className="btn-group pull-left">
+                <button type="button"
+                    onClick={openTranslation}
+                    className="btn btn-default">
+                    {weh._("translation")}
+                </button>
+                <button type="button"
+                    onClick={openConfigureFolders}
+                    className="btn btn-default">
+                    {weh._("configure_folders")}
+                </button>
+            </div>
             <div className="btn-group pull-right">
                 <button type="button"
                     onClick={this.props.cancel}
@@ -65,7 +91,7 @@ function RenderControls() {
                 </button>
             </div>
         </div>
-    )
+    );
 }
 
 render(
@@ -95,7 +121,7 @@ render(
             </footer>
         </PrefsSettingsApp>
     </Provider>,
-    document.getElementById('root')
-)
+    document.getElementById("root")
+);
 
 weh.setPageTitle(weh._("settings"));
