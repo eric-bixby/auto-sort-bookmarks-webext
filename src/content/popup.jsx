@@ -17,6 +17,7 @@
 
 import React from "react";
 import { render } from "react-dom";
+import PropTypes from "prop-types";
 
 import weh from "weh-content";
 
@@ -37,6 +38,11 @@ class Link extends React.Component {
         );
     }
 }
+
+Link.propTypes = {
+    messageCall: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
+};
 
 render(
     <div className="asb-popup">

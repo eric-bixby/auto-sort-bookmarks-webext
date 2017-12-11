@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//import React from "react";
+import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore, combineReducers } from "redux";
@@ -30,9 +30,6 @@ let reducers = combineReducers({
 
 let store = createStore(reducers, applyMiddleware(logger));
 
-/**
- * Render.
- */
 render(
     <Provider store={store}>
         <WehTranslationForm />
