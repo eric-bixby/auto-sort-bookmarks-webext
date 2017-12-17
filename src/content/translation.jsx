@@ -20,7 +20,10 @@ import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore, combineReducers } from "redux";
 import logger from "redux-logger";
-import { reducer as translateReducer, WehTranslationForm } from "react/weh-translation";
+import {
+    reducer as translateReducer,
+    WehTranslationForm
+} from "react/weh-translation";
 
 import weh from "weh-content";
 

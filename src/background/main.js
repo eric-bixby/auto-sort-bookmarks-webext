@@ -120,6 +120,9 @@ class BookmarkManager {
         if (getNodeType(removeInfo.node) === "separator") {
             sortIfAuto();
         }
+        else if (getNodeType(removeInfo.node) === "folder") {
+            weh.rpc.call("remove-folder", removeInfo.node.id);
+        }
     }
 
     /**
@@ -898,8 +901,6 @@ function registerPrefListeners() {
     weh.prefs.on("folder_inverse", adjustSortCriteria);
     weh.prefs.on("folder_sort_order", adjustSortCriteria);
     weh.prefs.on("bookmark_sort_order", adjustSortCriteria);
-
-    // weh.prefs.on("exclude_folders", showConfigureFoldersToExclude(sortIfAuto));
 }
 
 /**
@@ -925,12 +926,41 @@ function registerUserEvents() {
             weh.ui.open("configure-folders", {
                 type: "tab",
                 url: "content/configure-folders.html"
+            }).then(function () {
+                const texts = {
+                    recursiveText: "Recursive",
+                    messageText: "The sub-folders are recursively excluded.",
+                    loadingText: "Loading...",
+                };
+
+                weh.rpc.call("init", getRootFolders(), this.data.url("add.png"), this.data.url("remove.png"), texts);
             });
             weh.ui.close("main");
         },
         sort: () => {
             sortAllBookmarks();
             weh.ui.close("main");
+        },
+        sortCheckboxChange: (folderID, activated) => {
+            if (activated) {
+                tags.removeDoNotSortAnnotation(folderID);
+            }
+            else {
+                tags.setDoNotSortAnnotation(folderID);
+            }
+        },
+        recursiveCheckboxChange: (folderID, activated) => {
+            if (activated) {
+                tags.setRecursiveAnnotation(folderID);
+            }
+            else {
+                tags.removeRecursiveAnnotation(folderID);
+            }
+        },
+        queryChildren: (parentId) => {
+            getChildrenFolders(parentId, function (children) {
+                weh.rpc.call("children", parentId, children);
+            });
         },
     });
 }
@@ -1046,6 +1076,50 @@ function getNodeType(node) {
     }
     log("node.type=" + type);
     return type;
+}
+
+/**
+ * Get the children folders of a folder.
+ *
+ * @param {string} parentId The parent ID.
+ * @return {Array}
+ */
+function getChildrenFolders(parentId, callback) {
+    browser.bookmarks.getChildren(parentId, function (o) {
+        if (o !== undefined) {
+            let children = [];
+            for (let node of o) {
+                children.push({
+                    id: node.id,
+                    title: node.title,
+                    excluded: tags.hasDoNotSortAnnotation(node.id),
+                    recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
+                });
+            }
+
+            if (typeof callback === "function") {
+                callback(children);
+            }
+        }
+    });
+}
+
+/**
+ * Get the root folders.
+ * 
+ * @return {Array}
+ */
+function getRootFolders() {
+    let folders = [];
+    for (let id of asb.rootFolderIds) {
+        folders.push({
+            id: id,
+            excluded: tags.hasDoNotSortAnnotation(id),
+            recursivelyExcluded: tags.hasRecursiveAnnotation(id)
+        });
+    }
+
+    return folders;
 }
 
 // ====
