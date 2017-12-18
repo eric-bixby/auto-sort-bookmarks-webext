@@ -67,26 +67,6 @@ function RenderControls() {
     );
 }
 
-render(
-    <Provider store={store}>
-        <PrefsSettingsApp>
-            <WehHeader />
-            <main>
-                <div className="container">
-                    <section>
-                    </section>
-                </div>
-            </main>
-            <footer>
-                <WehPrefsControls render={RenderControls} />
-            </footer>
-        </PrefsSettingsApp>
-    </Provider>,
-    document.getElementById("root")
-);
-
-weh.setPageTitle(weh._("configure_folders"));
-
 let addIcon;
 let loadingText = "";
 let messageText = "";
@@ -96,6 +76,7 @@ let fetching = new Set();
 
 /**
  * Send value.
+ * 
  * @param type
  * @param folderID
  * @param checkbox
@@ -108,12 +89,13 @@ function sendValue(type, folderID, checkbox, image) {
             let children = document.querySelector("#folder-" + folderID);
             children.style.display = "block";
         }
-        self.port.emit(type + "-checkbox-change", folderID, checkbox.checked);
+        weh.rpc.call(type + "CheckboxChange", folderID, checkbox.checked);
     };
 }
 
 /**
  * Toggle children.
+ * 
  * @param parentID
  * @param image
  * @param children
@@ -134,7 +116,7 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
 
                 fetching.add(parentID);
                 setTimeout(function () {
-                    self.port.emit("query-children", parentID);
+                    weh.rpc.call("queryChildren", parentID);
                 }, 100);
             }
             else {
@@ -212,6 +194,7 @@ function appendFolder(folder, list) {
 
 /**
  * Append folders.
+ * 
  * @param folders
  * @param list
  */
@@ -224,33 +207,53 @@ function appendFolders(folders, list) {
     }
 }
 
-self.port.on("remove-folder", function (folderID) {
-    let folder = document.querySelector("#folder-" + folderID);
-    if (folder) {
-        let parent = folder.parentNode;
-        parent.parentNode.removeChild(parent);
-    }
-});
+render(
+    <Provider store={store}>
+        <PrefsSettingsApp>
+            <WehHeader />
+            <main>
+                <div className="container">
+                    <section>
+                    </section>
+                </div>
+            </main>
+            <footer>
+                <WehPrefsControls render={RenderControls} />
+            </footer>
+        </PrefsSettingsApp>
+    </Provider>,
+    document.getElementById("root")
+);
 
-self.port.on("children", function (parentID, children) {
-    let list = document.querySelector("#folder-" + parentID);
-    appendFolders(children, list);
-    fetching.delete(parentID);
-});
+weh.setPageTitle(weh._("configure_folders"));
 
-self.port.on("init", function (folders, plusIcon, minusIcon, texts) {
-    recursiveText = texts.recursiveText;
-    messageText = texts.messageText;
-    loadingText = texts.loadingText;
-    addIcon = plusIcon;
-    removeIcon = minusIcon;
+weh.rpc.listen({
+    removeFolder: (folderID) => {
+        let folder = document.querySelector("#folder-" + folderID);
+        if (folder) {
+            let parent = folder.parentNode;
+            parent.parentNode.removeChild(parent);
+        }
+    },
+    children: (parentID, children) => {
+        let list = document.querySelector("#folder-" + parentID);
+        appendFolders(children, list);
+        fetching.delete(parentID);
+    },
+    init: (folders, plusIcon, minusIcon, texts) => {
+        recursiveText = texts.recursiveText;
+        messageText = texts.messageText;
+        loadingText = texts.loadingText;
+        addIcon = plusIcon;
+        removeIcon = minusIcon;
 
-    let rootFolders = document.querySelector("#rootFolders");
-    if (rootFolders === null) {
-        rootFolders = document.createElement("ul");
-        rootFolders.id = "rootFolders";
-        document.body.appendChild(rootFolders);
-    }
+        let rootFolders = document.querySelector("#rootFolders");
+        if (rootFolders === null) {
+            rootFolders = document.createElement("ul");
+            rootFolders.id = "rootFolders";
+            document.body.appendChild(rootFolders);
+        }
 
-    appendFolders(folders, rootFolders);
+        appendFolders(folders, rootFolders);
+    },
 });
