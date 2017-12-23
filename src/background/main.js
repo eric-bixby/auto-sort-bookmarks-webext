@@ -955,7 +955,9 @@ function registerUserEvents() {
                 messageText: "The sub-folders are recursively excluded.",
                 loadingText: "Loading...",
             };
-            weh.rpc.call("configure-folders", "root", getRootFolders(), "content/images/add.png", "content/images/remove.png", texts);
+            var addImgUrl = browser.extension.getURL("content/images/add.png");
+            var removeImgUrl = browser.extension.getURL("content/images/remove.png");
+            weh.rpc.call("configure-folders", "root", getRootFolders(), addImgUrl, removeImgUrl, texts);
         },
         queryChildren: (parentId) => {
             getChildrenFolders(parentId, function (children) {
