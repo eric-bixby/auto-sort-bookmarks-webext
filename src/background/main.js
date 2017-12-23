@@ -926,14 +926,6 @@ function registerUserEvents() {
             weh.ui.open("configure-folders", {
                 type: "tab",
                 url: "content/configure-folders.html"
-            }).then(function () {
-                const texts = {
-                    recursiveText: "Recursive",
-                    messageText: "The sub-folders are recursively excluded.",
-                    loadingText: "Loading...",
-                };
-
-                weh.rpc.call("init", getRootFolders(), this.data.url("add.png"), this.data.url("remove.png"), texts);
             });
             weh.ui.close("main");
         },
@@ -957,9 +949,17 @@ function registerUserEvents() {
                 tags.removeRecursiveAnnotation(folderID);
             }
         },
+        queryRoot: () => {
+            const texts = {
+                recursiveText: "Recursive",
+                messageText: "The sub-folders are recursively excluded.",
+                loadingText: "Loading...",
+            };
+            weh.rpc.call("configure-folders", "root", getRootFolders(), "content/images/add.png", "content/images/remove.png", texts);
+        },
         queryChildren: (parentId) => {
             getChildrenFolders(parentId, function (children) {
-                weh.rpc.call("children", parentId, children);
+                weh.rpc.call("configure-folders", "children", parentId, children);
             });
         },
     });

@@ -22,6 +22,41 @@
 <head>
     <link href="styles.css" type="text/css" rel="stylesheet">
     <meta charset="utf-8" />
+    <style>
+        body {
+            -moz-user-select: none;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        img {
+            vertical-align: middle;
+        }
+
+        label.recursive {
+            font-weight: bold;
+            padding-left: 30px;
+        }
+
+        .recursive-checkbox~p {
+            display: none;
+            font-style: italic;
+        }
+
+        .recursive-checkbox~ul {
+            display: block;
+        }
+
+        .recursive-checkbox:checked~p {
+            display: block;
+        }
+
+        .recursive-checkbox:checked~ul {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>

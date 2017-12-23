@@ -19,7 +19,7 @@
 
 /* global module */
 
-module.exports = {
+var self = module.exports = {
 
     /**
     * Get an item annotation.
@@ -42,7 +42,7 @@ module.exports = {
      * @return {boolean} Whether the item has a do not sort annotation.
      */
     hasDoNotSortAnnotation: function (id) {
-        return this.exports.getItemAnnotation(id, "donotsort");
+        return self.getItemAnnotation(id, "donotsort");
     },
 
     /**
@@ -52,7 +52,7 @@ module.exports = {
      * @return {boolean} Whether the item has a recursive annotation.
      */
     hasRecursiveAnnotation: function (id) {
-        return this.exports.getItemAnnotation(id, "recursive");
+        return self.getItemAnnotation(id, "recursive");
     },
 
     /**
@@ -62,7 +62,7 @@ module.exports = {
      * @return {boolean} Whether the item is recursively excluded.
      */
     isRecursivelyExcluded: function (id) {
-        return this.exports.hasDoNotSortAnnotation(id) && this.exports.hasRecursiveAnnotation(id);
+        return self.hasDoNotSortAnnotation(id) && self.hasRecursiveAnnotation(id);
     },
 
     /**
@@ -83,7 +83,7 @@ module.exports = {
      * @param {string} id The item ID.
      */
     removeDoNotSortAnnotation: function (id) {
-        this.exports.removeItemAnnotation(id, "autosortbookmarks/donotsort");
+        self.removeItemAnnotation(id, "autosortbookmarks/donotsort");
     },
 
     /**
@@ -92,7 +92,7 @@ module.exports = {
      * @param {string} id The item ID.
      */
     removeRecursiveAnnotation: function (id) {
-        this.exports.removeItemAnnotation(id, "autosortbookmarks/recursive");
+        self.removeItemAnnotation(id, "autosortbookmarks/recursive");
     },
 
     /**
@@ -115,7 +115,7 @@ module.exports = {
      * @param {string} id The item ID.
      */
     setDoNotSortAnnotation: function (id) {
-        this.exports.setItemAnnotation(id, "autosortbookmarks/donotsort", true);
+        self.setItemAnnotation(id, "autosortbookmarks/donotsort", true);
     },
 
     /**
@@ -123,7 +123,7 @@ module.exports = {
      * @param {string} id The item ID.
      */
     setRecursiveAnnotation: function (id) {
-        this.exports.setItemAnnotation(id, "autosortbookmarks/recursive", true);
+        self.setItemAnnotation(id, "autosortbookmarks/recursive", true);
     }
 
 };

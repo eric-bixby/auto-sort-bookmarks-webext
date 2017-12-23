@@ -133,6 +133,7 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
 
 /**
  * Append folder.
+ * 
  * @param folder
  * @param list
  */
@@ -207,26 +208,6 @@ function appendFolders(folders, list) {
     }
 }
 
-render(
-    <Provider store={store}>
-        <PrefsSettingsApp>
-            <WehHeader />
-            <main>
-                <div className="container">
-                    <section>
-                    </section>
-                </div>
-            </main>
-            <footer>
-                <WehPrefsControls render={RenderControls} />
-            </footer>
-        </PrefsSettingsApp>
-    </Provider>,
-    document.getElementById("root")
-);
-
-weh.setPageTitle(weh._("configure_folders"));
-
 weh.rpc.listen({
     removeFolder: (folderID) => {
         let folder = document.querySelector("#folder-" + folderID);
@@ -240,7 +221,7 @@ weh.rpc.listen({
         appendFolders(children, list);
         fetching.delete(parentID);
     },
-    init: (folders, plusIcon, minusIcon, texts) => {
+    root: (folders, plusIcon, minusIcon, texts) => {
         recursiveText = texts.recursiveText;
         messageText = texts.messageText;
         loadingText = texts.loadingText;
@@ -257,3 +238,21 @@ weh.rpc.listen({
         appendFolders(folders, rootFolders);
     },
 });
+
+render(
+    <Provider store={store}>
+        <PrefsSettingsApp>
+            <WehHeader />
+            <main>
+                <div className="container" id="rootFolders" />
+            </main>
+            <footer>
+                <WehPrefsControls render={RenderControls} />
+            </footer>
+        </PrefsSettingsApp>
+    </Provider>,
+    document.getElementById("root")
+);
+
+weh.setPageTitle(weh._("configure_folders"));
+weh.rpc.call("queryRoot");
