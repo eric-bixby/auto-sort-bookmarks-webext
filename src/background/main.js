@@ -19,25 +19,11 @@
 // CLASSES
 // =======
 
-// TODO: add a mapping function so works for both browsers
-// mapping chrome to FF bookmark id (chrome-id, ff-id, ff-title):
-// "0"   = "root________" = "?"
-// "1"   = "toolbar_____" = "Bookmarks Toolbar"
-// "2"   = "menu________" = "Bookmarks Menu"
-// "3"   = "mobile______" = "Mobile Bookmarks" (not used by FF)
-// undef = "unfiled_____" = "Other Bookmarks" (not used by chrome)
-
 /**
  * Various settings.
  */
 let asb = {
     "rootId": "root________",
-    "rootFolderIds": [
-        "toolbar_____",
-        "menu________",
-        "mobile______",
-        "unfiled_____"
-    ],
     "version": {
         "current": function () {
             var manifest = browser.runtime.getManifest();
@@ -637,15 +623,27 @@ class BookmarkSorter {
      * Sort all bookmarks.
      */
     sortAllBookmarks() {
+        var self = this;
+        getChildrenFolders(asb.rootId, function (children) {
+            self.sortRootFolders(children);
+        });
+    }
+
+    /**
+     * Sort root folders.
+     * 
+     * @param children
+     */
+    sortRootFolders(children) {
         let promiseAry = [];
 
-        for (let id of asb.rootFolderIds) {
-            let folder = new Folder(id);
+        for (let node of children) {
+            let folder = new Folder(node.id);
 
             let p = new Promise((resolve) => {
                 let folders = [];
 
-                if (!tags.isRecursivelyExcluded(id)) {
+                if (!node.recursivelyExcluded) {
                     folders.push(folder);
 
                     folder.getFolders(function (subfolders) {
@@ -957,7 +955,9 @@ function registerUserEvents() {
             };
             var addImgUrl = browser.extension.getURL("content/images/add.png");
             var removeImgUrl = browser.extension.getURL("content/images/remove.png");
-            weh.rpc.call("configure-folders", "root", getRootFolders(), addImgUrl, removeImgUrl, texts);
+            getChildrenFolders(asb.rootId, function (children) {
+                weh.rpc.call("configure-folders", "root", children, addImgUrl, removeImgUrl, texts);
+            });
         },
         queryChildren: (parentId) => {
             getChildrenFolders(parentId, function (children) {
@@ -1076,7 +1076,6 @@ function getNodeType(node) {
             type = "separator";
         }
     }
-    log("node.type=" + type);
     return type;
 }
 
@@ -1091,6 +1090,7 @@ function getChildrenFolders(parentId, callback) {
         if (o !== undefined) {
             let children = [];
             for (let node of o) {
+                log(node);
                 children.push({
                     id: node.id,
                     title: node.title,
@@ -1106,37 +1106,17 @@ function getChildrenFolders(parentId, callback) {
     });
 }
 
-/**
- * Get the root folders.
- * 
- * @return {Array}
- */
-function getRootFolders() {
-    let folders = [];
-    for (let id of asb.rootFolderIds) {
-        folders.push({
-            id: id,
-            excluded: tags.hasDoNotSortAnnotation(id),
-            recursivelyExcluded: tags.hasRecursiveAnnotation(id)
-        });
-    }
-
-    return folders;
-}
-
 // ====
 // MAIN
 // ====
 
-var tags = require("annotations");
-
 var weh = require("weh-background");
-
-// declare default values
 weh.prefs.declare(require("default-prefs"));
 
 // log() depends on weh being defined and declare() being called
 log("main:begin");
+
+var tags = require("annotations");
 
 installOrUpgradePrefs();
 

@@ -147,19 +147,14 @@ function appendFolder(folder, list) {
     children.id = "folder-" + folder.id;
 
     let icon = document.createElement("img");
-    icon.alt = "plus-minus";
+    icon.alt = "Expand/Collpase";
     icon.src = addIcon;
     icon.setAttribute("data-state", "add");
     icon.addEventListener("click", toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
-    listItem.appendChild(icon);
-
-    let label = document.createElement("label");
-    label.textContent = folder.title;
-    label.addEventListener("click", toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
-    listItem.appendChild(label);
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.id = "enable-" + folder.id;
     checkbox.checked = !folder.excluded;
     checkbox.addEventListener("change", sendValue("sort", folder.id, checkbox), false);
     checkbox.addEventListener("change", function () {
@@ -167,15 +162,11 @@ function appendFolder(folder, list) {
         recursiveLabel.disabled = checkbox.checked;
     }, false);
 
-    listItem.appendChild(checkbox);
-
-    recursiveLabel.textContent = recursiveText;
-    recursiveLabel.htmlFor = "recursive-" + folder.id;
-    recursiveLabel.className = "recursive";
-    recursiveLabel.disabled = checkbox.checked;
-    listItem.appendChild(recursiveLabel);
-
-    let message = document.createElement("p");
+    let label = document.createElement("label");
+    label.textContent = folder.title;
+    label.htmlFor = "enable-" + folder.id;
+    label.className = "folder-title";
+    label.addEventListener("click", toggleChildren(folder.id, icon, children, recursiveCheckbox), false);
 
     recursiveCheckbox.type = "checkbox";
     recursiveCheckbox.id = "recursive-" + folder.id;
@@ -183,11 +174,21 @@ function appendFolder(folder, list) {
     recursiveCheckbox.disabled = checkbox.checked;
     recursiveCheckbox.className = "recursive-checkbox";
     recursiveCheckbox.addEventListener("change", sendValue("recursive", folder.id, recursiveCheckbox, icon), false);
-    listItem.appendChild(recursiveCheckbox);
 
+    recursiveLabel.textContent = recursiveText;
+    recursiveLabel.htmlFor = "recursive-" + folder.id;
+    recursiveLabel.className = "recursive";
+    recursiveLabel.disabled = checkbox.checked;
+
+    let message = document.createElement("p");
     message.textContent = messageText;
-    listItem.appendChild(message);
 
+    listItem.appendChild(icon);
+    listItem.appendChild(checkbox);
+    listItem.appendChild(label);
+    listItem.appendChild(recursiveCheckbox);
+    listItem.appendChild(recursiveLabel);
+    listItem.appendChild(message);
     listItem.appendChild(children);
 
     list.appendChild(listItem);
@@ -225,17 +226,13 @@ weh.rpc.listen({
         recursiveText = texts.recursiveText;
         messageText = texts.messageText;
         loadingText = texts.loadingText;
+
         addIcon = plusIcon;
         removeIcon = minusIcon;
 
-        let rootFolders = document.querySelector("#rootFolders");
-        if (rootFolders === null) {
-            rootFolders = document.createElement("ul");
-            rootFolders.id = "rootFolders";
-            document.body.appendChild(rootFolders);
-        }
+        let rootFoldersDoc = document.querySelector("#rootFolders");
 
-        appendFolders(folders, rootFolders);
+        appendFolders(folders, rootFoldersDoc);
     },
 });
 
@@ -244,7 +241,10 @@ render(
         <PrefsSettingsApp>
             <WehHeader />
             <main>
-                <div className="container" id="rootFolders" />
+                <div className="container">
+                    <ul id="rootFolders">
+                    </ul>
+                </div>
             </main>
             <footer>
                 <WehPrefsControls render={RenderControls} />
