@@ -42,12 +42,6 @@ module.exports = [{
         name: "URL",
         value: "url"
     }, {
-        name: "Description",
-        value: "description"
-    }, {
-        name: "Keyword",
-        value: "keyword"
-    }, {
         name: "Date Added",
         value: "dateAdded"
     }, {
@@ -80,12 +74,6 @@ module.exports = [{
     }, {
         name: "URL",
         value: "url"
-    }, {
-        name: "Description",
-        value: "description"
-    }, {
-        name: "Keyword",
-        value: "keyword"
     }, {
         name: "Date Added",
         value: "dateAdded"
