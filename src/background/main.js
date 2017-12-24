@@ -1090,13 +1090,14 @@ function getChildrenFolders(parentId, callback) {
         if (o !== undefined) {
             let children = [];
             for (let node of o) {
-                log(node);
-                children.push({
-                    id: node.id,
-                    title: node.title,
-                    excluded: tags.hasDoNotSortAnnotation(node.id),
-                    recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
-                });
+                if (getNodeType(node) === "folder") {
+                    children.push({
+                        id: node.id,
+                        title: node.title,
+                        excluded: tags.hasDoNotSortAnnotation(node.id),
+                        recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
+                    });
+                }
             }
 
             if (typeof callback === "function") {
