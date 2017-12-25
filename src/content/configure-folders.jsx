@@ -22,15 +22,12 @@ import { applyMiddleware, createStore, combineReducers } from "redux";
 import {
     reducer as prefsSettingsReducer,
     App as PrefsSettingsApp,
-    WehPrefsControls,
     listenPrefs
 } from "react/weh-prefs-settings";
 import logger from "redux-logger";
 import WehHeader from "react/weh-header";
 
 import weh from "weh-content";
-
-//import bootstrapStyles from "bootstrap/dist/css/bootstrap.css";
 
 let reducers = combineReducers({
     prefs: prefsSettingsReducer,
@@ -39,33 +36,6 @@ let reducers = combineReducers({
 let store = createStore(reducers, applyMiddleware(logger));
 
 listenPrefs(store);
-
-/**
- * Render controls.
- */
-function RenderControls() {
-    return (
-        <div className="btn-toolbar justify-content-end">
-            <div className="btn-group pull-right">
-                <button type="button"
-                    onClick={this.props.cancel}
-                    className={"btn btn-default " + (this.props.flags.isModified ? "" : "disabled")}>
-                    {weh._("cancel")}
-                </button>
-                <button type="button"
-                    onClick={this.props.reset}
-                    className={"btn btn-warning " + (!this.props.flags.isDefault ? "" : "disabled")}>
-                    {weh._("default")}
-                </button>
-                <button type="button"
-                    onClick={this.props.save}
-                    className={"btn btn-primary " + (this.props.flags.isModified && this.props.flags.isValid ? "" : "disabled")}>
-                    {weh._("save")}
-                </button>
-            </div>
-        </div>
-    );
-}
 
 let addIcon;
 let loadingText = "";
@@ -158,6 +128,10 @@ function appendFolder(folder, list) {
     checkbox.checked = !folder.excluded;
     checkbox.addEventListener("change", sendValue("sort", folder.id, checkbox), false);
     checkbox.addEventListener("change", function () {
+        // clear recursive checkbox when re-enabled
+        if (checkbox.checked) {
+            recursiveCheckbox.checked = false;
+        }
         recursiveCheckbox.disabled = checkbox.checked;
         recursiveLabel.disabled = checkbox.checked;
     }, false);
@@ -242,13 +216,9 @@ render(
             <WehHeader />
             <main>
                 <div className="container">
-                    <ul id="rootFolders">
-                    </ul>
+                    <ul id="rootFolders" />
                 </div>
             </main>
-            <footer>
-                <WehPrefsControls render={RenderControls} />
-            </footer>
         </PrefsSettingsApp>
     </Provider>,
     document.getElementById("root")

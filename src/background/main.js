@@ -272,7 +272,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether it can be sorted or not.
      */
     canBeSorted() {
-        if (tags.hasDoNotSortAnnotation(this.id) || this.hasAncestorExcluded()) {
+        if (tags.hasDoNotSortAnnotation(this.id) || tags.isRecursivelyExcluded(this.id)) {
             return false;
         }
 
@@ -294,8 +294,7 @@ class Folder extends Bookmark {
                 let promiseAry = [];
 
                 for (let node of o) {
-                    node.type = getNodeType(node);
-                    if (node.type === "bookmark") {
+                    if (getNodeType(node) === "bookmark") {
                         // history.getVisits() is faster than history.search() because
                         // history.search() checks title and url, plus does not match url exactly, so it takes longer.
                         var p = browser.history.getVisits({
@@ -363,8 +362,8 @@ class Folder extends Bookmark {
                     let isTop = false;
 
                     for (let node of o) {
-                        if (node.url === undefined && !tags.isRecursivelyExcluded(node.id)) {
-                            folder = new Folder(node.id, node.index, node.parentId, node.title, node.dateAdded, 0);
+                        if (getNodeType(node) === "folder" && !tags.isRecursivelyExcluded(node.id)) {
+                            folder = createItemFromNode(node);
                             if (self.id === node.id) {
                                 isTop = true;
                             }
@@ -385,32 +384,12 @@ class Folder extends Bookmark {
     }
 
     /**
-     * Check if this folder is excluded because ancestor is set to recursively exclude.
-     *
-     * @returns {boolean} Whether this folder is excluded or not.
-     */
-    hasAncestorExcluded() {
-        // FIXME: this is not stopping when it reaches the root folder
-        // if (tags.isRecursivelyExcluded(this.id)) {
-        //     return true;
-        // }
-        // else {
-        //     if (!this.isRoot()) {
-        //         let parentFolder = createItem("folder", this.parentId);
-        //         return parentFolder.hasAncestorExcluded();
-        //     }
-        // }
-
-        return false;
-    }
-
-    /**
-     * Check if this folder is a root folder (menu, toolbar, unsorted).
+     * Check if this folder is the root folder.
      *
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.parentId === asb.rootId;
+        return this.id === asb.rootId;
     }
 
     /**
@@ -639,7 +618,7 @@ class BookmarkSorter {
         let promiseAry = [];
 
         for (let node of children) {
-            let folder = new Folder(node.id);
+            let folder = createItemFromNode(node);
 
             let p = new Promise((resolve) => {
                 let folders = [];
@@ -660,6 +639,8 @@ class BookmarkSorter {
 
             promiseAry.push(p);
         }
+
+        // TODO: add call to tags.removeMissingFolders() to remove folders that have been removed
 
         Promise.all(promiseAry).then(folders => {
             // Flatten array of arrays into array
@@ -738,6 +719,7 @@ class BookmarkSorter {
      * @param folders The folders to sort.
      */
     sortFolders(folders) {
+        // convert single folder into array of folders
         folders = folders instanceof Folder ? [folders] : folders;
 
         let self = this;
@@ -935,6 +917,7 @@ function registerUserEvents() {
         sortCheckboxChange: (folderID, activated) => {
             if (activated) {
                 tags.removeDoNotSortAnnotation(folderID);
+                tags.removeRecursiveAnnotation(folderID);
             }
             else {
                 tags.setDoNotSortAnnotation(folderID);
@@ -1056,7 +1039,7 @@ function createItem(type, id, index, parentId, title, url, lastVisited, accessCo
  * @return {Item} The new item.
  */
 function createItemFromNode(node) {
-    return createItem(node.type, node.id, node.index, node.parentId, node.title, node.url, node.lastVisited, node.accessCount, node.dateAdded, node.dateGroupModified);
+    return createItem(getNodeType(node), node.id, node.index, node.parentId, node.title, node.url, node.lastVisited, node.accessCount, node.dateAdded, node.dateGroupModified);
 }
 
 /**
@@ -1067,14 +1050,10 @@ function createItemFromNode(node) {
  */
 function getNodeType(node) {
     let type = "bookmark";
-    if (node.type !== undefined) {
-        type = node.type;
-    } else {
-        if (node.url === undefined) {
-            type = "folder";
-        } else if (node.url === "data:") {
-            type = "separator";
-        }
+    if (node.url === undefined) {
+        type = "folder";
+    } else if (node.url === "data:") {
+        type = "separator";
     }
     return type;
 }
@@ -1093,6 +1072,7 @@ function getChildrenFolders(parentId, callback) {
                 if (getNodeType(node) === "folder") {
                     children.push({
                         id: node.id,
+                        parentId: node.parentId,
                         title: node.title,
                         excluded: tags.hasDoNotSortAnnotation(node.id),
                         recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),

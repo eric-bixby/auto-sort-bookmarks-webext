@@ -31,8 +31,6 @@ import WehHeader from "react/weh-header";
 
 import weh from "weh-content";
 
-//import bootstrapStyles from "bootstrap/dist/css/bootstrap.css";
-
 let reducers = combineReducers({
     prefs: prefsSettingsReducer,
 });
