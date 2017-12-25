@@ -19,6 +19,8 @@
 
 /* global module */
 
+const DONOTSORT = "donotsort", RECURSIVE = "recursive";
+
 var self = module.exports = {
 
     /**
@@ -29,10 +31,8 @@ var self = module.exports = {
     * @returns {*} The item annotation.
     */
     getItemAnnotation: function (id, name) {
-        // TODO: get annotation from preferences or folder title
-        console.log(id);
-        console.log(name);
-        return false;
+        var map = JSON.parse(localStorage.getItem(name)) || new Map();
+        return map[id] || false;
     },
 
     /**
@@ -42,7 +42,7 @@ var self = module.exports = {
      * @return {boolean} Whether the item has a do not sort annotation.
      */
     hasDoNotSortAnnotation: function (id) {
-        return self.getItemAnnotation(id, "donotsort");
+        return self.getItemAnnotation(id, DONOTSORT);
     },
 
     /**
@@ -52,7 +52,7 @@ var self = module.exports = {
      * @return {boolean} Whether the item has a recursive annotation.
      */
     hasRecursiveAnnotation: function (id) {
-        return self.getItemAnnotation(id, "recursive");
+        return self.getItemAnnotation(id, RECURSIVE);
     },
 
     /**
@@ -72,9 +72,11 @@ var self = module.exports = {
     * @param {string} name The item name.
     */
     removeItemAnnotation: function (id, name) {
-        // TODO: chrome does not have annotations, what about tags?
-        console.log(id);
-        console.log(name);
+        var map = JSON.parse(localStorage.getItem(name)) || new Map();
+        if (map[id] !== undefined) {
+            delete map[id];
+        }
+        localStorage.setItem(name, JSON.stringify(map));
     },
 
     /**
@@ -83,7 +85,7 @@ var self = module.exports = {
      * @param {string} id The item ID.
      */
     removeDoNotSortAnnotation: function (id) {
-        self.removeItemAnnotation(id, "autosortbookmarks/donotsort");
+        self.removeItemAnnotation(id, DONOTSORT);
     },
 
     /**
@@ -92,7 +94,7 @@ var self = module.exports = {
      * @param {string} id The item ID.
      */
     removeRecursiveAnnotation: function (id) {
-        self.removeItemAnnotation(id, "autosortbookmarks/recursive");
+        self.removeItemAnnotation(id, RECURSIVE);
     },
 
     /**
@@ -103,10 +105,9 @@ var self = module.exports = {
      * @param value The item value.
      */
     setItemAnnotation: function (id, name, value) {
-        // TODO: chrome does not have annotations, what about tags?
-        console.log(id);
-        console.log(name);
-        console.log(value);
+        var map = JSON.parse(localStorage.getItem(name)) || new Map();
+        map[id] = value;
+        localStorage.setItem(name, JSON.stringify(map));
     },
 
     /**
@@ -115,7 +116,7 @@ var self = module.exports = {
      * @param {string} id The item ID.
      */
     setDoNotSortAnnotation: function (id) {
-        self.setItemAnnotation(id, "autosortbookmarks/donotsort", true);
+        self.setItemAnnotation(id, DONOTSORT, true);
     },
 
     /**
@@ -123,7 +124,6 @@ var self = module.exports = {
      * @param {string} id The item ID.
      */
     setRecursiveAnnotation: function (id) {
-        self.setItemAnnotation(id, "autosortbookmarks/recursive", true);
+        self.setItemAnnotation(id, RECURSIVE, true);
     }
-
 };

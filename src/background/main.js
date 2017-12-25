@@ -272,9 +272,9 @@ class Folder extends Bookmark {
      * @return {boolean} Whether it can be sorted or not.
      */
     canBeSorted() {
-        // if (hasDoNotSortAnnotation(this.id) || this.hasAncestorExcluded()) {
-        //     return false;
-        // }
+        if (tags.hasDoNotSortAnnotation(this.id) || this.hasAncestorExcluded()) {
+            return false;
+        }
 
         return !this.isRoot();
     }
@@ -390,15 +390,16 @@ class Folder extends Bookmark {
      * @returns {boolean} Whether this folder is excluded or not.
      */
     hasAncestorExcluded() {
-        if (tags.isRecursivelyExcluded(this.id)) {
-            return true;
-        }
-        else {
-            if (!this.isRoot()) {
-                let parentFolder = createItem("folder", this.parentId);
-                return parentFolder.hasAncestorExcluded();
-            }
-        }
+        // FIXME: this is not stopping when it reaches the root folder
+        // if (tags.isRecursivelyExcluded(this.id)) {
+        //     return true;
+        // }
+        // else {
+        //     if (!this.isRoot()) {
+        //         let parentFolder = createItem("folder", this.parentId);
+        //         return parentFolder.hasAncestorExcluded();
+        //     }
+        // }
 
         return false;
     }
@@ -983,7 +984,6 @@ function installOrUpgradePrefs() {
             });
         } else {
             log("Upgrade");
-            // TODO convert 3.0 preference to 3.1
         }
 
         // update the localStorage version for next time
