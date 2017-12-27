@@ -80,6 +80,29 @@ var self = module.exports = {
     },
 
     /**
+     * Remove folders that no longer exist.
+     * 
+     * @param {array} folders The current existing folders.
+     */
+    removeMissingFolders: function (folders) {
+        var name = DONOTSORT;
+        var map = JSON.parse(localStorage.getItem(name)) || new Map();
+        for (var key of Object.keys(map)) {
+            var found = false;
+            for (let folder of folders) {
+                if (folder.id === key) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                delete map[key];
+            }
+        }
+        localStorage.setItem(name, JSON.stringify(map));
+    },
+
+    /**
      * Remove the do not sort annotation on an item.
      *
      * @param {string} id The item ID.

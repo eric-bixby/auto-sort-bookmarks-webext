@@ -94,5 +94,14 @@
   },
   "default": {
     "message": "Default"
+  },
+  "recursive": {
+    "message": "Recursive"
+  },
+  "subfolders_recursively_excluded": {
+    "message": "The sub-folders are recursively excluded."
+  },
+  "loading": {
+    "message": "Loading..."
   }
 }

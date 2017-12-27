@@ -107,7 +107,7 @@ class BookmarkManager {
             sortIfAuto();
         }
         else if (getNodeType(removeInfo.node) === "folder") {
-            weh.rpc.call("remove-folder", removeInfo.node.id);
+            weh.rpc.call("configure-folders", "removeFolder", removeInfo.node.id);
         }
     }
 
@@ -640,12 +640,11 @@ class BookmarkSorter {
             promiseAry.push(p);
         }
 
-        // TODO: add call to tags.removeMissingFolders() to remove folders that have been removed
-
         Promise.all(promiseAry).then(folders => {
             // Flatten array of arrays into array
-            let merged = [].concat.apply([], folders);
-            this.sortFolders(merged);
+            let mergedFolders = [].concat.apply([], folders);
+            tags.removeMissingFolders(mergedFolders);
+            this.sortFolders(mergedFolders);
         });
     }
 
@@ -933,9 +932,9 @@ function registerUserEvents() {
         },
         queryRoot: () => {
             const texts = {
-                recursiveText: "Recursive",
-                messageText: "The sub-folders are recursively excluded.",
-                loadingText: "Loading...",
+                recursiveText: weh._("recursive"),
+                messageText: weh._("subfolders_recursively_excluded"),
+                loadingText: weh._("loading")
             };
             var addImgUrl = browser.extension.getURL("content/images/add.png");
             var removeImgUrl = browser.extension.getURL("content/images/remove.png");
