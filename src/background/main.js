@@ -23,10 +23,16 @@
  * Various settings.
  */
 let asb = {
-    "rootId": "root________",
+    "rootId": function () {
+        if (window.chrome === undefined) {
+            return "root________";
+        } else {
+            return "0";
+        }
+    },
     "version": {
         "current": function () {
-            var manifest = browser.runtime.getManifest();
+            var manifest = chrome.runtime.getManifest();
             return manifest.version;
         },
         "local": function (set) {
@@ -131,11 +137,11 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     createChangeListeners() {
-        browser.bookmarks.onChanged.addListener(this.handleChanged);
-        browser.bookmarks.onCreated.addListener(this.handleCreated);
-        browser.bookmarks.onMoved.addListener(this.handleMoved);
-        browser.bookmarks.onRemoved.addListener(this.handleRemoved);
-        browser.history.onVisited.addListener(this.handleVisited);
+        chrome.bookmarks.onChanged.addListener(this.handleChanged);
+        chrome.bookmarks.onCreated.addListener(this.handleCreated);
+        chrome.bookmarks.onMoved.addListener(this.handleMoved);
+        chrome.bookmarks.onRemoved.addListener(this.handleRemoved);
+        chrome.history.onVisited.addListener(this.handleVisited);
         log("added listeners");
     }
 
@@ -145,11 +151,11 @@ class BookmarkManager {
      * @memberof BookmarkManager
      */
     removeChangeListeners() {
-        browser.bookmarks.onChanged.removeListener(this.handleChanged);
-        browser.bookmarks.onCreated.removeListener(this.handleCreated);
-        browser.bookmarks.onMoved.removeListener(this.handleMoved);
-        browser.bookmarks.onRemoved.removeListener(this.handleRemoved);
-        browser.history.onVisited.removeListener(this.handleVisited);
+        chrome.bookmarks.onChanged.removeListener(this.handleChanged);
+        chrome.bookmarks.onCreated.removeListener(this.handleCreated);
+        chrome.bookmarks.onMoved.removeListener(this.handleMoved);
+        chrome.bookmarks.onRemoved.removeListener(this.handleRemoved);
+        chrome.history.onVisited.removeListener(this.handleVisited);
         log("removed listeners");
     }
 }
@@ -180,7 +186,7 @@ class Item {
      * @memberof Item
      */
     saveIndex() {
-        return browser.bookmarks.move(this.id, { index: this.index });
+        return chrome.bookmarks.move(this.id, { index: this.index });
     }
 
     /**
@@ -289,7 +295,7 @@ class Folder extends Bookmark {
         this.children = [[]];
         var self = this;
 
-        browser.bookmarks.getChildren(this.id, function (o) {
+        chrome.bookmarks.getChildren(this.id, function (o) {
             if (o !== undefined) {
                 let promiseAry = [];
 
@@ -297,8 +303,10 @@ class Folder extends Bookmark {
                     if (getNodeType(node) === "bookmark") {
                         // history.getVisits() is faster than history.search() because
                         // history.search() checks title and url, plus does not match url exactly, so it takes longer.
-                        var p = browser.history.getVisits({
+                        var p = chrome.history.getVisits({
                             url: node.url
+                        }, function (visitItems) {
+                            log(visitItems);
                         });
                         promiseAry.push(p);
                     } else {
@@ -349,7 +357,7 @@ class Folder extends Bookmark {
         this.folders = [];
         var self = this;
 
-        browser.bookmarks.getSubTree(this.id, (function () {
+        chrome.bookmarks.getSubTree(this.id, (function () {
             /**
              * Get sub folders. Defined locally so that it can be called recursively and not blow the stack.
              * 
@@ -389,7 +397,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.id === asb.rootId;
+        return this.id === asb.rootId();
     }
 
     /**
@@ -604,7 +612,7 @@ class BookmarkSorter {
      */
     sortAllBookmarks() {
         var self = this;
-        getChildrenFolders(asb.rootId, function (children) {
+        getChildrenFolders(asb.rootId(), function (children) {
             self.sortRootFolders(children);
         });
     }
@@ -936,9 +944,9 @@ function registerUserEvents() {
                 messageText: weh._("subfolders_recursively_excluded"),
                 loadingText: weh._("loading")
             };
-            var addImgUrl = browser.extension.getURL("content/images/add.png");
-            var removeImgUrl = browser.extension.getURL("content/images/remove.png");
-            getChildrenFolders(asb.rootId, function (children) {
+            var addImgUrl = chrome.extension.getURL("content/images/add.png");
+            var removeImgUrl = chrome.extension.getURL("content/images/remove.png");
+            getChildrenFolders(asb.rootId(), function (children) {
                 weh.rpc.call("configure-folders", "root", children, addImgUrl, removeImgUrl, texts);
             });
         },
@@ -1064,7 +1072,7 @@ function getNodeType(node) {
  * @return {Array}
  */
 function getChildrenFolders(parentId, callback) {
-    browser.bookmarks.getChildren(parentId, function (o) {
+    chrome.bookmarks.getChildren(parentId, function (o) {
         if (o !== undefined) {
             let children = [];
             for (let node of o) {
