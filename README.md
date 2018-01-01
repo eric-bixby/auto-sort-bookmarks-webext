@@ -1,11 +1,11 @@
 [Auto-Sort Bookmarks](https://addons.mozilla.org/en-US/firefox/addon/auto-sort-bookmarks/)
 ==========================================================================================
 
-Provide a way to sort all bookmarks and automatically sort bookmarks. This extension considers separators by sorting bookmarks between separators.
+Provides a way to sort bookmarks automatically or manually. This extension considers separators by sorting bookmarks between separators.
 
 **Backup your current bookmarks** in case you do not like the new bookmarks order.
 
-**Reviewers**, your constructive feedback is appreciated. However, if you need technical support, discover a bug, or have a feature request, then [write an issue](https://github.com/eric-bixby/auto-sort-bookmarks-webext/issues) on the support site.
+**Reviewers:** Your constructive feedback is appreciated. However, if you need technical support, discover a bug, or have a feature request, then [write an issue](https://github.com/eric-bixby/auto-sort-bookmarks-webext/issues) on the support site.
 
 **Settings:**
 *   **Auto-sort:** If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator.
@@ -20,5 +20,4 @@ Provide a way to sort all bookmarks and automatically sort bookmarks. This exten
 *   **Folder Sort Order:** Specifies the folder sort order. Minimum value of 1 and maximum of 2.
 *   **Bookmark Sort Order:** Specifies the bookmark sort order. Minimum value of 1 and maximum of 2.
 *   **Logging:** If this option is enabled, debug information will be shown in the browser console.
-
-**Configure Folders:** This button opens a new tab allowing you to exclude folders when sorting. If you uncheck the checkbox next to a folder, it won't be sorted, but the children folders will be sorted. If you want to exclude a folder recursively from being sorted, check the recursive checkbox.
+*   **Configure Folders:** This button opens a new tab allowing you to exclude folders when sorting. If you uncheck the checkbox next to a folder, it won't be sorted, but the children folders will be sorted. If you want to exclude a folder recursively from being sorted, check the recursive checkbox.
