@@ -95,6 +95,12 @@
   "default": {
     "message": "Default"
   },
+  "folders_to_sort": {
+    "message": "Folders to Sort:"
+  },
+  "uncheck_to_exclude_folder": {
+    "message": "Uncheck the folders to exclude when sorting."
+  },
   "recursive": {
     "message": "Recursive"
   },

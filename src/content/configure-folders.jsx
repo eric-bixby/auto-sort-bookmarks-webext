@@ -216,6 +216,8 @@ render(
             <WehHeader />
             <main>
                 <div className="container">
+                    <b>{weh._("folders_to_sort")}</b>
+                    <p>{weh._("uncheck_to_exclude_folder")}</p>
                     <ul id="rootFolders" />
                 </div>
             </main>

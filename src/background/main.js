@@ -24,10 +24,11 @@
  */
 let asb = {
     "rootId": function () {
-        if (window.chrome === undefined) {
-            return "root________";
-        } else {
+        var isChrome = false;
+        if (isChrome) {
             return "0";
+        } else {
+            return "root________";
         }
     },
     "version": {
