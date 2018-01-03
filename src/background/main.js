@@ -304,10 +304,9 @@ class Folder extends Bookmark {
                     if (getNodeType(node) === "bookmark") {
                         // history.getVisits() is faster than history.search() because
                         // history.search() checks title and url, plus does not match url exactly, so it takes longer.
-                        var p = chrome.history.getVisits({
+                        // chrome expects a callback to be the second argument, while browser-api doesn't and returns promise.
+                        var p = browser.history.getVisits({
                             url: node.url
-                        }, function (visitItems) {
-                            log(visitItems);
                         });
                         promiseAry.push(p);
                     } else {
@@ -342,9 +341,10 @@ class Folder extends Bookmark {
                         callback(self, compare, resolve);
                     }
                 });
-
             } else {
-                resolve();
+                if (typeof resolve === "function") {
+                    resolve();
+                }
             }
         });
     }
@@ -440,9 +440,12 @@ class Folder extends Bookmark {
                 }
             });
         } else {
-            resolve();
+            if (typeof resolve === "function") {
+                resolve();
+            }
         }
     }
+
 }
 
 /**
@@ -691,7 +694,9 @@ class BookmarkSorter {
         if (folder.canBeSorted()) {
             folder.getChildren(this.sortFolder, this.compare, resolve);
         } else {
-            resolve();
+            if (typeof resolve === "function") {
+                resolve();
+            }
         }
     }
 
