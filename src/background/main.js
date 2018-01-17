@@ -982,7 +982,7 @@ function installOrUpgradePrefs() {
             log("Upgrade");
         }
 
-        // update the localStorage version for next time
+        // update the version for next time
         asb.version.local("set");
     }
 }
