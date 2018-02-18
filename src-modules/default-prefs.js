@@ -121,8 +121,4 @@ module.exports = [{
     defaultValue: 2,
     minimum: 1,
     maximum: 2
-}, {
-    name: "logging",
-    type: "boolean",
-    defaultValue: false
 }];

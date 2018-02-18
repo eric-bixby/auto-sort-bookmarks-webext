@@ -8,7 +8,7 @@
   "author": "Eric Bixby",
   "background": {
     "scripts": [
-      "background/main.js"
+      "background/auto-sort-bookmarks.js"
     ]
   },
   "browser_action": {
@@ -38,7 +38,8 @@
   "permissions": [
     "bookmarks",
     "history",
+    "storage",
     "tabs"
   ],
-  "version": "3.2.1"
+  "version": "3.3"
 }

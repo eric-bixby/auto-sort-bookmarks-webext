@@ -20,33 +20,6 @@
 // =======
 
 /**
- * Various settings.
- */
-let asb = {
-    "rootId": function () {
-        var isChrome = false;
-        if (isChrome) {
-            return "0";
-        } else {
-            return "root________";
-        }
-    },
-    "version": {
-        "current": function () {
-            var manifest = chrome.runtime.getManifest();
-            return manifest.version;
-        },
-        "local": function (set) {
-            if (set === undefined) {
-                return localStorage["version"];
-            } else {
-                localStorage["version"] = this.current();
-            }
-        }
-    }
-};
-
-/**
  * Bookmark manager class.
  * 
  * @class BookmarkManager
@@ -398,7 +371,7 @@ class Folder extends Bookmark {
      * @return {boolean} Whether this is a root folder or not.
      */
     isRoot() {
-        return this.id === asb.rootId();
+        return this.id === getRootId();
     }
 
     /**
@@ -616,7 +589,7 @@ class BookmarkSorter {
      */
     sortAllBookmarks() {
         var self = this;
-        getChildrenFolders(asb.rootId(), function (children) {
+        getChildrenFolders(getRootId(), function (children) {
             self.sortRootFolders(children);
         });
     }
@@ -805,14 +778,45 @@ class BookmarkSorter {
 // =========
 
 /**
+ * Get the rootId.
+ * 
+ * @returns {string}
+ */
+function getRootId() {
+    var isChrome = false;
+    if (isChrome) {
+        return "0";
+    } else {
+        return "root________";
+    }
+}
+
+/**
  * If enabled, send message to console for debugging.
  *
- * @param {string} txt Text to display on console.
+ * @param {*} o Message to display on console.
  */
-function log(txt) {
-    if (getPref("logging")) {
-        console.log(txt);
+function log(o) {
+    // enable for debugging, disable prior to release.
+    var logging = true;
+    if (logging) {
+        console.log(o);
     }
+}
+
+/**
+ * Get stored settings.
+ * 
+ * @param {any} callback 
+ */
+function getStoredSettings(callback) {
+    var getting = browser.storage.local.get();
+    getting.then(storedSettings => {
+        log(storedSettings);
+        if (typeof callback === "function") {
+            callback(storedSettings);
+        }
+    });
 }
 
 /**
@@ -952,7 +956,7 @@ function registerUserEvents() {
             };
             var addImgUrl = chrome.extension.getURL("content/images/add.png");
             var removeImgUrl = chrome.extension.getURL("content/images/remove.png");
-            getChildrenFolders(asb.rootId(), function (children) {
+            getChildrenFolders(getRootId(), function (children) {
                 weh.rpc.call("configure-folders", "root", children, addImgUrl, removeImgUrl, texts);
             });
         },
@@ -960,31 +964,8 @@ function registerUserEvents() {
             getChildrenFolders(parentId, function (children) {
                 weh.rpc.call("configure-folders", "children", parentId, children);
             });
-        },
-    });
-}
-
-/**
- * Install or upgrade prefs.
- */
-function installOrUpgradePrefs() {
-    let local_version = asb.version.local();
-
-    // check if this is a first install or upgrade
-    if (local_version !== asb.version.current()) {
-        if (local_version === undefined) {
-            log("First install");
-            weh.ui.open("settings", {
-                type: "tab",
-                url: "content/settings.html"
-            });
-        } else {
-            log("Upgrade");
         }
-
-        // update the version for next time
-        asb.version.local("set");
-    }
+    });
 }
 
 /**
@@ -1104,21 +1085,23 @@ function getChildrenFolders(parentId, callback) {
 // MAIN
 // ====
 
+log("main:begin");
+
 var weh = require("weh-background");
 weh.prefs.declare(require("default-prefs"));
 
-// log() depends on weh being defined and declare() being called
-log("main:begin");
-
 var tags = require("annotations");
-
-installOrUpgradePrefs();
-
 var bookmarkSorter = new BookmarkSorter();
-adjustSortCriteria();
-
 var bookmarkManager = new BookmarkManager();
-registerUserEvents();
-registerPrefListeners();
+
+getStoredSettings(storedSettings => {
+    var prefsStr = storedSettings["weh-prefs"] || {};
+    log(prefsStr);
+    localStorage.setItem("weh-prefs", prefsStr);
+
+    adjustSortCriteria();
+    registerUserEvents();
+    registerPrefListeners();
+});
 
 log("main:end");

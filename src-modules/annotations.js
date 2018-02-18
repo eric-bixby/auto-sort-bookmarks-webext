@@ -24,59 +24,68 @@ const DONOTSORT = "donotsort", RECURSIVE = "recursive";
 var self = module.exports = {
 
     /**
-    * Get an item annotation.
-    *
-    * @param {string} id The item ID.
-    * @param {string} name The item name.
-    * @returns {*} The item annotation.
-    */
-    getItemAnnotation: function (id, name) {
-        var map = JSON.parse(localStorage.getItem(name)) || new Map();
-        return map[id] || false;
-    },
-
-    /**
-     * Check if an item has a do not sort annotation.
+     * If enabled, send message to console for debugging.
      *
-     * @param {string} id The item ID.
-     * @return {boolean} Whether the item has a do not sort annotation.
+     * @param {*} o Message to display on console.
      */
-    hasDoNotSortAnnotation: function (id) {
-        return self.getItemAnnotation(id, DONOTSORT);
-    },
-
-    /**
-     * Check if an item has a recursive annotation.
-     *
-     * @param {string} id The item ID.
-     * @return {boolean} Whether the item has a recursive annotation.
-     */
-    hasRecursiveAnnotation: function (id) {
-        return self.getItemAnnotation(id, RECURSIVE);
-    },
-
-    /**
-     * Check if an item is recursively excluded.
-     *
-     * @param {string} id The item ID.
-     * @return {boolean} Whether the item is recursively excluded.
-     */
-    isRecursivelyExcluded: function (id) {
-        return self.hasDoNotSortAnnotation(id) && self.hasRecursiveAnnotation(id);
-    },
-
-    /**
-    * Remove an item annotation.
-    *
-    * @param {string} id The item ID.
-    * @param {string} name The item name.
-    */
-    removeItemAnnotation: function (id, name) {
-        var map = JSON.parse(localStorage.getItem(name)) || new Map();
-        if (map[id] !== undefined) {
-            delete map[id];
+    log: function (o) {
+        // enable for debugging, disable prior to release.
+        var logging = true;
+        if (logging) {
+            console.log(o);
         }
-        localStorage.setItem(name, JSON.stringify(map));
+    },
+
+    /**
+     * Get DoNotSort Annotation Map.
+     * 
+     * @param {*} callback.
+     */
+    getDoNotSortAnnotationMap: function (callback) {
+        self.getStoredAnnotationMap(DONOTSORT, callback);
+    },
+
+    /**
+     * Get Recursive Annotation Map.
+     * 
+     * @param {*} callback.
+     */
+    getRecursiveAnnotationMap: function (callback) {
+        self.getStoredAnnotationMap(RECURSIVE, callback);
+    },
+
+    /**
+     * Get stored annotation map.
+     *
+     * @param {string} name The item name.
+     * @param {*} callback Callback to send annotation to.
+     */
+    getStoredAnnotationMap: function (name, callback) {
+        var getting = browser.storage.local.get(name);
+        getting.then(storedSettings => {
+            self.log(storedSettings);
+            // var map = JSON.parse(storedSettings[name] || "{}");
+            var map = storedSettings[name] || new Map();
+            self.log(map);
+            if (typeof callback === "function") {
+                callback(map);
+            }
+        });
+    },
+
+    /**
+     * Remove an item annotation.
+     *
+     * @param {string} id The item ID.
+     * @param {string} name The item name.
+     */
+    removeItemAnnotation: function (id, name) {
+        self.getStoredAnnotationMap(name, function (map) {
+            if (map[id] !== undefined) {
+                delete map[id];
+            }
+            self.setStoredAnnotationMap(name, map);
+        });
     },
 
     /**
@@ -85,21 +94,32 @@ var self = module.exports = {
      * @param {array} folders The current existing folders.
      */
     removeMissingFolders: function (folders) {
-        var name = DONOTSORT;
-        var map = JSON.parse(localStorage.getItem(name)) || new Map();
-        for (var key of Object.keys(map)) {
-            var found = false;
-            for (let folder of folders) {
-                if (folder.id === key) {
-                    found = true;
-                    break;
+        self.removeMissingFoldersForItem(folders, DONOTSORT);
+        self.removeMissingFoldersForItem(folders, RECURSIVE);
+    },
+
+    /**
+     * Remove folders that no longer exist.
+     * 
+     * @param {array} folders The current existing folders.
+     * @param {string} name Name of storage item.
+     */
+    removeMissingFoldersForItem: function (folders, name) {
+        self.getStoredAnnotationMap(name, function (map) {
+            for (var key of Object.keys(map)) {
+                var found = false;
+                for (let folder of folders) {
+                    if (folder.id === key) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    delete map[key];
                 }
             }
-            if (!found) {
-                delete map[key];
-            }
-        }
-        localStorage.setItem(name, JSON.stringify(map));
+            self.setStoredAnnotationMap(name, map);
+        });
     },
 
     /**
@@ -128,9 +148,10 @@ var self = module.exports = {
      * @param value The item value.
      */
     setItemAnnotation: function (id, name, value) {
-        var map = JSON.parse(localStorage.getItem(name)) || new Map();
-        map[id] = value;
-        localStorage.setItem(name, JSON.stringify(map));
+        self.getStoredAnnotationMap(name, function (map) {
+            map[id] = value;
+            self.setStoredAnnotationMap(name, map);
+        });
     },
 
     /**
@@ -144,9 +165,24 @@ var self = module.exports = {
 
     /**
      * Set the recursive annotation on an item.
+     * 
      * @param {string} id The item ID.
      */
     setRecursiveAnnotation: function (id) {
         self.setItemAnnotation(id, RECURSIVE, true);
+    },
+
+    /**
+     * Set the stored annotation.
+     * 
+     * @param {string} name Key to save map to.
+     * @param {*} map Map to be saved.
+     */
+    setStoredAnnotationMap: function (name, map) {
+        var settings = {};
+        // settings[name] = JSON.stringify(map);
+        settings[name] = map;
+        self.log(settings);
+        browser.storage.local.set(settings);
     }
 };
