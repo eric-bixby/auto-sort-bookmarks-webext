@@ -252,11 +252,12 @@ class Folder extends Bookmark {
      * @return {boolean} Whether it can be sorted or not.
      */
     canBeSorted() {
-        if (tags.hasDoNotSortAnnotation(this.id) || tags.isRecursivelyExcluded(this.id)) {
-            return false;
-        }
-
         return !this.isRoot();
+        // FIXME: fix annotations
+        // if (tags.hasDoNotSortAnnotation(this.id) || tags.isRecursivelyExcluded(this.id)) {
+        //     return false;
+        // }
+        // return !this.isRoot();
     }
 
     /**
@@ -344,7 +345,8 @@ class Folder extends Bookmark {
                     let isTop = false;
 
                     for (let node of o) {
-                        if (getNodeType(node) === "folder" && !tags.isRecursivelyExcluded(node.id)) {
+                        // FIXME: if (getNodeType(node) === "folder" && !tags.isRecursivelyExcluded(node.id)) {
+                        if (getNodeType(node) === "folder") {
                             folder = createItemFromNode(node);
                             if (self.id === node.id) {
                                 isTop = true;
@@ -628,7 +630,7 @@ class BookmarkSorter {
         Promise.all(promiseAry).then(folders => {
             // Flatten array of arrays into array
             let mergedFolders = [].concat.apply([], folders);
-            tags.removeMissingFolders(mergedFolders);
+            // FIXME: tags.removeMissingFolders(mergedFolders);
             this.sortFolders(mergedFolders);
         });
     }
@@ -778,16 +780,24 @@ class BookmarkSorter {
 // =========
 
 /**
+ * Determine if browser is Firefox or not.
+ * 
+ * @returns {boolean}
+ */
+function isFirefox() {
+    return weh.browserType === "firefox";
+}
+
+/**
  * Get the rootId.
  * 
  * @returns {string}
  */
 function getRootId() {
-    var isChrome = false;
-    if (isChrome) {
-        return "0";
-    } else {
+    if (isFirefox()) {
         return "root________";
+    } else {
+        return "0";
     }
 }
 
@@ -812,7 +822,6 @@ function log(o) {
 function getStoredSettings(callback) {
     var getting = browser.storage.local.get();
     getting.then(storedSettings => {
-        log(storedSettings);
         if (typeof callback === "function") {
             callback(storedSettings);
         }
@@ -932,21 +941,25 @@ function registerUserEvents() {
             weh.ui.close("main");
         },
         sortCheckboxChange: (folderID, activated) => {
-            if (activated) {
-                tags.removeDoNotSortAnnotation(folderID);
-                tags.removeRecursiveAnnotation(folderID);
-            }
-            else {
-                tags.setDoNotSortAnnotation(folderID);
-            }
+            // FIXME: fix annotations
+            log(activated);
+            // if (activated) {
+            //     tags.removeDoNotSortAnnotation(folderID);
+            //     tags.removeRecursiveAnnotation(folderID);
+            // }
+            // else {
+            //     tags.setDoNotSortAnnotation(folderID);
+            // }
         },
         recursiveCheckboxChange: (folderID, activated) => {
-            if (activated) {
-                tags.setRecursiveAnnotation(folderID);
-            }
-            else {
-                tags.removeRecursiveAnnotation(folderID);
-            }
+            // FIXME: fix annotations
+            log(activated);
+            // if (activated) {
+            //     tags.setRecursiveAnnotation(folderID);
+            // }
+            // else {
+            //     tags.removeRecursiveAnnotation(folderID);
+            // }
         },
         queryRoot: () => {
             const texts = {
@@ -1068,8 +1081,8 @@ function getChildrenFolders(parentId, callback) {
                         id: node.id,
                         parentId: node.parentId,
                         title: node.title,
-                        excluded: tags.hasDoNotSortAnnotation(node.id),
-                        recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
+                        // FIXME: excluded: tags.hasDoNotSortAnnotation(node.id),
+                        // FIXME: recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
                     });
                 }
             }
@@ -1087,17 +1100,27 @@ function getChildrenFolders(parentId, callback) {
 
 log("main:begin");
 
+var prefsStr = localStorage.getItem("weh-prefs");
+log("weh-prefs:");
+log(prefsStr);
+
+// var prefsStr = {};
+// localStorage.setItem("weh-prefs", prefsStr);
+
 var weh = require("weh-background");
 weh.prefs.declare(require("default-prefs"));
 
-var tags = require("annotations");
+// var tags = require("annotations");
 var bookmarkSorter = new BookmarkSorter();
 var bookmarkManager = new BookmarkManager();
 
 getStoredSettings(storedSettings => {
-    var prefsStr = storedSettings["weh-prefs"] || {};
-    log(prefsStr);
-    localStorage.setItem("weh-prefs", prefsStr);
+    log("storedSettings:");
+    log(storedSettings);
+
+    var wehPrefs = require("weh-prefs");
+    var prefs = { auto_sort: true };
+    wehPrefs.assign(prefs);
 
     adjustSortCriteria();
     registerUserEvents();
