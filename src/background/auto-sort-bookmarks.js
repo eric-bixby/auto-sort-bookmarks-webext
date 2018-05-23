@@ -1100,17 +1100,9 @@ function getChildrenFolders(parentId, callback) {
 
 log("main:begin");
 
-var prefsStr = localStorage.getItem("weh-prefs");
-log("weh-prefs:");
-log(prefsStr);
-
-// var prefsStr = {};
-// localStorage.setItem("weh-prefs", prefsStr);
-
 var weh = require("weh-background");
 weh.prefs.declare(require("default-prefs"));
 
-// var tags = require("annotations");
 var bookmarkSorter = new BookmarkSorter();
 var bookmarkManager = new BookmarkManager();
 
@@ -1118,9 +1110,26 @@ getStoredSettings(storedSettings => {
     log("storedSettings:");
     log(storedSettings);
 
+    // FIXME: use storedSettings for tags
+    // var tags = require("annotations");
+
+    // Convert storedSettings to prefs, then assign()
     var wehPrefs = require("weh-prefs");
-    var prefs = { auto_sort: true };
+    var prefs = storedSettings["weh-prefs"] || {};
+    log("weh-prefs:");
+    log(prefs);
     wehPrefs.assign(prefs);
+
+    // Listen for prefs change, then save prefs to storage
+    weh.rpc.listen({
+        prefsSet: function prefsSet(prefs) {
+            log("saving prefs:");
+            log(prefs);
+            storedSettings["weh-prefs"] = prefs;
+            browser.storage.local.set(storedSettings);
+            return wehPrefs.assign(prefs);
+        }
+    });
 
     adjustSortCriteria();
     registerUserEvents();
