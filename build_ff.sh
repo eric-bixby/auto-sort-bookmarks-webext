@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo Cleaning...
 rm -rf *.zip *.xpi
 
 echo
@@ -11,8 +12,13 @@ echo Archiving...
 cd build
 web-ext build -a ..
 cd ..
+
+echo
 for file in *.zip
 do
- mv "$file" "${file%.zip}.xpi"
+  echo Renaming "$file" to "${file%.zip}.xpi"
+  mv "$file" "${file%.zip}.xpi"
 done
 
+echo
+echo Done.
