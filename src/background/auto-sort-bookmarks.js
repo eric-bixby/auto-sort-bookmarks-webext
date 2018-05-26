@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2018  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,12 +252,10 @@ class Folder extends Bookmark {
      * @return {boolean} Whether it can be sorted or not.
      */
     canBeSorted() {
+        if (tags.hasDoNotSortAnnotation(this.id) || tags.isRecursivelyExcluded(this.id)) {
+            return false;
+        }
         return !this.isRoot();
-        // FIXME: fix annotations
-        // if (tags.hasDoNotSortAnnotation(this.id) || tags.isRecursivelyExcluded(this.id)) {
-        //     return false;
-        // }
-        // return !this.isRoot();
     }
 
     /**
@@ -345,8 +343,7 @@ class Folder extends Bookmark {
                     let isTop = false;
 
                     for (let node of o) {
-                        // FIXME: if (getNodeType(node) === "folder" && !tags.isRecursivelyExcluded(node.id)) {
-                        if (getNodeType(node) === "folder") {
+                        if (getNodeType(node) === "folder" && !tags.isRecursivelyExcluded(node.id)) {
                             folder = createItemFromNode(node);
                             if (self.id === node.id) {
                                 isTop = true;
@@ -630,7 +627,8 @@ class BookmarkSorter {
         Promise.all(promiseAry).then(folders => {
             // Flatten array of arrays into array
             let mergedFolders = [].concat.apply([], folders);
-            // FIXME: tags.removeMissingFolders(mergedFolders);
+
+            tags.removeMissingFolders(mergedFolders);
             this.sortFolders(mergedFolders);
         });
     }
@@ -941,25 +939,21 @@ function registerUserEvents() {
             weh.ui.close("main");
         },
         sortCheckboxChange: (folderID, activated) => {
-            // FIXME: fix annotations
-            log(activated);
-            // if (activated) {
-            //     tags.removeDoNotSortAnnotation(folderID);
-            //     tags.removeRecursiveAnnotation(folderID);
-            // }
-            // else {
-            //     tags.setDoNotSortAnnotation(folderID);
-            // }
+            if (activated) {
+                tags.removeDoNotSortAnnotation(folderID);
+                tags.removeRecursiveAnnotation(folderID);
+            }
+            else {
+                tags.setDoNotSortAnnotation(folderID);
+            }
         },
         recursiveCheckboxChange: (folderID, activated) => {
-            // FIXME: fix annotations
-            log(activated);
-            // if (activated) {
-            //     tags.setRecursiveAnnotation(folderID);
-            // }
-            // else {
-            //     tags.removeRecursiveAnnotation(folderID);
-            // }
+            if (activated) {
+                tags.setRecursiveAnnotation(folderID);
+            }
+            else {
+                tags.removeRecursiveAnnotation(folderID);
+            }
         },
         queryRoot: () => {
             const texts = {
@@ -1081,8 +1075,8 @@ function getChildrenFolders(parentId, callback) {
                         id: node.id,
                         parentId: node.parentId,
                         title: node.title,
-                        // FIXME: excluded: tags.hasDoNotSortAnnotation(node.id),
-                        // FIXME: recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
+                        excluded: tags.hasDoNotSortAnnotation(node.id),
+                        recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
                     });
                 }
             }
@@ -1103,28 +1097,21 @@ log("main:begin");
 var weh = require("weh-background");
 weh.prefs.declare(require("default-prefs"));
 
+var tags = require("annotations");
 var bookmarkSorter = new BookmarkSorter();
 var bookmarkManager = new BookmarkManager();
 
 getStoredSettings(storedSettings => {
-    log("storedSettings:");
-    log(storedSettings);
+    // FIXME: get excluded-folders prefs
 
-    // FIXME: use storedSettings for tags
-    // var tags = require("annotations");
-
-    // Convert storedSettings to prefs, then assign()
+    // Convert storedSettings to prefs, then call assign() to save.
     var wehPrefs = require("weh-prefs");
     var prefs = storedSettings["weh-prefs"] || {};
-    log("weh-prefs:");
-    log(prefs);
     wehPrefs.assign(prefs);
 
-    // Listen for prefs change, then save prefs to storage
+    // Listen for prefs change from UI, then save prefs to storedSettings.
     weh.rpc.listen({
         prefsSet: function prefsSet(prefs) {
-            log("saving prefs:");
-            log(prefs);
             storedSettings["weh-prefs"] = prefs;
             browser.storage.local.set(storedSettings);
             return wehPrefs.assign(prefs);
