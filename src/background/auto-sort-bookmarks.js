@@ -773,6 +773,159 @@ class BookmarkSorter {
     }
 }
 
+/**
+ * Annotations class.
+ * 
+ * @class Annotations
+ */
+class Annotations {
+    /**
+     * Check if an item has a do not sort annotation.
+     *
+     * @param {string} id The item ID.
+     * @return {boolean} Whether the item has a do not sort annotation.
+     */
+    hasDoNotSortAnnotation(id) {
+        if (storedSettings !== undefined && storedSettings[DONOTSORT] !== undefined && storedSettings[DONOTSORT][id] !== undefined) {
+            return storedSettings[DONOTSORT][id];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check if an item has a recursive annotation.
+     *
+     * @param {string} id The item ID.
+     * @return {boolean} Whether the item has a recursive annotation.
+     * 
+     * @param {any} id 
+     */
+    hasRecursiveAnnotation(id) {
+        if (storedSettings !== undefined && storedSettings[RECURSIVE] !== undefined && storedSettings[RECURSIVE][id] !== undefined) {
+            return storedSettings[RECURSIVE][id];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check if an item is recursively excluded.
+     *
+     * @param {string} id The item ID.
+     * @return {boolean} Whether the item is recursively excluded.
+     */
+    isRecursivelyExcluded(id) {
+        return this.hasDoNotSortAnnotation(id) && this.hasRecursiveAnnotation(id);
+    }
+
+    /**
+     * Remove an item annotation.
+     *
+     * @param {string} name The item name.
+     * @param {string} id The item ID.
+     */
+    removeItemAnnotation(name, id) {
+        if (storedSettings !== undefined && storedSettings[name] !== undefined && storedSettings[name][id] !== undefined) {
+            delete storedSettings[name][id];
+            this.setStoredSettings();
+        }
+    }
+
+    /**
+     * Remove folders that no longer exist.
+     * 
+     * @param {array} folders The current existing folders.
+     */
+    removeMissingFolders(folders) {
+        this.removeMissingFoldersForItem(DONOTSORT, folders);
+        this.removeMissingFoldersForItem(RECURSIVE, folders);
+    }
+
+    /**
+     * Remove folders that no longer exist.
+     * 
+     * @param {string} name Name of storage item.
+     * @param {array} folders The current existing folders.
+     */
+    removeMissingFoldersForItem(name, folders) {
+        if (storedSettings !== undefined && storedSettings[name] !== undefined) {
+            for (var id of Object.keys(storedSettings[name])) {
+                var found = false;
+                for (let folder of folders) {
+                    if (folder.id === id) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    this.removeItemAnnotation(name, id);
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove the do not sort annotation on an item.
+     *
+     * @param {string} id The item ID.
+     */
+    removeDoNotSortAnnotation(id) {
+        this.removeItemAnnotation(DONOTSORT, id);
+    }
+
+    /**
+     * Remove the recursive annotation on an item.
+     *
+     * @param {string} id The item ID.
+     */
+    removeRecursiveAnnotation(id) {
+        this.removeItemAnnotation(RECURSIVE, id);
+    }
+
+    /**
+     * Set an item annotation.
+     *
+     * @param {string} name The item name.
+     * @param {string} id The item ID.
+     * @param {string} value The item value.
+     */
+    setItemAnnotation(name, id, value) {
+        if (storedSettings !== undefined) {
+            if (storedSettings[name] === undefined) {
+                storedSettings[name] = {};
+            }
+            storedSettings[name][id] = value;
+            this.setStoredSettings();
+        }
+    }
+
+    /**
+     * Set the do not sort annotation on an item.
+     * 
+     * @param {string} id The item ID.
+     */
+    setDoNotSortAnnotation(id) {
+        this.setItemAnnotation(DONOTSORT, id, true);
+    }
+
+    /**
+     * Set the recursive annotation on an item.
+     * 
+     * @param {string} id The item ID.
+     */
+    setRecursiveAnnotation(id) {
+        this.setItemAnnotation(RECURSIVE, id, true);
+    }
+
+    /**
+     * Set the stored annotation.
+     */
+    setStoredSettings() {
+        browser.storage.local.set(storedSettings);
+    }
+}
+
 // =========
 // FUNCTIONS
 // =========
@@ -1094,22 +1247,26 @@ function getChildrenFolders(parentId, callback) {
 
 log("main:begin");
 
+const DONOTSORT = "donotsort", RECURSIVE = "recursive";
+
 var weh = require("weh-background");
 weh.prefs.declare(require("default-prefs"));
 
-var tags = require("annotations");
 var bookmarkSorter = new BookmarkSorter();
 var bookmarkManager = new BookmarkManager();
 
-getStoredSettings(storedSettings => {
-    // FIXME: get excluded-folders prefs
+var storedSettings = {};
+var tags = new Annotations();
 
-    // Convert storedSettings to prefs, then call assign() to save.
+getStoredSettings(settings => {
+    storedSettings = settings;
+
+    // Get weh prefs
     var wehPrefs = require("weh-prefs");
     var prefs = storedSettings["weh-prefs"] || {};
     wehPrefs.assign(prefs);
 
-    // Listen for prefs change from UI, then save prefs to storedSettings.
+    // Listen for change to weh prefs
     weh.rpc.listen({
         prefsSet: function prefsSet(prefs) {
             storedSettings["weh-prefs"] = prefs;
