@@ -959,7 +959,7 @@ function getRootId() {
  */
 function log(o) {
     // enable for debugging, disable prior to release.
-    var logging = true;
+    var logging = false;
     if (logging) {
         console.log(o);
     }
