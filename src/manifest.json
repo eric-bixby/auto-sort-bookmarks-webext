@@ -37,9 +37,10 @@
   },
   "permissions": [
     "bookmarks",
+    "downloads",
     "history",
     "storage",
     "tabs"
   ],
-  "version": "3.3"
+  "version": "3.3.2"
 }
