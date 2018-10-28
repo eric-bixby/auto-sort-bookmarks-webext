@@ -1,6 +1,7 @@
 *.xpi
 *.swp
 *.iml
+.DS_Store
 .idea
 bookmarks*.html
 test-*.txt
