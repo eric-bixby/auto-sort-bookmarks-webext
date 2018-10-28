@@ -19,7 +19,7 @@
     "default_title": "Auto-Sort Bookmarks",
     "browser_style": true
   },
-  "default_locale": "en_US",
+  "default_locale": "en",
   "description": "Sort bookmarks by multiple criteria.",
   "icons": {
     "16": "content/images/icon-16.png",
