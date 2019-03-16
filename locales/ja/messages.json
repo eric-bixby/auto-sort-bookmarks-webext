@@ -1,0 +1,107 @@
+{
+    "weh_prefs_label_auto_sort": {
+        "message": "自動ソート："
+    },
+    "weh_prefs_description_auto_sort": {
+        "message": "このオプションを有効にすると、ブックマークが追加、変更、移動、削除されたときにブックマークがソートされます。"
+    },
+    "weh_prefs_label_delay": {
+        "message": "非アクティブ待ち："
+    },
+    "weh_prefs_description_delay": {
+        "message": "ブックマークをソートする前に非アクティブを待つ時間を秒単位で指定します。これは自動ソートと手動ソートに適用されます。最小値は3、最大値は255です。ドラッグしてブックマークを移動する場合は、少なくとも45の値を使用することをお勧めします。"
+    },
+    "weh_prefs_label_case_insensitive": {
+        "message": "大文字と小文字を区別しない："
+    },
+    "weh_prefs_description_case_insensitive": {
+        "message": "このオプションを有効にすると、大文字と小文字を区別せずにブックマークがソートされます。"
+    },
+    "weh_prefs_label_sort_by": {
+        "message": "ソート順："
+    },
+    "weh_prefs_description_sort_by": {
+        "message": "ブックマークをソートするための最初のソート基準を指定します。"
+    },
+    "weh_prefs_label_inverse": {
+        "message": "逆順："
+    },
+    "weh_prefs_description_inverse": {
+        "message": "このオプションを有効にすると、[並べ替え]で指定した順序が逆になります。そのため、順序は降順になります。"
+    },
+    "weh_prefs_label_then_sort_by": {
+        "message": "次にソート順："
+    },
+    "weh_prefs_description_then_sort_by": {
+        "message": "ブックマークをソートするための2番目のソート基準を指定します。"
+    },
+    "weh_prefs_label_then_inverse": {
+        "message": "2番目の順序を逆にする："
+    },
+    "weh_prefs_description_then_inverse": {
+        "message": "このオプションを有効にすると、[ソート順]で指定した順序が逆になります。"
+    },
+    "weh_prefs_label_folder_sort_by": {
+        "message": "フォルダのソート順："
+    },
+    "weh_prefs_description_folder_sort_by": {
+        "message": "フォルダをソートするためのソート基準を指定します。"
+    },
+    "weh_prefs_label_folder_inverse": {
+        "message": "フォルダの順序を逆にする："
+    },
+    "weh_prefs_description_folder_inverse": {
+        "message": "このオプションを有効にすると、[フォルダのソート順]で指定した順序が逆になります。"
+    },
+    "weh_prefs_label_folder_sort_order": {
+        "message": "フォルダの並び順："
+    },
+    "weh_prefs_description_folder_sort_order": {
+        "message": "フォルダの並び順を指定します。 最小値 1、最大値 2。"
+    },
+    "weh_prefs_label_bookmark_sort_order": {
+        "message": "ブックマークのソート順："
+    },
+    "weh_prefs_description_bookmark_sort_order": {
+        "message": "ブックマークのソート順を指定します。最小値 1、最大値 2。"
+    },
+    "title": {
+        "message": "ブックマークを自動ソートする"
+    },
+    "settings": {
+        "message": "設定"
+    },
+    "translation": {
+        "message": "翻訳"
+    },
+    "configure_folders": {
+        "message": "フォルダの設定"
+    },
+    "sort": {
+        "message": "ソート"
+    },
+    "save": {
+        "message": "保存"
+    },
+    "cancel": {
+        "message": "取り消す"
+    },
+    "default": {
+        "message": "Default（規定）"
+    },
+    "folders_to_sort": {
+        "message": "ソートするフォルダ："
+    },
+    "uncheck_to_exclude_folder": {
+        "message": "並べ替え時に除外するフォルダのチェックを外します。"
+    },
+    "recursive": {
+        "message": "再帰的"
+    },
+    "subfolders_recursively_excluded": {
+        "message": "サブフォルダは再帰的に除外されます."
+    },
+    "loading": {
+        "message": "読み込み中..."
+    }
+}
