@@ -23,6 +23,27 @@
   "weh_prefs_description_sort_by": {
     "message": "Specifies the first sort criteria to sort the bookmarks."
   },
+  "weh_prefs_sort_by_option_title": {
+    "message": "Title"
+  },
+  "weh_prefs_sort_by_option_url": {
+    "message": "URL"
+  },
+  "weh_prefs_sort_by_option_dateAdded": {
+    "message": "Date Added"
+  },
+  "weh_prefs_sort_by_option_lastModified": {
+    "message": "Last Modified"
+  },
+  "weh_prefs_sort_by_option_lastVisited": {
+    "message": "Last Visited"
+  },
+  "weh_prefs_sort_by_option_accessCount": {
+    "message": "Access Count"
+  },
+  "weh_prefs_sort_by_option_revurl": {
+    "message": "Reverse URL"
+  },
   "weh_prefs_label_inverse": {
     "message": "Inverse Order:"
   },
@@ -35,6 +56,30 @@
   "weh_prefs_description_then_sort_by": {
     "message": "Specifies the second sort criteria to sort the bookmarks."
   },
+  "weh_prefs_then_sort_by_option_none": {
+    "message": "None"
+  },
+  "weh_prefs_then_sort_by_option_title": {
+    "message": "Title"
+  },
+  "weh_prefs_then_sort_by_option_url": {
+    "message": "URL"
+  },
+  "weh_prefs_then_sort_by_option_dateAdded": {
+    "message": "Date Added"
+  },
+  "weh_prefs_then_sort_by_option_lastModified": {
+    "message": "Last Modified"
+  },
+  "weh_prefs_then_sort_by_option_lastVisited": {
+    "message": "Last Visited"
+  },
+  "weh_prefs_then_sort_by_option_accessCount": {
+    "message": "Access Count"
+  },
+  "weh_prefs_then_sort_by_option_revurl": {
+    "message": "Reverse URL"
+  },
   "weh_prefs_label_then_inverse": {
     "message": "Inverse Second Order:"
   },
@@ -46,6 +91,12 @@
   },
   "weh_prefs_description_folder_sort_by": {
     "message": "Specifies a sort criteria to sort folders."
+  },
+  "weh_prefs_folder_sort_by_option_none": {
+    "message": "None"
+  },
+  "weh_prefs_folder_sort_by_option_title": {
+    "message": "Title"
   },
   "weh_prefs_label_folder_inverse": {
     "message": "Inverse Folder Order:"
