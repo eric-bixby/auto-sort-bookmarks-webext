@@ -9,9 +9,7 @@
       "experimentalObjectRestSpread": true
     }
   },
-  "plugins": [
-    "react"
-  ],
+  "plugins": ["react", "prettier"],
   "env": {
     "browser": true,
     "es6": true,
@@ -19,10 +17,13 @@
     "amd": true
   },
   "extends": [
+    "airbnb",
+    "prettier",
     "eslint:recommended",
     "plugin:react/recommended"
   ],
   "rules": {
+    "prettier/prettier": ["error"],
     "indent": [
       "error",
       4,
@@ -30,18 +31,9 @@
         "SwitchCase": 1
       }
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "double"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
     "require-jsdoc": [
       "error",
       {

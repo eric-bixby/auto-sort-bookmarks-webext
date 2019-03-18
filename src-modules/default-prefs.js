@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2019  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,108 +17,84 @@
 
 /* global module */
 
-module.exports = [{
+module.exports = [
+  {
     name: "auto_sort",
     type: "boolean",
     defaultValue: false
-}, {
+  },
+  {
     name: "delay",
     type: "integer",
     defaultValue: 3,
     minimum: 3,
     maximum: 255
-}, {
+  },
+  {
     name: "case_insensitive",
     type: "boolean",
     defaultValue: false
-}, {
+  },
+  {
     name: "sort_by",
     type: "choice",
     defaultValue: "title",
-    choices: [{
-        name: "Title",
-        value: "title"
-    }, {
-        name: "URL",
-        value: "url"
-    }, {
-        name: "Date Added",
-        value: "dateAdded"
-    }, {
-        name: "Last Modified",
-        value: "lastModified"
-    }, {
-        name: "Last Visited",
-        value: "lastVisited"
-    }, {
-        name: "Access Count",
-        value: "accessCount"
-    }, {
-        name: "Reverse URL",
-        value: "revurl"
-    }]
-}, {
+    choices: [
+      "title",
+      "url",
+      "dateAdded",
+      "lastModified",
+      "accessCount",
+      "revurl"
+    ]
+  },
+  {
     name: "inverse",
     type: "boolean",
     defaultValue: false
-}, {
+  },
+  {
     name: "then_sort_by",
     type: "choice",
     defaultValue: "none",
-    choices: [{
-        name: "None",
-        value: "none"
-    }, {
-        name: "Title",
-        value: "title"
-    }, {
-        name: "URL",
-        value: "url"
-    }, {
-        name: "Date Added",
-        value: "dateAdded"
-    }, {
-        name: "Last Modified",
-        value: "lastModified"
-    }, {
-        name: "Last Visited",
-        value: "lastVisited"
-    }, {
-        name: "Access Count",
-        value: "accessCount"
-    }, {
-        name: "Reverse URL",
-        value: "revurl"
-    }]
-}, {
+    choices: [
+      "none",
+      "title",
+      "url",
+      "dateAdded",
+      "lastModified",
+      "accessCount",
+      "revurl"
+    ]
+  },
+  {
     name: "then_inverse",
     type: "boolean",
     defaultValue: false
-}, {
+  },
+  {
     name: "folder_sort_by",
     type: "choice",
     defaultValue: "title",
-    choices: [{
-        name: "None",
-        value: "none"
-    }, {
-        name: "Title",
-        value: "title"
-    }]
-}, {
+    choices: ["none", "title"]
+  },
+  {
     name: "folder_inverse",
     type: "boolean",
     defaultValue: false
-}, {
+  },
+  {
     name: "folder_sort_order",
     type: "integer",
     defaultValue: 1,
     minimum: 1,
     maximum: 2
-}, {
+  },
+  {
     name: "bookmark_sort_order",
     type: "integer",
     defaultValue: 2,
     minimum: 1,
     maximum: 2
-}];
+  }
+];
