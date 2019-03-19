@@ -29,6 +29,7 @@ import argparse
 import random
 import string
 
+
 def generateFileContent(outputFile, dirCount, linkCount):
     f = open(outputFile, "w")
     f.write("<!DOCTYPE NETSCAPE-Bookmark-file-1>\n")
@@ -37,18 +38,19 @@ def generateFileContent(outputFile, dirCount, linkCount):
     f.write("<H1>Bookmarks Menu</H1>\n")
     f.write("\n")
     f.write("<DL><p>\n")
-    f.write(generateBookmarks(dirCount, linkCount));
+    f.write(generateBookmarks(dirCount, linkCount))
     f.write("</DL>\n")
     f.close()
+
 
 def generateBookmarks(dirCount, linkCount):
     result = ""
     for d in range(0, dirCount):
         directoryName = generateName()
         result += "    <DT><H3 ADD_DATE=\"1438910135\" LAST_MODIFIED=\"1438910135\">" \
-        + directoryName \
-        + "</H3>\n" \
-        + "    <DL><p>\n"
+            + directoryName \
+            + "</H3>\n" \
+            + "    <DL><p>\n"
         for b in range(0, linkCount):
             bookmarkName = generateName()
             result += "        <DT><A HREF=\"https://" \
@@ -59,16 +61,21 @@ def generateBookmarks(dirCount, linkCount):
         result += "    </DL><p>\n"
     return result
 
+
 def generateName():
     return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(10))
+
 
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("outputfile", help="output filename")
-    parser.add_argument("--dircount", type=int, help="number of directories to generate", default=10)
-    parser.add_argument("--linkcount", type=int, help="number of bookmarks to generate per directory", default=10)
+    parser.add_argument("--dircount", type=int,
+                        help="number of directories to generate", default=10)
+    parser.add_argument("--linkcount", type=int,
+                        help="number of bookmarks to generate per directory", default=10)
     args = parser.parse_args()
     generateFileContent(args.outputfile, args.dircount, args.linkcount)
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
