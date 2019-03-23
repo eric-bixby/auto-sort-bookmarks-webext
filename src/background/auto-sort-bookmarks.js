@@ -384,7 +384,7 @@ class Folder extends Bookmark {
               }
             }
 
-            // only return the complete list if this is the top interition
+            // only return the complete list if this is the top iteration
             if (isTop && typeof callback === "function") {
               callback(self.folders);
             }
@@ -835,7 +835,7 @@ class BookmarkSorter {
    */
   sortIfNotSorting() {
     if (!this.sorting) {
-      // restart clock everytime there is an event triggered
+      // restart clock every time there is an event triggered
       this.lastCheck = Date.now();
       // if already waiting, then don't wait again or there will be multiple loops
       if (!this.isWaiting) {
@@ -890,10 +890,10 @@ class Annotations {
   hasDoNotSortAnnotation(id) {
     if (
       storedSettings !== undefined &&
-      storedSettings[DONOTSORT] !== undefined &&
-      storedSettings[DONOTSORT][id] !== undefined
+      storedSettings[DO_NOT_SORT] !== undefined &&
+      storedSettings[DO_NOT_SORT][id] !== undefined
     ) {
-      return storedSettings[DONOTSORT][id];
+      return storedSettings[DO_NOT_SORT][id];
     } else {
       return false;
     }
@@ -952,7 +952,7 @@ class Annotations {
    * @param {array} folders The current existing folders.
    */
   removeMissingFolders(folders) {
-    this.removeMissingFoldersForItem(DONOTSORT, folders);
+    this.removeMissingFoldersForItem(DO_NOT_SORT, folders);
     this.removeMissingFoldersForItem(RECURSIVE, folders);
   }
 
@@ -985,7 +985,7 @@ class Annotations {
    * @param {string} id The item ID.
    */
   removeDoNotSortAnnotation(id) {
-    this.removeItemAnnotation(DONOTSORT, id);
+    this.removeItemAnnotation(DO_NOT_SORT, id);
   }
 
   /**
@@ -1020,7 +1020,7 @@ class Annotations {
    * @param {string} id The item ID.
    */
   setDoNotSortAnnotation(id) {
-    this.setItemAnnotation(DONOTSORT, id, true);
+    this.setItemAnnotation(DO_NOT_SORT, id, true);
   }
 
   /**
@@ -1155,7 +1155,7 @@ function adjustSortCriteria() {
 }
 
 /**
- * Reigster listeners for pref changes.
+ * Register listeners for pref changes.
  */
 function registerPrefListeners() {
   weh.prefs.on("auto_sort", sortIfAuto);
@@ -1405,7 +1405,7 @@ function getChildrenFolders(parentId, callback) {
 
 log("main:begin");
 
-const DONOTSORT = "donotsort",
+const DO_NOT_SORT = "donotsort",
   RECURSIVE = "recursive";
 
 var weh = require("weh-background");
