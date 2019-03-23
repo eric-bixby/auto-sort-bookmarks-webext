@@ -1,107 +1,107 @@
 {
-   "cancel": {
-      "message": "Cancelar"
-   },
-   "configure_folders": {
-      "message": "Configurar Pastas"
-   },
-   "default": {
-      "message": "Padrão"
-   },
-   "folders_to_sort": {
-      "message": "Pastas pra Organizar:"
-   },
-   "loading": {
-      "message": "Carregando..."
-   },
-   "recursive": {
-      "message": "Recursivo"
-   },
-   "save": {
-      "message": "Salvar"
-   },
-   "settings": {
-      "message": "Configurações"
-   },
-   "sort": {
-      "message": "Organizar"
-   },
-   "subfolders_recursively_excluded": {
-      "message": "As sub-pastas estão excluídas recursivamente."
-   },
-   "title": {
-      "message": "Auto-Organizar Favoritos"
-   },
-   "translation": {
-      "message": "Tradução"
-   },
-   "uncheck_to_exclude_folder": {
-      "message": "Remover a seleção das pastas a excluir quando organizar."
-   },
-   "weh_prefs_description_auto_sort": {
-      "message": "Se esta opção estiver ativada os favoritos serão organizados quando os favoritos são adicionados, mudados ou apagados. Isto significa que você não pode mover quaisquer favoritos na mesma pasta a menos que seja movida sobre um separador."
-   },
-   "weh_prefs_description_bookmark_sort_order": {
-      "message": "Especifica a ordem de organização dos favoritos. Valor mínimo de 1 e máximo de 2."
-   },
-   "weh_prefs_description_case_insensitive": {
-      "message": "Se esta opção estiver ativada os favoritos serão organizados sem considerar o tamanho da letra."
-   },
-   "weh_prefs_description_delay": {
-      "message": "Especifica quanto tempo esperar (em segundos) por inatividade antes de organizar os favoritos. Isto se aplica a organização automática e manual. Valor mínimo de 3 e máximo de 255."
-   },
-   "weh_prefs_description_folder_inverse": {
-      "message": "Se esta opção estiver ativada a ordem especificada em (Organizar Pasta Por) será revertida."
-   },
-   "weh_prefs_description_folder_sort_by": {
-      "message": "Especifica um critério de organização pra organizar as pastas."
-   },
-   "weh_prefs_description_folder_sort_order": {
-      "message": "Especifica a ordem de organização das pastas. Valor mínimo de 1 e máximo de 2."
-   },
-   "weh_prefs_description_inverse": {
-      "message": "Se esta opção estiver ativada a ordem especificada em \"Organizar Por\" será revertida. Então a ordem será descendente."
-   },
-   "weh_prefs_description_sort_by": {
-      "message": "Especifica o primeiro critério de organização pra organizar os favoritos."
-   },
-   "weh_prefs_description_then_inverse": {
-      "message": "Se esta opção estiver ativada, a ordem especificada no \"Então Organizar Por\" será revertida."
-   },
-   "weh_prefs_description_then_sort_by": {
-      "message": "Especifica o segundo critério de organização pra organizar os favoritos."
-   },
-   "weh_prefs_label_auto_sort": {
-      "message": "Auto-organizar:"
-   },
-   "weh_prefs_label_bookmark_sort_order": {
-      "message": "Ordem da Organização dos Favoritos:"
-   },
-   "weh_prefs_label_case_insensitive": {
-      "message": "Caso Insensitivo:"
-   },
-   "weh_prefs_label_delay": {
-      "message": "Espera de Inatividade:"
-   },
-   "weh_prefs_label_folder_inverse": {
-      "message": "Ordem Inversa das Pastas:"
-   },
-   "weh_prefs_label_folder_sort_by": {
-      "message": "Organizar Pasta Por:"
-   },
-   "weh_prefs_label_folder_sort_order": {
-      "message": "Ordem de Organização das Pastas:"
-   },
-   "weh_prefs_label_inverse": {
-      "message": "Ordem Inversa:"
-   },
-   "weh_prefs_label_sort_by": {
-      "message": "Organizar Por:"
-   },
-   "weh_prefs_label_then_inverse": {
-      "message": "Segunda Ordem Inversa:"
-   },
-   "weh_prefs_label_then_sort_by": {
-      "message": "Então Organizar Por:"
-   }
+  "cancel": {
+    "message": "Cancelar"
+  },
+  "configure_folders": {
+    "message": "Configurar Pastas"
+  },
+  "default": {
+    "message": "Padrão"
+  },
+  "folders_to_sort": {
+    "message": "Pastas pra Organizar:"
+  },
+  "loading": {
+    "message": "Carregando..."
+  },
+  "recursive": {
+    "message": "Recursivo"
+  },
+  "save": {
+    "message": "Salvar"
+  },
+  "settings": {
+    "message": "Configurações"
+  },
+  "sort": {
+    "message": "Organizar"
+  },
+  "subfolders_recursively_excluded": {
+    "message": "As sub-pastas estão excluídas recursivamente."
+  },
+  "title": {
+    "message": "Auto-Organizar Favoritos"
+  },
+  "translation": {
+    "message": "Tradução"
+  },
+  "uncheck_to_exclude_folder": {
+    "message": "Remover a seleção das pastas a excluir quando organizar."
+  },
+  "weh_prefs_description_auto_sort": {
+    "message": "Se esta opção estiver ativada os favoritos serão organizados quando os favoritos são adicionados, mudados ou apagados. Isto significa que você não pode mover quaisquer favoritos na mesma pasta a menos que seja movida sobre um separador."
+  },
+  "weh_prefs_description_bookmark_sort_order": {
+    "message": "Especifica a ordem de organização dos favoritos. Valor mínimo de 1 e máximo de 2."
+  },
+  "weh_prefs_description_case_insensitive": {
+    "message": "Se esta opção estiver ativada os favoritos serão organizados sem considerar o tamanho da letra."
+  },
+  "weh_prefs_description_delay": {
+    "message": "Especifica quanto tempo esperar (em segundos) por inatividade antes de organizar os favoritos. Isto se aplica a organização automática e manual. Valor mínimo de 3 e máximo de 255."
+  },
+  "weh_prefs_description_folder_inverse": {
+    "message": "Se esta opção estiver ativada a ordem especificada em (Organizar Pasta Por) será revertida."
+  },
+  "weh_prefs_description_folder_sort_by": {
+    "message": "Especifica um critério de organização pra organizar as pastas."
+  },
+  "weh_prefs_description_folder_sort_order": {
+    "message": "Especifica a ordem de organização das pastas. Valor mínimo de 1 e máximo de 2."
+  },
+  "weh_prefs_description_inverse": {
+    "message": "Se esta opção estiver ativada a ordem especificada em \"Organizar Por\" será revertida. Então a ordem será descendente."
+  },
+  "weh_prefs_description_sort_by": {
+    "message": "Especifica o primeiro critério de organização pra organizar os favoritos."
+  },
+  "weh_prefs_description_then_inverse": {
+    "message": "Se esta opção estiver ativada, a ordem especificada no \"Então Organizar Por\" será revertida."
+  },
+  "weh_prefs_description_then_sort_by": {
+    "message": "Especifica o segundo critério de organização pra organizar os favoritos."
+  },
+  "weh_prefs_label_auto_sort": {
+    "message": "Auto-organizar:"
+  },
+  "weh_prefs_label_bookmark_sort_order": {
+    "message": "Ordem da Organização dos Favoritos:"
+  },
+  "weh_prefs_label_case_insensitive": {
+    "message": "Caso Insensitivo:"
+  },
+  "weh_prefs_label_delay": {
+    "message": "Espera de Inatividade:"
+  },
+  "weh_prefs_label_folder_inverse": {
+    "message": "Ordem Inversa das Pastas:"
+  },
+  "weh_prefs_label_folder_sort_by": {
+    "message": "Organizar Pasta Por:"
+  },
+  "weh_prefs_label_folder_sort_order": {
+    "message": "Ordem de Organização das Pastas:"
+  },
+  "weh_prefs_label_inverse": {
+    "message": "Ordem Inversa:"
+  },
+  "weh_prefs_label_sort_by": {
+    "message": "Organizar Por:"
+  },
+  "weh_prefs_label_then_inverse": {
+    "message": "Segunda Ordem Inversa:"
+  },
+  "weh_prefs_label_then_sort_by": {
+    "message": "Então Organizar Por:"
+  }
 }
