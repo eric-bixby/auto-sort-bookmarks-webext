@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2019  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,23 +21,23 @@ import { Provider } from "react-redux";
 import { applyMiddleware, createStore, combineReducers } from "redux";
 import logger from "redux-logger";
 import {
-    reducer as translateReducer,
-    WehTranslationForm
+  reducer as translateReducer,
+  WehTranslationForm
 } from "react/weh-translation";
 
 import weh from "weh-content";
 
 let reducers = combineReducers({
-    translate: translateReducer
+  translate: translateReducer
 });
 
 let store = createStore(reducers, applyMiddleware(logger));
 
 render(
-    <Provider store={store}>
-        <WehTranslationForm />
-    </Provider>,
-    document.getElementById("root")
+  <Provider store={store}>
+    <WehTranslationForm />
+  </Provider>,
+  document.getElementById("root")
 );
 
 weh.setPageTitle(weh._("translation"));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2019  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,36 +22,35 @@ import PropTypes from "prop-types";
 import weh from "weh-content";
 
 class Link extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
 
-    constructor(props) {
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-    }
+  handleClick() {
+    weh.rpc.call(this.props.messageCall);
+  }
 
-    handleClick() {
-        weh.rpc.call(this.props.messageCall);
-    }
-
-    render() {
-        return (
-            <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
-        );
-    }
+  render() {
+    return (
+      <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
+    );
+  }
 }
 
 Link.propTypes = {
-    messageCall: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired
+  messageCall: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired
 };
 
 render(
-    <div className="asb-popup">
-        <div className="asb-toolbar">
-            <Link messageCall={"openSettings"} label={"settings"} />
-            <Link messageCall={"openConfigureFolders"} label={"configure_folders"} />
-            <Link messageCall={"openTranslation"} label={"translation"} />
-            <Link messageCall={"sort"} label={"sort"} />
-        </div>
-    </div>,
-    document.getElementById("root")
+  <div className="asb-popup">
+    <div className="asb-toolbar">
+      <Link messageCall={"openSettings"} label={"settings"} />
+      <Link messageCall={"openConfigureFolders"} label={"configure_folders"} />
+      <Link messageCall={"openTranslation"} label={"translation"} />
+      <Link messageCall={"sort"} label={"sort"} />
+    </div>
+  </div>,
+  document.getElementById("root")
 );
