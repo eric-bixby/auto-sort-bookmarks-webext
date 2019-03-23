@@ -1259,13 +1259,11 @@ function reverseBaseUrl(str) {
     return "";
   }
 
-  // Used code generator: https://regex101.com/
   str = str.replace(/^\S+:\/\//, "");
   let re = /^[^/]+$|^[^/]+/;
+  let m = re.exec(str);
 
-  let m;
-
-  if ((m = re.exec(str)) !== null) {
+  if (m !== null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
     }
