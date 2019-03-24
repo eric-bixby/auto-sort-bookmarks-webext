@@ -46,6 +46,7 @@
         }
       }
     ],
-    "no-console": "off"
+    "no-console": "off",
+    "import/no-unresolved": "off"
   }
 }
