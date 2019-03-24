@@ -116,7 +116,7 @@ function appendFolder(folder, list) {
   children.id = "folder-" + folder.id;
 
   let icon = document.createElement("img");
-  icon.alt = "Expand/Collpase";
+  icon.alt = "Expand/Collapse";
   icon.src = addIcon;
   icon.setAttribute("data-state", "add");
   icon.addEventListener(
