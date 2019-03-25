@@ -51,7 +51,7 @@
     "message": "Specifies how long to wait (in seconds) for inactivity before sorting bookmarks. This applies to automatic and manual sorting. Minimum value of 3 and maximum of 255."
   },
   "weh_prefs_description_folder_inverse": {
-    "message": "If this option is enabled, the order speficied in 'Sort Folder By' will be reversed."
+    "message": "If this option is enabled, the order specified in 'Sort Folder By' will be reversed."
   },
   "weh_prefs_description_folder_sort_by": {
     "message": "Specifies a sort criteria to sort folders."
