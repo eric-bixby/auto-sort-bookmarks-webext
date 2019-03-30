@@ -7,7 +7,7 @@
 
 ***
 
-#### [<img align="right" src="https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_2.png">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmark/)
+#### [<img align="right" src="https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_2.png">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmarks/)
 Provides a way to sort bookmarks automatically or manually.
 
 This extension considers separators by sorting bookmarks between separators. However, set the delay before sorting (Inactivity Wait) to 45 seconds as the auto-sorting may happen while dragging bookmarks. This add-on cannot detect when bookmarks are being dragged.
