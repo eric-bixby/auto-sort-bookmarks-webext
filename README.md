@@ -1,3 +1,8 @@
+[<img align="right" src="https://img.shields.io/amo/stars/auto-sort-bookmarks.svg">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmarks/reviews/)
+[<img align="right" src="https://img.shields.io/amo/users/auto-sort-bookmarks.svg">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmarks/statistics)
+[<img align="right" src="https://img.shields.io/github/release/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases)
+[<img align="right" src="https://img.shields.io/github/license/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/blob/master/LICENSE)
+
 # [Auto-Sort Bookmarks](https://addons.mozilla.org/en-US/firefox/addon/auto-sort-bookmarks/)
 
 Provides a way to sort bookmarks automatically or manually.
