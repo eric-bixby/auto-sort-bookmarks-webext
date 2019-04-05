@@ -1,0 +1,158 @@
+{
+  "cancel": {
+    "message": "Avbryt"
+  },
+  "configure_folders": {
+    "message": "Konfigurera mappar"
+  },
+  "default": {
+    "message": "Standard"
+  },
+  "folders_to_sort": {
+    "message": "Mappar att sortera:"
+  },
+  "loading": {
+    "message": "Laddar..."
+  },
+  "recursive": {
+    "message": "Rekursivt"
+  },
+  "save": {
+    "message": "Spara"
+  },
+  "settings": {
+    "message": "Inställningar"
+  },
+  "sort": {
+    "message": "Sortera"
+  },
+  "subfolders_recursively_excluded": {
+    "message": "Undermapparna är rekursivt uteslutna."
+  },
+  "title": {
+    "message": "Sortera bookmärken automatiskt"
+  },
+  "translation": {
+    "message": "Översätt"
+  },
+  "uncheck_to_exclude_folder": {
+    "message": "Avmarkera mapparna för att uteslutas vid sortering."
+  },
+  "weh_prefs_description_auto_sort": {
+    "message": "Om det här alternativet är aktiverat kommer bormärkena att sorteras när de läggs till, ändras, flyttas eller tas bort. Detta betyder att du inte kan flytta ett bokmärke i samma mapp, om den inte flyttas över en avskiljare."
+  },
+  "weh_prefs_description_bookmark_sort_order": {
+    "message": "Specifies the bookmark sort order. Minimum value of 1 and maximum of 2."
+  },
+  "weh_prefs_description_case_insensitive": {
+    "message": "Om det här alternativet är aktiverat kommer bokmärkena sorteras utan hänsyn till skiftläget."
+  },
+  "weh_prefs_description_delay": {
+    "message": "Anger väntetiden (i sekunder) innan bokmärkena sorteras. Detta gäller automatisk och manuell sortering. Minsta värdet är 3 och högsta är 255."
+  },
+  "weh_prefs_description_folder_inverse": {
+    "message": "Om det här alternativet är aktiverat kommer sorteringsordningen i 'Sortera mappar efter' att bli omvänd."
+  },
+  "weh_prefs_description_folder_sort_by": {
+    "message": "Anger sorteringskriterier för sortering av mappar."
+  },
+  "weh_prefs_description_folder_sort_order": {
+    "message": "Anger mappsorteringsordningen. Minsta värdet av 1 och högsta av 2."
+  },
+  "weh_prefs_description_inverse": {
+    "message": "Om det här alternativet är aktiverat kommer sorteringsordningen i 'Sortera efter' att bli omvänd. Så ordningen kommer att bli fallande."
+  },
+  "weh_prefs_description_sort_by": {
+    "message": "Anger den första sorteringsordningen för bokmärken."
+  },
+  "weh_prefs_description_then_inverse": {
+    "message": "Om det här alternativet är aktiverat kommer sorteringsordningen i 'Sortera sen efter' att bli omvänd."
+  },
+  "weh_prefs_description_then_sort_by": {
+    "message": "Anger den andra sorteringsordningen för bokmärken."
+  },
+  "weh_prefs_folder_sort_by_option_none": {
+    "message": "Ingen"
+  },
+  "weh_prefs_folder_sort_by_option_title": {
+    "message": "Titel"
+  },
+  "weh_prefs_label_auto_sort": {
+    "message": "Sortera automatiskt:"
+  },
+  "weh_prefs_label_bookmark_sort_order": {
+    "message": "Sorteringsordning av bokmärken:"
+  },
+  "weh_prefs_label_case_insensitive": {
+    "message": "Skiftlägesokänsliga:"
+  },
+  "weh_prefs_label_delay": {
+    "message": "Inaktivitetsfördröjning:"
+  },
+  "weh_prefs_label_folder_inverse": {
+    "message": "Omvänd mappordning:"
+  },
+  "weh_prefs_label_folder_sort_by": {
+    "message": "Sortera mapp efter:"
+  },
+  "weh_prefs_label_folder_sort_order": {
+    "message": "Mappsorteringsordning:"
+  },
+  "weh_prefs_label_inverse": {
+    "message": "Omvänd ordning:"
+  },
+  "weh_prefs_label_sort_by": {
+    "message": "Sortera efter:"
+  },
+  "weh_prefs_label_then_inverse": {
+    "message": "Omvänd sekundär ordning:"
+  },
+  "weh_prefs_label_then_sort_by": {
+    "message": "Sortera sen efter:"
+  },
+  "weh_prefs_sort_by_option_accessCount": {
+    "message": "Besöksantal"
+  },
+  "weh_prefs_sort_by_option_dateAdded": {
+    "message": "Tilläggsdatum"
+  },
+  "weh_prefs_sort_by_option_lastModified": {
+    "message": "Senast ändrad"
+  },
+  "weh_prefs_sort_by_option_lastVisited": {
+    "message": "Senast besökta"
+  },
+  "weh_prefs_sort_by_option_revurl": {
+    "message": "Omvänd webbadress"
+  },
+  "weh_prefs_sort_by_option_title": {
+    "message": "Titel"
+  },
+  "weh_prefs_sort_by_option_url": {
+    "message": "Webbadress"
+  },
+  "weh_prefs_then_sort_by_option_accessCount": {
+    "message": "Besöksantal"
+  },
+  "weh_prefs_then_sort_by_option_dateAdded": {
+    "message": "Tilläggsdatum"
+  },
+  "weh_prefs_then_sort_by_option_lastModified": {
+    "message": "Senast ändrad"
+  },
+  "weh_prefs_then_sort_by_option_lastVisited": {
+    "message": "Senast besökta"
+  },
+  "weh_prefs_then_sort_by_option_none": {
+    "message": "Ingen"
+  },
+  "weh_prefs_then_sort_by_option_revurl": {
+    "message": "Omvänd webbadress"
+  },
+  "weh_prefs_then_sort_by_option_title": {
+    "message": "Titel"
+  },
+  "weh_prefs_then_sort_by_option_url": {
+    "message": "Webbadress"
+  }
+}
