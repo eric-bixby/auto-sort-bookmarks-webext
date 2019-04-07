@@ -3,19 +3,19 @@
     "message": "Cancel"
   },
   "configure_folders": {
-    "message": "Configure Folders"
+    "message": "Konfigurieren Folders"
   },
   "default": {
     "message": "Default"
   },
   "folders_to_sort": {
-    "message": "Folders to Sort:"
+    "message": "Ordner zu Sortieren:"
   },
   "loading": {
-    "message": "Loading..."
+    "message": "Laden..."
   },
   "recursive": {
-    "message": "Recursive"
+    "message": "Rekursive"
   },
   "save": {
     "message": "Save"
@@ -27,7 +27,7 @@
     "message": "Sort"
   },
   "subfolders_recursively_excluded": {
-    "message": "The sub-folders are recursively excluded."
+    "message": "Die Unterordner werden rekursiv ausgeschlossen."
   },
   "title": {
     "message": "Auto-Sort Bookmarks"
@@ -36,7 +36,7 @@
     "message": "Translation"
   },
   "uncheck_to_exclude_folder": {
-    "message": "Uncheck the folders to exclude when sorting."
+    "message": "Deaktivieren Sie die Ordner ausschließen, beim sortieren."
   },
   "weh_prefs_description_auto_sort": {
     "message": "If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
@@ -72,7 +72,7 @@
     "message": "Specifies the second sort criteria to sort the bookmarks."
   },
   "weh_prefs_folder_sort_by_option_none": {
-    "message": "None"
+    "message": "Keine Festlegung"
   },
   "weh_prefs_folder_sort_by_option_title": {
     "message": "Title"
@@ -111,19 +111,19 @@
     "message": "Then Sort By:"
   },
   "weh_prefs_sort_by_option_accessCount": {
-    "message": "Access Count"
+    "message": "Meistbesucht"
   },
   "weh_prefs_sort_by_option_dateAdded": {
-    "message": "Date Added"
+    "message": "Hinzugefügt"
   },
   "weh_prefs_sort_by_option_lastModified": {
-    "message": "Last Modified"
+    "message": "Zuletzt geändert"
   },
   "weh_prefs_sort_by_option_lastVisited": {
-    "message": "Last Visited"
+    "message": "Zuletzt besucht"
   },
   "weh_prefs_sort_by_option_revurl": {
-    "message": "Reverse URL"
+    "message": "Umgekehrt URL"
   },
   "weh_prefs_sort_by_option_title": {
     "message": "Title"
@@ -132,22 +132,22 @@
     "message": "URL"
   },
   "weh_prefs_then_sort_by_option_accessCount": {
-    "message": "Access Count"
+    "message": "Meistbesucht"
   },
   "weh_prefs_then_sort_by_option_dateAdded": {
-    "message": "Date Added"
+    "message": "Hinzugefügt"
   },
   "weh_prefs_then_sort_by_option_lastModified": {
-    "message": "Last Modified"
+    "message": "Zuletzt geändert"
   },
   "weh_prefs_then_sort_by_option_lastVisited": {
-    "message": "Last Visited"
+    "message": "Zuletzt besucht"
   },
   "weh_prefs_then_sort_by_option_none": {
-    "message": "None"
+    "message": "Keine Festlegung"
   },
   "weh_prefs_then_sort_by_option_revurl": {
-    "message": "Reverse URL"
+    "message": "Umgekehrt URL"
   },
   "weh_prefs_then_sort_by_option_title": {
     "message": "Title"
