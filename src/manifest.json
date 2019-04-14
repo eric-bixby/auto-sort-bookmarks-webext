@@ -7,9 +7,7 @@
   },
   "author": "Eric Bixby",
   "background": {
-    "scripts": [
-      "background/auto-sort-bookmarks.js"
-    ]
+    "scripts": ["background/auto-sort-bookmarks.js"]
   },
   "browser_action": {
     "default_icon": {
@@ -35,12 +33,6 @@
     "page": "content/settings.html?panel=settings",
     "browser_style": true
   },
-  "permissions": [
-    "bookmarks",
-    "downloads",
-    "history",
-    "storage",
-    "tabs"
-  ],
-  "version": "3.3.3"
+  "permissions": ["bookmarks", "downloads", "history", "storage", "tabs"],
+  "version": "3.4"
 }
