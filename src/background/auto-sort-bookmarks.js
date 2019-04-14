@@ -519,6 +519,20 @@ class BookmarkSorter {
       }
     }
 
+    /**
+     * Add host.
+     *
+     * @param bookmark1
+     * @param bookmark2
+     * @param criteria
+     */
+    function addHost(bookmark1, bookmark2, criteria) {
+      if (criteria === "host") {
+        bookmark1.host = (new URL(bookmark1.url)).hostname;
+        bookmark2.host = (new URL(bookmark2.url)).hostname;
+      }
+    }
+
     let compareOptions = {
       caseFirst: "upper",
       numeric: true,
@@ -531,12 +545,17 @@ class BookmarkSorter {
 
     let firstComparator;
     if (
-      ["title", "url", "revurl"].indexOf(
+      ["title", "url", "revurl", "host"].indexOf(
         BookmarkSorter.prototype.firstSortCriteria
       ) !== -1
     ) {
       firstComparator = function(bookmark1, bookmark2) {
         addReverseUrls(
+          bookmark1,
+          bookmark2,
+          BookmarkSorter.prototype.firstSortCriteria
+        );
+        addHost(
           bookmark1,
           bookmark2,
           BookmarkSorter.prototype.firstSortCriteria
@@ -566,7 +585,7 @@ class BookmarkSorter {
       BookmarkSorter.prototype.secondSortCriteria !== "none"
     ) {
       if (
-        ["title", "url", "revurl"].indexOf(
+        ["title", "url", "revurl", "host"].indexOf(
           BookmarkSorter.prototype.secondSortCriteria
         ) !== -1
       ) {
@@ -575,6 +594,11 @@ class BookmarkSorter {
             bookmark1,
             bookmark2,
             BookmarkSorter.prototype.secondSortCriteria
+          );
+          addHost(
+            bookmark1,
+            bookmark2,
+            BookmarkSorter.prototype.firstSortCriteria
           );
           return (
             bookmark1[

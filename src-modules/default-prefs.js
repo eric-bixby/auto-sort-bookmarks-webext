@@ -45,7 +45,8 @@ module.exports = [
       "dateAdded",
       "lastModified",
       "accessCount",
-      "revurl"
+      "revurl",
+      "host"
     ]
   },
   {
@@ -64,7 +65,8 @@ module.exports = [
       "dateAdded",
       "lastModified",
       "accessCount",
-      "revurl"
+      "revurl",
+      "host"
     ]
   },
   {
