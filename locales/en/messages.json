@@ -116,8 +116,8 @@
   "weh_prefs_sort_by_option_dateAdded": {
     "message": "Date Added"
   },
-  "weh_prefs_sort_by_option_host": {
-    "message": "Host"
+  "weh_prefs_sort_by_option_hostname": {
+    "message": "Host Name"
   },
   "weh_prefs_sort_by_option_lastModified": {
     "message": "Last Modified"
@@ -140,8 +140,8 @@
   "weh_prefs_then_sort_by_option_dateAdded": {
     "message": "Date Added"
   },
-  "weh_prefs_then_sort_by_option_host": {
-    "message": "Host"
+  "weh_prefs_then_sort_by_option_hostname": {
+    "message": "Host Name"
   },
   "weh_prefs_then_sort_by_option_lastModified": {
     "message": "Last Modified"

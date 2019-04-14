@@ -520,16 +520,16 @@ class BookmarkSorter {
     }
 
     /**
-     * Add host.
+     * Add host names.
      *
      * @param bookmark1
      * @param bookmark2
      * @param criteria
      */
-    function addHost(bookmark1, bookmark2, criteria) {
-      if (criteria === "host") {
-        bookmark1.host = (new URL(bookmark1.url)).hostname;
-        bookmark2.host = (new URL(bookmark2.url)).hostname;
+    function addHostNames(bookmark1, bookmark2, criteria) {
+      if (criteria === "hostname") {
+        bookmark1.hostname = new URL(bookmark1.url).hostname;
+        bookmark2.hostname = new URL(bookmark2.url).hostname;
       }
     }
 
@@ -545,7 +545,7 @@ class BookmarkSorter {
 
     let firstComparator;
     if (
-      ["title", "url", "revurl", "host"].indexOf(
+      ["title", "url", "revurl", "hostname"].indexOf(
         BookmarkSorter.prototype.firstSortCriteria
       ) !== -1
     ) {
@@ -555,7 +555,7 @@ class BookmarkSorter {
           bookmark2,
           BookmarkSorter.prototype.firstSortCriteria
         );
-        addHost(
+        addHostNames(
           bookmark1,
           bookmark2,
           BookmarkSorter.prototype.firstSortCriteria
@@ -585,7 +585,7 @@ class BookmarkSorter {
       BookmarkSorter.prototype.secondSortCriteria !== "none"
     ) {
       if (
-        ["title", "url", "revurl", "host"].indexOf(
+        ["title", "url", "revurl", "hostname"].indexOf(
           BookmarkSorter.prototype.secondSortCriteria
         ) !== -1
       ) {
@@ -595,7 +595,7 @@ class BookmarkSorter {
             bookmark2,
             BookmarkSorter.prototype.secondSortCriteria
           );
-          addHost(
+          addHostNames(
             bookmark1,
             bookmark2,
             BookmarkSorter.prototype.firstSortCriteria

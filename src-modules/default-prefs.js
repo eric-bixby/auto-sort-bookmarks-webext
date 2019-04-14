@@ -46,7 +46,7 @@ module.exports = [
       "lastModified",
       "accessCount",
       "revurl",
-      "host"
+      "hostname"
     ]
   },
   {
@@ -66,7 +66,7 @@ module.exports = [
       "lastModified",
       "accessCount",
       "revurl",
-      "host"
+      "hostname"
     ]
   },
   {
