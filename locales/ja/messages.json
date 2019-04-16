@@ -75,7 +75,7 @@
     "message": "無し"
   },
   "weh_prefs_folder_sort_by_option_title": {
-    "message": "名称"
+    "message": "タイトル"
   },
   "weh_prefs_label_auto_sort": {
     "message": "自動ソート："
@@ -114,7 +114,7 @@
     "message": "訪問回数"
   },
   "weh_prefs_sort_by_option_dateAdded": {
-    "message": "追加日"
+    "message": "追加された日付"
   },
   "weh_prefs_sort_by_option_lastModified": {
     "message": "最終更新日時"
@@ -123,10 +123,10 @@
     "message": "最終訪問日時"
   },
   "weh_prefs_sort_by_option_revurl": {
-    "message": "の逆順"
+    "message": "URL の逆順"
   },
   "weh_prefs_sort_by_option_title": {
-    "message": "名称"
+    "message": "タイトル"
   },
   "weh_prefs_sort_by_option_url": {
     "message": "URL"
@@ -135,7 +135,7 @@
     "message": "訪問回数"
   },
   "weh_prefs_then_sort_by_option_dateAdded": {
-    "message": "追加日"
+    "message": "追加された日付"
   },
   "weh_prefs_then_sort_by_option_lastModified": {
     "message": "最終更新日時"
@@ -147,10 +147,10 @@
     "message": "無し"
   },
   "weh_prefs_then_sort_by_option_revurl": {
-    "message": "の逆順"
+    "message": "URL の逆順"
   },
   "weh_prefs_then_sort_by_option_title": {
-    "message": "名称"
+    "message": "タイトル"
   },
   "weh_prefs_then_sort_by_option_url": {
     "message": "URL"
