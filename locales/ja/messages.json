@@ -48,7 +48,7 @@
     "message": "このオプションを有効にすると、大文字と小文字を区別せずにブックマークがソートされます。"
   },
   "weh_prefs_description_delay": {
-    "message": "ブックマークをソートする前に非アクティブを待つ時間を秒単位で指定します。これは自動ソートと手動ソートに適用されます。最小値は3、最大値は255です。ドラッグしてブックマークを移動する場合は、少なくとも45の値を使用することをお勧めします。"
+    "message": "ブックマークをソートする前に非アクティブの遅延時間を秒単位で指定します。これは自動ソートと手動ソートに適用されます。最小値は3、最大値は255です。ドラッグしてブックマークを移動する場合は、少なくとも45の値を使用することをお勧めします。"
   },
   "weh_prefs_description_folder_inverse": {
     "message": "このオプションを有効にすると、[フォルダのソート順]で指定した順序が逆になります。"
@@ -69,7 +69,7 @@
     "message": "このオプションを有効にすると、[ソート順]で指定した順序が逆になります。"
   },
   "weh_prefs_description_then_sort_by": {
-    "message": "ブックマークをソートするための2番目のソート基準を指定します。"
+    "message": "ブックマークをソートするための第二のソート順ソート基準を指定します。"
   },
   "weh_prefs_folder_sort_by_option_none": {
     "message": "無し"
@@ -87,7 +87,7 @@
     "message": "大文字と小文字を区別しない："
   },
   "weh_prefs_label_delay": {
-    "message": "非アクティブ待ち："
+    "message": "ソートまでの遅延時間："
   },
   "weh_prefs_label_folder_inverse": {
     "message": "フォルダの順序を逆にする："
@@ -108,7 +108,7 @@
     "message": "2番目の順序を逆にする："
   },
   "weh_prefs_label_then_sort_by": {
-    "message": "次にソート順："
+    "message": "第二のソート順："
   },
   "weh_prefs_sort_by_option_accessCount": {
     "message": "訪問回数"
