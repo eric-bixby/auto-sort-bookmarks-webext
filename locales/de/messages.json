@@ -1,123 +1,123 @@
 {
   "cancel": {
-    "message": "Cancel"
+    "message": "Abbrechen"
   },
   "configure_folders": {
-    "message": "Konfigurieren Folders"
+    "message": "Ordner konfigurieren"
   },
   "default": {
-    "message": "Default"
+    "message": "Standard"
   },
   "folders_to_sort": {
-    "message": "Ordner zu Sortieren:"
+    "message": "Zu sortierende Ordner:"
   },
   "loading": {
     "message": "Laden..."
   },
   "recursive": {
-    "message": "Rekursive"
+    "message": "Rekursiv"
   },
   "save": {
-    "message": "Save"
+    "message": "Speichern"
   },
   "settings": {
-    "message": "Settings"
+    "message": "Einstellungen"
   },
   "sort": {
-    "message": "Sort"
+    "message": "Sortieren"
   },
   "subfolders_recursively_excluded": {
     "message": "Die Unterordner werden rekursiv ausgeschlossen."
   },
   "title": {
-    "message": "Auto-Sort Bookmarks"
+    "message": "Lesezeichen autom. sortieren"
   },
   "translation": {
-    "message": "Translation"
+    "message": "Übersetzung"
   },
   "uncheck_to_exclude_folder": {
-    "message": "Deaktivieren Sie die Ordner ausschließen, beim sortieren."
+    "message": "Ordner deaktivieren, um sie vom Sortieren auszuschließen."
   },
   "weh_prefs_description_auto_sort": {
-    "message": "If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
+    "message": "Ist diese Option aktiviert, werden die Lesezeichen beim Hinzufügen, Ändern, Verschieben oder Löschen sortiert. D. h., Sie können keine Lesezeichen im selben Ordner verschieben, es sei denn, sie werden mit einem Trennzeichen verschoben."
   },
   "weh_prefs_description_bookmark_sort_order": {
-    "message": "Specifies the bookmark sort order. Minimum value of 1 and maximum of 2."
+    "message": "Legt die Lesezeichensortierreihenfolge fest. Mindestwert 1 und Höchstwert 2."
   },
   "weh_prefs_description_case_insensitive": {
-    "message": "If this option is enabled, the bookmarks will be sorted without considering the letter case."
+    "message": "Wenn diese Option aktiviert ist, werden die Lesezeichen ohne Berücksichtigung der Groß-/Kleinschreibung sortiert."
   },
   "weh_prefs_description_delay": {
-    "message": "Specifies how long to wait (in seconds) for inactivity before sorting bookmarks. This applies to automatic and manual sorting. Minimum value of 3 and maximum of 255."
+    "message": "Gibt an, wie lange (in Sekunden) auf Inaktivität gewartet werden soll, bevor die Lesezeichen sortiert werden. Dies gilt sowohl für die autom. als auch für die manuelle Sortierung. Mindestwert 3 und Höchstwert 255."
   },
   "weh_prefs_description_folder_inverse": {
-    "message": "If this option is enabled, the order specified in 'Sort Folder By' will be reversed."
+    "message": "Wenn diese Option aktiviert ist, wird die in 'Ordner sortieren nach' angegebene Reihenfolge umgekehrt."
   },
   "weh_prefs_description_folder_sort_by": {
-    "message": "Specifies a sort criteria to sort folders."
+    "message": "Gibt ein Sortierkriterium für die Ordnersortierung an."
   },
   "weh_prefs_description_folder_sort_order": {
-    "message": "Specifies the folder sort order. Minimum value of 1 and maximum of 2."
+    "message": "Gibt die Ordnersortierreihenfolge an. Mindestwert 1 und Höchstwert 2.."
   },
   "weh_prefs_description_inverse": {
-    "message": "if this option is enabled, the order specified in 'Sort By' will be reversed. So the order will be descending."
+    "message": "Wenn diese Option aktiviert ist, wird die in 'Sortieren nach' angegebene Reihenfolge umgekehrt. Die Reihenfolge wird absteigend sein."
   },
   "weh_prefs_description_sort_by": {
-    "message": "Specifies the first sort criteria to sort the bookmarks."
+    "message": "Gibt das 1. Sortierkriterium für die Lesezeichensortierung an."
   },
   "weh_prefs_description_then_inverse": {
-    "message": "If this option is enabled, the order specified in 'Then Sort By' will be reversed."
+    "message": "Wenn diese Option aktiviert ist, wird die unter 'Dann sortieren nach' angegebene Reihenfolge umgekehrt."
   },
   "weh_prefs_description_then_sort_by": {
-    "message": "Specifies the second sort criteria to sort the bookmarks."
+    "message": "Gibt das 2. Sortierkriterium für die Lesezeichensortierung an."
   },
   "weh_prefs_folder_sort_by_option_none": {
-    "message": "Keine Festlegung"
+    "message": "Keine"
   },
   "weh_prefs_folder_sort_by_option_title": {
-    "message": "Title"
+    "message": "Titel"
   },
   "weh_prefs_label_auto_sort": {
-    "message": "Auto-sort:"
+    "message": "Autom. sortieren:"
   },
   "weh_prefs_label_bookmark_sort_order": {
-    "message": "Bookmark Sort Order:"
+    "message": "Lesezeichensortierreihenfolge:"
   },
   "weh_prefs_label_case_insensitive": {
-    "message": "Case Insensitive:"
+    "message": "Groß-/Kleinschreibung egal:"
   },
   "weh_prefs_label_delay": {
-    "message": "Inactivity Wait:"
+    "message": "Warten Inaktivität:"
   },
   "weh_prefs_label_folder_inverse": {
-    "message": "Inverse Folder Order:"
+    "message": "Umgekehrte Ordnerreihenfolge:"
   },
   "weh_prefs_label_folder_sort_by": {
-    "message": "Sort Folder By:"
+    "message": "Ordner sortieren nach:"
   },
   "weh_prefs_label_folder_sort_order": {
-    "message": "Folder Sort Order:"
+    "message": "Ordnersortierreihenfolge:"
   },
   "weh_prefs_label_inverse": {
-    "message": "Inverse Order:"
+    "message": "Umgekehrte Reihenfolge:"
   },
   "weh_prefs_label_sort_by": {
-    "message": "Sort By:"
+    "message": "Sortieren nach:"
   },
   "weh_prefs_label_then_inverse": {
-    "message": "Inverse Second Order:"
+    "message": "Umgekehrte 2. Reihenfolge:"
   },
   "weh_prefs_label_then_sort_by": {
-    "message": "Then Sort By:"
+    "message": "Dann sortieren nach:"
   },
   "weh_prefs_sort_by_option_accessCount": {
-    "message": "Meistbesucht"
+    "message": "Anzahl Zugriffe"
   },
   "weh_prefs_sort_by_option_dateAdded": {
-    "message": "Hinzugefügt"
+    "message": "Datum hinzugefügt"
   },
   "weh_prefs_sort_by_option_hostname": {
-    "message": "Host Name"
+    "message": "Host-Name"
   },
   "weh_prefs_sort_by_option_lastModified": {
     "message": "Zuletzt geändert"
@@ -126,22 +126,22 @@
     "message": "Zuletzt besucht"
   },
   "weh_prefs_sort_by_option_revurl": {
-    "message": "Umgekehrt URL"
+    "message": "URL umkehren"
   },
   "weh_prefs_sort_by_option_title": {
-    "message": "Title"
+    "message": "Titel"
   },
   "weh_prefs_sort_by_option_url": {
     "message": "URL"
   },
   "weh_prefs_then_sort_by_option_accessCount": {
-    "message": "Meistbesucht"
+    "message": "Anzahl Zugriffe"
   },
   "weh_prefs_then_sort_by_option_dateAdded": {
-    "message": "Hinzugefügt"
+    "message": "Datum hinzugefügt"
   },
   "weh_prefs_then_sort_by_option_hostname": {
-    "message": "Host Name"
+    "message": "Host-Name"
   },
   "weh_prefs_then_sort_by_option_lastModified": {
     "message": "Zuletzt geändert"
@@ -150,13 +150,13 @@
     "message": "Zuletzt besucht"
   },
   "weh_prefs_then_sort_by_option_none": {
-    "message": "Keine Festlegung"
+    "message": "Keine"
   },
   "weh_prefs_then_sort_by_option_revurl": {
-    "message": "Umgekehrt URL"
+    "message": "URL umkehren"
   },
   "weh_prefs_then_sort_by_option_title": {
-    "message": "Title"
+    "message": "Titel"
   },
   "weh_prefs_then_sort_by_option_url": {
     "message": "URL"
