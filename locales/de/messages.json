@@ -27,7 +27,7 @@
     "message": "Sortieren"
   },
   "subfolders_recursively_excluded": {
-    "message": "Die Unterordner werden rekursiv ausgeschlossen."
+    "message": "Unterordner werden rekursiv ausgeschlossen."
   },
   "title": {
     "message": "Lesezeichen autom. sortieren"
