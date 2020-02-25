@@ -44,6 +44,7 @@ module.exports = [
       "url",
       "dateAdded",
       "lastModified",
+      "lastVisited",
       "accessCount",
       "revurl",
       "hostname"
@@ -64,6 +65,7 @@ module.exports = [
       "url",
       "dateAdded",
       "lastModified",
+      "lastVisited",
       "accessCount",
       "revurl",
       "hostname"
