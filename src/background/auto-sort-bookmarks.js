@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019  Boucher, Antoni <bouanto@zoho.com>
+ * Copyright (C) 2014-2020  Boucher, Antoni <bouanto@zoho.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -294,7 +294,7 @@ class Folder extends Bookmark {
     this.children = [[]];
     var self = this;
 
-    chrome.bookmarks.getChildren(this.id, function(o) {
+    chrome.bookmarks.getChildren(this.id, function (o) {
       if (o !== undefined) {
         let promiseAry = [];
 
@@ -312,7 +312,7 @@ class Folder extends Bookmark {
           }
         }
 
-        Promise.all(promiseAry).then(values => {
+        Promise.all(promiseAry).then((values) => {
           // populate nodes with visit information
           for (var i = 0; i < values.length; i++) {
             if (values[i] !== undefined && values[i].length > 0) {
@@ -357,7 +357,7 @@ class Folder extends Bookmark {
 
     chrome.bookmarks.getSubTree(
       this.id,
-      (function() {
+      (function () {
         /**
          * Get sub folders. Defined locally so that it can be called recursively and not blow the stack.
          *
@@ -437,7 +437,7 @@ class Folder extends Bookmark {
         }
       }
 
-      Promise.all(promiseAry).then(function() {
+      Promise.all(promiseAry).then(function () {
         if (typeof resolve === "function") {
           resolve();
         }
@@ -549,7 +549,7 @@ class BookmarkSorter {
         BookmarkSorter.prototype.firstSortCriteria
       ) !== -1
     ) {
-      firstComparator = function(bookmark1, bookmark2) {
+      firstComparator = function (bookmark1, bookmark2) {
         addReverseUrls(
           bookmark1,
           bookmark2,
@@ -570,7 +570,7 @@ class BookmarkSorter {
       };
     } else {
       // sort numerically: dateAdded, lastModified, accessCount, lastVisited
-      firstComparator = function(bookmark1, bookmark2) {
+      firstComparator = function (bookmark1, bookmark2) {
         return (
           (bookmark1[BookmarkSorter.prototype.firstSortCriteria] -
             bookmark2[BookmarkSorter.prototype.firstSortCriteria]) *
@@ -589,7 +589,7 @@ class BookmarkSorter {
           BookmarkSorter.prototype.secondSortCriteria
         ) !== -1
       ) {
-        secondComparator = function(bookmark1, bookmark2) {
+        secondComparator = function (bookmark1, bookmark2) {
           addReverseUrls(
             bookmark1,
             bookmark2,
@@ -612,7 +612,7 @@ class BookmarkSorter {
         };
       } else {
         // sort numerically: dateAdded, lastModified, accessCount, lastVisited
-        secondComparator = function(bookmark1, bookmark2) {
+        secondComparator = function (bookmark1, bookmark2) {
           return (
             (bookmark1[BookmarkSorter.prototype.secondSortCriteria] -
               bookmark2[BookmarkSorter.prototype.secondSortCriteria]) *
@@ -622,13 +622,13 @@ class BookmarkSorter {
       }
     } else {
       // no sorting
-      secondComparator = function() {
+      secondComparator = function () {
         return 0;
       };
     }
 
     // combine the first and second comparators
-    let itemComparator = function(bookmark1, bookmark2) {
+    let itemComparator = function (bookmark1, bookmark2) {
       return (
         firstComparator(bookmark1, bookmark2) ||
         secondComparator(bookmark1, bookmark2)
@@ -641,7 +641,7 @@ class BookmarkSorter {
         BookmarkSorter.prototype.folderSortCriteria !== "none"
       ) {
         // sort folders, then sort bookmarks
-        comparator = function(bookmark1, bookmark2) {
+        comparator = function (bookmark1, bookmark2) {
           if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
             if (
               ["title"].indexOf(BookmarkSorter.prototype.folderSortCriteria) !==
@@ -670,7 +670,7 @@ class BookmarkSorter {
         };
       } else {
         // no sorting
-        comparator = function(bookmark1, bookmark2) {
+        comparator = function (bookmark1, bookmark2) {
           if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
             return 0;
           }
@@ -683,7 +683,7 @@ class BookmarkSorter {
       comparator = itemComparator;
     }
 
-    return function(bookmark1, bookmark2) {
+    return function (bookmark1, bookmark2) {
       let result = checkCorruptedAndOrder(bookmark1, bookmark2);
       if (result === undefined) {
         return comparator(bookmark1, bookmark2);
@@ -698,7 +698,7 @@ class BookmarkSorter {
    */
   sortAllBookmarks() {
     var self = this;
-    getChildrenFolders(getRootId(), function(children) {
+    getChildrenFolders(getRootId(), function (children) {
       self.sortRootFolders(children);
     });
   }
@@ -714,13 +714,13 @@ class BookmarkSorter {
     for (let node of children) {
       let folder = createItemFromNode(node);
 
-      let p = new Promise(resolve => {
+      let p = new Promise((resolve) => {
         let folders = [];
 
         if (!node.recursivelyExcluded) {
           folders.push(folder);
 
-          folder.getFolders(function(subfolders) {
+          folder.getFolders(function (subfolders) {
             for (let f of subfolders) {
               folders.push(f);
             }
@@ -734,7 +734,7 @@ class BookmarkSorter {
       promiseAry.push(p);
     }
 
-    Promise.all(promiseAry).then(folders => {
+    Promise.all(promiseAry).then((folders) => {
       // Flatten array of arrays into array
       let mergedFolders = [].concat.apply([], folders);
 
@@ -832,20 +832,20 @@ class BookmarkSorter {
 
     for (let folder of folders) {
       // create an array of promises
-      let p = new Promise(resolve => {
+      let p = new Promise((resolve) => {
         self.sortAndSave(folder, resolve);
       });
 
       promiseAry.push(p);
     }
 
-    Promise.all(promiseAry).then(function() {
+    Promise.all(promiseAry).then(function () {
       log("sort:end");
       self.sorting = false;
       self.lastCheck = Date.now();
       // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
       setTimeout(
-        function() {
+        function () {
           bookmarkManager.createChangeListeners();
         },
         3000,
@@ -881,7 +881,7 @@ class BookmarkSorter {
         this.isWaiting = true;
         var self = this;
         setTimeout(
-          function() {
+          function () {
             log("waiting one second for activity to stop");
             self.sortIfNoChanges();
           },
@@ -1097,7 +1097,7 @@ function getRootId() {
  */
 function log(o) {
   // enable for debugging, disable prior to release.
-  var logging = false;
+  var logging = true;
   if (logging) {
     console.log(o);
   }
@@ -1110,7 +1110,7 @@ function log(o) {
  */
 function getStoredSettings(callback) {
   var getting = browser.storage.local.get();
-  getting.then(storedSettings => {
+  getting.then((storedSettings) => {
     if (typeof callback === "function") {
       callback(storedSettings);
     }
@@ -1253,7 +1253,7 @@ function registerUserEvents() {
       };
       var addImgUrl = chrome.extension.getURL("content/images/add.png");
       var removeImgUrl = chrome.extension.getURL("content/images/remove.png");
-      getChildrenFolders(getRootId(), function(children) {
+      getChildrenFolders(getRootId(), function (children) {
         weh.rpc.call(
           "configure-folders",
           "root",
@@ -1264,8 +1264,8 @@ function registerUserEvents() {
         );
       });
     },
-    queryChildren: parentId => {
-      getChildrenFolders(parentId, function(children) {
+    queryChildren: (parentId) => {
+      getChildrenFolders(parentId, function (children) {
         weh.rpc.call("configure-folders", "children", parentId, children);
       });
     }
@@ -1293,13 +1293,7 @@ function reverseBaseUrl(str) {
     }
 
     // Replace the found string by it's reversion
-    str = str.replace(
-      m[0],
-      m[0]
-        .split(".")
-        .reverse()
-        .join(".")
-    );
+    str = str.replace(m[0], m[0].split(".").reverse().join("."));
   }
 
   return str;
@@ -1399,7 +1393,7 @@ function getNodeType(node) {
  * @return {Array}
  */
 function getChildrenFolders(parentId, callback) {
-  chrome.bookmarks.getChildren(parentId, function(o) {
+  chrome.bookmarks.getChildren(parentId, function (o) {
     if (o !== undefined) {
       let children = [];
       for (let node of o) {
@@ -1439,7 +1433,7 @@ var bookmarkManager = new BookmarkManager();
 var storedSettings = {};
 var tags = new Annotations();
 
-getStoredSettings(settings => {
+getStoredSettings((settings) => {
   storedSettings = settings;
 
   // Get weh prefs
