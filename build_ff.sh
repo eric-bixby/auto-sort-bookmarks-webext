@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo Cleaning...
-rm -rf *.zip *.xpi
+rm -f *.zip *.xpi
 
 echo
 echo Building...
@@ -22,3 +22,4 @@ done
 
 echo
 echo Done.
+
