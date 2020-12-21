@@ -32,9 +32,6 @@
   "title": {
     "message": "Sortera bookmärken automatiskt"
   },
-  "translation": {
-    "message": "Översätt"
-  },
   "uncheck_to_exclude_folder": {
     "message": "Avmarkera mapparna för att uteslutas vid sortering."
   },

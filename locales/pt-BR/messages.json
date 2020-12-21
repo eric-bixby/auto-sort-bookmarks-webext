@@ -32,9 +32,6 @@
   "title": {
     "message": "Auto-Organizar Favoritos"
   },
-  "translation": {
-    "message": "Tradução"
-  },
   "uncheck_to_exclude_folder": {
     "message": "Remover a seleção das pastas a excluir quando organizar."
   },

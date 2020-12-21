@@ -48,7 +48,6 @@ render(
     <div className="asb-toolbar">
       <Link messageCall={"openSettings"} label={"settings"} />
       <Link messageCall={"openConfigureFolders"} label={"configure_folders"} />
-      <Link messageCall={"openTranslation"} label={"translation"} />
       <Link messageCall={"sort"} label={"sort"} />
     </div>
   </div>,

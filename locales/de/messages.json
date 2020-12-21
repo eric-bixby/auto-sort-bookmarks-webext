@@ -32,9 +32,6 @@
   "title": {
     "message": "Lesezeichen autom. sortieren"
   },
-  "translation": {
-    "message": "Übersetzung"
-  },
   "uncheck_to_exclude_folder": {
     "message": "Ordner deaktivieren, um sie vom Sortieren auszuschließen."
   },
