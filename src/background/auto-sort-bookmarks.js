@@ -1212,13 +1212,6 @@ function registerUserEvents() {
       });
       weh.ui.close("main");
     },
-    openTranslation: () => {
-      weh.ui.open("translation", {
-        type: "tab",
-        url: "content/translation.html"
-      });
-      weh.ui.close("main");
-    },
     openConfigureFolders: () => {
       weh.ui.open("configure-folders", {
         type: "tab",

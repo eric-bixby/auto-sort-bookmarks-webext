@@ -32,9 +32,6 @@
   "title": {
     "message": "Auto-Sort Bookmarks"
   },
-  "translation": {
-    "message": "Translation"
-  },
   "uncheck_to_exclude_folder": {
     "message": "Uncheck the folders to exclude when sorting."
   },

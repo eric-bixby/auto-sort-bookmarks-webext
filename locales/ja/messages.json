@@ -32,9 +32,6 @@
   "title": {
     "message": "ブックマークを自動ソートする"
   },
-  "translation": {
-    "message": "翻訳"
-  },
   "uncheck_to_exclude_folder": {
     "message": "並べ替え時に除外するフォルダのチェックを外します。"
   },

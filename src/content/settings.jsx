@@ -40,13 +40,6 @@ let store = createStore(reducers, applyMiddleware(logger));
 listenPrefs(store);
 
 /**
- * Open tab for translation.
- */
-function openTranslation() {
-  weh.rpc.call("openTranslation");
-}
-
-/**
  * Open tab for configure folders.
  */
 function openConfigureFolders() {
@@ -60,13 +53,6 @@ function RenderControls() {
   return (
     <div className="btn-toolbar justify-content-between">
       <div className="btn-group pull-left">
-        <button
-          type="button"
-          onClick={openTranslation}
-          className="btn btn-default"
-        >
-          {weh._("translation")}
-        </button>
         <button
           type="button"
           onClick={openConfigureFolders}
