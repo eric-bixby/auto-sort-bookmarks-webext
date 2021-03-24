@@ -1,159 +1,159 @@
 {
   "cancel": {
-    "message": "Cancel"
+    "message": "Annuler"
   },
   "configure_folders": {
-    "message": "Configure Folders"
+    "message": "Configurer les répertoires"
   },
   "default": {
-    "message": "Default"
+    "message": "Par défaut"
   },
   "folders_to_sort": {
-    "message": "Folders to Sort:"
+    "message": "Répertoires à trier:"
   },
   "loading": {
-    "message": "Loading..."
+    "message": "Chargement..."
   },
   "recursive": {
-    "message": "Recursive"
+    "message": "Récursif"
   },
   "save": {
-    "message": "Save"
+    "message": "Sauver"
   },
   "settings": {
-    "message": "Settings"
+    "message": "Paramètres"
   },
   "sort": {
-    "message": "Sort"
+    "message": "Trier"
   },
   "subfolders_recursively_excluded": {
-    "message": "The sub-folders are recursively excluded."
+    "message": "Les sous-répertoires sont récursivement exclus."
   },
   "title": {
-    "message": "Auto-Sort Bookmarks"
+    "message": "Trier les marque-pages automatiquement"
   },
   "uncheck_to_exclude_folder": {
-    "message": "Uncheck the folders to exclude when sorting."
+    "message": "Désélectionner les fichiers pour les exclure du tri."
   },
   "weh_prefs_description_auto_sort": {
-    "message": "If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
+    "message": "Si ce choix est validé, le tri se fera lorsque que des marque-pages seront ajoutés, déplacés ou supprimés. Cela signifie que vous ne pourrez déplacer un marque-page dans le même répertoire, uniquement dans un répertoire distinct."
   },
   "weh_prefs_description_bookmark_sort_order": {
-    "message": "Specifies the bookmark sort order. Minimum value of 1 and maximum of 2."
+    "message": "Spécifier l'ordre du tri des marque-pages. Valeur minimum 1 et maximum 2."
   },
   "weh_prefs_description_case_insensitive": {
-    "message": "If this option is enabled, the bookmarks will be sorted without considering the letter case."
+    "message": "Si ce choix est validé, les marque-pages seront triés sans distinction de la casse."
   },
   "weh_prefs_description_delay": {
-    "message": "Specifies how long to wait (in seconds) for inactivity before sorting bookmarks. This applies to automatic and manual sorting. Minimum value of 3 and maximum of 255."
+    "message": "Spécifier le temps (en secondes) d'inactivité avant de trier les marque-pages. Ceci s'applique aux tris automatiques et manuels. Valeur minimum 3 et maximum 255."
   },
   "weh_prefs_description_folder_inverse": {
-    "message": "If this option is enabled, the order specified in 'Sort Folder By' will be reversed."
+    "message": "Si ce choix est validé, l'ordre spécifié dans 'Trier les répertoires par' sera inversé."
   },
   "weh_prefs_description_folder_sort_by": {
-    "message": "Specifies a sort criteria to sort folders."
+    "message": "Spécifier un critère de tri pour classer les répertoires."
   },
   "weh_prefs_description_folder_sort_order": {
-    "message": "Specifies the folder sort order. Minimum value of 1 and maximum of 2."
+    "message": "Spécifier l'ordre de tri des répertoires. Valeur minimum 1 et maximum 2."
   },
   "weh_prefs_description_inverse": {
-    "message": "if this option is enabled, the order specified in 'Sort By' will be reversed. So the order will be descending."
+    "message": "Si ce choix est validé, l'ordre spécifié dans 'Trier par' sera inversé."
   },
   "weh_prefs_description_sort_by": {
-    "message": "Specifies the first sort criteria to sort the bookmarks."
+    "message": "Spécifier le premier critère de tri pour classer les marque-pages."
   },
   "weh_prefs_description_then_inverse": {
-    "message": "If this option is enabled, the order specified in 'Then Sort By' will be reversed."
+    "message": "Si ce choix est validé, l'ordre spécifié dans 'Puis trier par' sera inversé."
   },
   "weh_prefs_description_then_sort_by": {
-    "message": "Specifies the second sort criteria to sort the bookmarks."
+    "message": "Spécifier le second critère de choix pour trier les marque-pages."
   },
   "weh_prefs_folder_sort_by_option_none": {
-    "message": "None"
+    "message": "Aucun"
   },
   "weh_prefs_folder_sort_by_option_title": {
-    "message": "Title"
+    "message": "Titre"
   },
   "weh_prefs_label_auto_sort": {
-    "message": "Auto-sort:"
+    "message": "Tri-automatique:"
   },
   "weh_prefs_label_bookmark_sort_order": {
-    "message": "Bookmark Sort Order:"
+    "message": "Ordre de tri des marque-pages:"
   },
   "weh_prefs_label_case_insensitive": {
-    "message": "Case Insensitive:"
+    "message": "Insensible à la casse:"
   },
   "weh_prefs_label_delay": {
-    "message": "Inactivity Wait:"
+    "message": "Temps d'inactivité:"
   },
   "weh_prefs_label_folder_inverse": {
-    "message": "Inverse Folder Order:"
+    "message": "Inverser l'ordre des répertoires:"
   },
   "weh_prefs_label_folder_sort_by": {
-    "message": "Sort Folder By:"
+    "message": "Trier les répertoires par:"
   },
   "weh_prefs_label_folder_sort_order": {
-    "message": "Folder Sort Order:"
+    "message": "Ordre de tri des répertoires:"
   },
   "weh_prefs_label_inverse": {
-    "message": "Inverse Order:"
+    "message": "Inverser l'ordre:"
   },
   "weh_prefs_label_sort_by": {
-    "message": "Sort By:"
+    "message": "Trier par:"
   },
   "weh_prefs_label_then_inverse": {
-    "message": "Inverse Second Order:"
+    "message": "Inverser le second critère de tri:"
   },
   "weh_prefs_label_then_sort_by": {
-    "message": "Then Sort By:"
+    "message": "Puis trier par:"
   },
   "weh_prefs_sort_by_option_accessCount": {
-    "message": "Access Count"
+    "message": "Nombre d'accès"
   },
   "weh_prefs_sort_by_option_dateAdded": {
-    "message": "Date Added"
+    "message": "Date ajoutée"
   },
   "weh_prefs_sort_by_option_hostname": {
-    "message": "Host Name"
+    "message": "Nom d'hôte"
   },
   "weh_prefs_sort_by_option_lastModified": {
-    "message": "Last Modified"
+    "message": "Derniers modifiés"
   },
   "weh_prefs_sort_by_option_lastVisited": {
-    "message": "Last Visited"
+    "message": "Derniers visités"
   },
   "weh_prefs_sort_by_option_revurl": {
-    "message": "Reverse URL"
+    "message": "Inverser l'URL"
   },
   "weh_prefs_sort_by_option_title": {
-    "message": "Title"
+    "message": "Titre"
   },
   "weh_prefs_sort_by_option_url": {
     "message": "URL"
   },
   "weh_prefs_then_sort_by_option_accessCount": {
-    "message": "Access Count"
+    "message": "Nombre d'accès"
   },
   "weh_prefs_then_sort_by_option_dateAdded": {
-    "message": "Date Added"
+    "message": "Date ajoutée"
   },
   "weh_prefs_then_sort_by_option_hostname": {
-    "message": "Host Name"
+    "message": "Nom d'hôte"
   },
   "weh_prefs_then_sort_by_option_lastModified": {
-    "message": "Last Modified"
+    "message": "Derniers modifiés"
   },
   "weh_prefs_then_sort_by_option_lastVisited": {
-    "message": "Last Visited"
+    "message": "Derniers visités"
   },
   "weh_prefs_then_sort_by_option_none": {
-    "message": "None"
+    "message": "Aucun"
   },
   "weh_prefs_then_sort_by_option_revurl": {
-    "message": "Reverse URL"
+    "message": "Inverser l'URL"
   },
   "weh_prefs_then_sort_by_option_title": {
-    "message": "Title"
+    "message": "Titre"
   },
   "weh_prefs_then_sort_by_option_url": {
     "message": "URL"
