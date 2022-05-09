@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ASB_VER=3.4.3
+ASB_VER=3.4.4
 XPI_FILE=auto-sort_bookmarks-${ASB_VER}.xpi
 
 id=$(docker create asb)

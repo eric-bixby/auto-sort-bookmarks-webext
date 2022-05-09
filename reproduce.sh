@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ASB_VER=3.4.3
+ASB_VER=3.4.4
 OUT_DIR=~/temp
 
 sudo apt install curl -y
@@ -9,7 +9,7 @@ rm -rf ${OUT_DIR}
 mkdir -p ${OUT_DIR}
 cd ${OUT_DIR}
 
-curl -L https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases/download/v3.4.3/auto-sort_bookmarks-${ASB_VER}.xpi --output auto-sort_bookmarks-${ASB_VER}.xpi
+curl -L https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases/download/v${ASB_VER}/auto-sort_bookmarks-${ASB_VER}.xpi --output auto-sort_bookmarks-${ASB_VER}.xpi
 
 unzip auto-sort_bookmarks-${ASB_VER}.xpi -d auto-sort_bookmarks-${ASB_VER}
 
