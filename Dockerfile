@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-ENV ASB_VER 3.4.3
+ENV ASB_VER 3.4.4
 ENV HOME /root
 WORKDIR $HOME
 
@@ -11,7 +11,7 @@ WORKDIR $HOME
 RUN apt-get update && apt-get install -y curl unzip
 
 # Download/extract XPI
-#RUN curl -L https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases/download/v3.4.3/auto-sort_bookmarks-${ASB_VER}.xpi \
+#RUN curl -L https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases/download/v${ASB_VER}/auto-sort_bookmarks-${ASB_VER}.xpi \
 #         --output auto-sort_bookmarks-${ASB_VER}.xpi \
 #    && unzip auto-sort_bookmarks-${ASB_VER}.xpi -d auto-sort_bookmarks-${ASB_VER}
 
