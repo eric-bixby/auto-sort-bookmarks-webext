@@ -1,10 +1,4 @@
 {
-  "applications": {
-    "gecko": {
-      "id": "sortbookmarks@bouanto",
-      "strict_min_version": "52.0"
-    }
-  },
   "author": "Eric Bixby",
   "background": {
     "scripts": ["background/auto-sort-bookmarks.js"]
@@ -16,6 +10,12 @@
     "default_popup": "content/popup.html?panel=main",
     "default_title": "Auto-Sort Bookmarks",
     "browser_style": true
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "sortbookmarks@bouanto",
+      "strict_min_version": "63.0"
+    }
   },
   "default_locale": "en",
   "description": "Sort bookmarks by multiple criteria.",
@@ -34,5 +34,5 @@
     "browser_style": true
   },
   "permissions": ["bookmarks", "downloads", "history", "storage", "tabs"],
-  "version": "3.4.4"
+  "version": "3.4.5"
 }
