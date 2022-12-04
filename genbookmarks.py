@@ -7,8 +7,8 @@ Haskell version:
 http://codereview.stackexchange.com/questions/101621/netscape-bookmark-file-generator
 Copyright (C) 2015  Boucher, Antoni <bouanto@zoho.com>
 
-Haskell version ported to Python by Eric Bixby.
-Copyright (C) 2016-2020  Eric Bixby <ebixby@yahoo.com>
+Python version:
+Copyright (C) 2016-2022  Eric Bixby <ebixby@yahoo.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
