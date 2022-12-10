@@ -1,1 +1,0 @@
-@weh --no-watch
