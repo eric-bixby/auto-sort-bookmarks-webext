@@ -43,7 +43,7 @@ class BookmarkManager {
    * @memberof BookmarkManager
    */
   handleChanged(id, changeInfo) {
-    log("onChanged: " + id);
+    log(`onChanged: ${id}`);
     log(changeInfo);
     sortIfAuto();
   }
@@ -56,7 +56,7 @@ class BookmarkManager {
    * @memberof BookmarkManager
    */
   handleCreated(id, bookmark) {
-    log("onCreated: " + id);
+    log(`onCreated: ${id}`);
     log(bookmark);
     sortIfAuto();
   }
@@ -69,7 +69,7 @@ class BookmarkManager {
    * @memberof BookmarkManager
    */
   handleMoved(id, moveInfo) {
-    log("onMoved: " + id);
+    log(`onMoved: ${id}`);
     log(moveInfo);
     sortIfAuto();
   }
@@ -82,7 +82,7 @@ class BookmarkManager {
    * @memberof BookmarkManager
    */
   handleRemoved(id, removeInfo) {
-    log("onRemoved: " + id);
+    log(`onRemoved: ${id}`);
     log(removeInfo);
     if (getNodeType(removeInfo.node) === "separator") {
       sortIfAuto();
@@ -214,12 +214,7 @@ class Bookmark extends Item {
       accessCount === null
     ) {
       log(
-        "ERROR: Corrupted bookmark found. ID: " +
-          id +
-          " - Title: " +
-          title +
-          " - URL: " +
-          url
+        `ERROR: Corrupted bookmark found. ID: ${id} - Title: ${title} - URL: ${url}`
       );
       this.corrupted = true;
     }
@@ -293,19 +288,19 @@ class Folder extends Bookmark {
    */
   getChildren(callback, compare, resolve) {
     this.children = [[]];
-    var self = this;
+    const self = this;
 
-    chrome.bookmarks.getChildren(this.id, function (o) {
+    chrome.bookmarks.getChildren(this.id, (o) => {
       if (o !== undefined) {
-        let promiseAry = [];
+        const promiseAry = [];
 
-        for (let node of o) {
+        for (const node of o) {
           if (getNodeType(node) === "bookmark") {
             // history.getVisits() is faster than history.search() because
             // history.search() checks title and url, plus does not match url exactly, so it takes longer.
             // chrome expects a callback to be the second argument, while browser-api doesn't and returns promise.
-            var p = browser.history.getVisits({
-              url: node.url
+            const p = browser.history.getVisits({
+              url: node.url,
             });
             promiseAry.push(p);
           } else {
@@ -315,7 +310,7 @@ class Folder extends Bookmark {
 
         Promise.all(promiseAry).then((values) => {
           // populate nodes with visit information
-          for (var i = 0; i < values.length; i++) {
+          for (let i = 0; i < values.length; i++) {
             if (values[i] !== undefined && values[i].length > 0) {
               o[i].accessCount = values[i].length;
               o[i].lastVisited = values[i][0].visitTime;
@@ -324,8 +319,8 @@ class Folder extends Bookmark {
 
           let index = 0;
 
-          for (let node of o) {
-            let item = createItemFromNode(node);
+          for (const node of o) {
+            const item = createItemFromNode(node);
             if (item instanceof Separator) {
               // create sub-array to store nodes after separator
               self.children.push([]);
@@ -339,10 +334,8 @@ class Folder extends Bookmark {
             callback(self, compare, resolve);
           }
         });
-      } else {
-        if (typeof resolve === "function") {
-          resolve();
-        }
+      } else if (typeof resolve === "function") {
+        resolve();
       }
     });
   }
@@ -354,7 +347,7 @@ class Folder extends Bookmark {
    */
   getFolders(callback) {
     this.folders = [];
-    var self = this;
+    const self = this;
 
     chrome.bookmarks.getSubTree(
       this.id,
@@ -370,7 +363,7 @@ class Folder extends Bookmark {
             let folder;
             let isTop = false;
 
-            for (let node of o) {
+            for (const node of o) {
               if (
                 getNodeType(node) === "folder" &&
                 !tags.isRecursivelyExcluded(node.id)
@@ -412,7 +405,7 @@ class Folder extends Bookmark {
    */
   hasMove() {
     for (let i = 0; i < this.children.length; ++i) {
-      let length = this.children[i].length;
+      const { length } = this.children[i];
       for (let j = 0; j < length; ++j) {
         if (this.children[i][j].index !== this.children[i][j].oldIndex) {
           return true;
@@ -428,25 +421,23 @@ class Folder extends Bookmark {
    */
   save(resolve) {
     if (this.hasMove()) {
-      let promiseAry = [];
+      const promiseAry = [];
 
       for (let i = 0; i < this.children.length; ++i) {
-        let length = this.children[i].length;
+        const { length } = this.children[i];
         for (let j = 0; j < length; ++j) {
-          let p = this.children[i][j].saveIndex();
+          const p = this.children[i][j].saveIndex();
           promiseAry.push(p);
         }
       }
 
-      Promise.all(promiseAry).then(function () {
+      Promise.all(promiseAry).then(() => {
         if (typeof resolve === "function") {
           resolve();
         }
       });
-    } else {
-      if (typeof resolve === "function") {
-        resolve();
-      }
+    } else if (typeof resolve === "function") {
+      resolve();
     }
   }
 }
@@ -497,7 +488,8 @@ class BookmarkSorter {
         }
 
         return 1;
-      } else if (bookmark2.corrupted) {
+      }
+      if (bookmark2.corrupted) {
         return -1;
       }
 
@@ -534,10 +526,10 @@ class BookmarkSorter {
       }
     }
 
-    let compareOptions = {
+    const compareOptions = {
       caseFirst: "upper",
       numeric: true,
-      sensitivity: "case"
+      sensitivity: "case",
     };
 
     if (BookmarkSorter.prototype.caseInsensitive) {
@@ -629,7 +621,7 @@ class BookmarkSorter {
     }
 
     // combine the first and second comparators
-    let itemComparator = function (bookmark1, bookmark2) {
+    const itemComparator = function (bookmark1, bookmark2) {
       return (
         firstComparator(bookmark1, bookmark2) ||
         secondComparator(bookmark1, bookmark2)
@@ -685,7 +677,7 @@ class BookmarkSorter {
     }
 
     return function (bookmark1, bookmark2) {
-      let result = checkCorruptedAndOrder(bookmark1, bookmark2);
+      const result = checkCorruptedAndOrder(bookmark1, bookmark2);
       if (result === undefined) {
         return comparator(bookmark1, bookmark2);
       }
@@ -698,8 +690,8 @@ class BookmarkSorter {
    * Sort all bookmarks.
    */
   sortAllBookmarks() {
-    var self = this;
-    getChildrenFolders(getRootId(), function (children) {
+    const self = this;
+    getChildrenFolders(getRootId(), (children) => {
       self.sortRootFolders(children);
     });
   }
@@ -710,19 +702,19 @@ class BookmarkSorter {
    * @param children
    */
   sortRootFolders(children) {
-    let promiseAry = [];
+    const promiseAry = [];
 
-    for (let node of children) {
-      let folder = createItemFromNode(node);
+    for (const node of children) {
+      const folder = createItemFromNode(node);
 
-      let p = new Promise((resolve) => {
-        let folders = [];
+      const p = new Promise((resolve) => {
+        const folders = [];
 
         if (!node.recursivelyExcluded) {
           folders.push(folder);
 
-          folder.getFolders(function (subfolders) {
-            for (let f of subfolders) {
+          folder.getFolders((subfolders) => {
+            for (const f of subfolders) {
               folders.push(f);
             }
             resolve(folders);
@@ -737,7 +729,7 @@ class BookmarkSorter {
 
     Promise.all(promiseAry).then((folders) => {
       // Flatten array of arrays into array
-      let mergedFolders = [].concat.apply([], folders);
+      const mergedFolders = [].concat.apply([], folders);
 
       tags.removeMissingFolders(mergedFolders);
       this.sortFolders(mergedFolders);
@@ -786,10 +778,8 @@ class BookmarkSorter {
   sortAndSave(folder, resolve) {
     if (folder.canBeSorted()) {
       folder.getChildren(this.sortFolder, this.compare, resolve);
-    } else {
-      if (typeof resolve === "function") {
-        resolve();
-      }
+    } else if (typeof resolve === "function") {
+      resolve();
     }
   }
 
@@ -828,25 +818,25 @@ class BookmarkSorter {
     // convert single folder into array of folders
     folders = folders instanceof Folder ? [folders] : folders;
 
-    let self = this;
-    let promiseAry = [];
+    const self = this;
+    const promiseAry = [];
 
-    for (let folder of folders) {
+    for (const folder of folders) {
       // create an array of promises
-      let p = new Promise((resolve) => {
+      const p = new Promise((resolve) => {
         self.sortAndSave(folder, resolve);
       });
 
       promiseAry.push(p);
     }
 
-    Promise.all(promiseAry).then(function () {
+    Promise.all(promiseAry).then(() => {
       log("sort:end");
       self.sorting = false;
       self.lastCheck = Date.now();
       // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
       setTimeout(
-        function () {
+        () => {
           bookmarkManager.createChangeListeners();
         },
         3000,
@@ -875,14 +865,14 @@ class BookmarkSorter {
   sortIfNoChanges() {
     if (!this.sorting) {
       // wait for a period of no activity before sorting
-      var now = Date.now();
-      var diff = now - this.lastCheck;
-      var delay = parseInteger(getPref("delay")) * 1000;
+      const now = Date.now();
+      const diff = now - this.lastCheck;
+      const delay = parseInteger(getPref("delay")) * 1000;
       if (diff < delay) {
         this.isWaiting = true;
-        var self = this;
+        const self = this;
         setTimeout(
-          function () {
+          () => {
             log("waiting one second for activity to stop");
             self.sortIfNoChanges();
           },
@@ -919,9 +909,8 @@ class Annotations {
       storedSettings[DO_NOT_SORT][id] !== undefined
     ) {
       return storedSettings[DO_NOT_SORT][id];
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
@@ -939,9 +928,8 @@ class Annotations {
       storedSettings[RECURSIVE][id] !== undefined
     ) {
       return storedSettings[RECURSIVE][id];
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
@@ -989,9 +977,9 @@ class Annotations {
    */
   removeMissingFoldersForItem(name, folders) {
     if (storedSettings !== undefined && storedSettings[name] !== undefined) {
-      for (var id of Object.keys(storedSettings[name])) {
-        var found = false;
-        for (let folder of folders) {
+      for (const id of Object.keys(storedSettings[name])) {
+        let found = false;
+        for (const folder of folders) {
           if (folder.id === id) {
             found = true;
             break;
@@ -1086,9 +1074,8 @@ function isFirefox() {
 function getRootId() {
   if (isFirefox()) {
     return "root________";
-  } else {
-    return "0";
   }
+  return "0";
 }
 
 /**
@@ -1098,7 +1085,7 @@ function getRootId() {
  */
 function log(o) {
   // enable for debugging, disable prior to release.
-  var logging = true;
+  const logging = true;
   if (logging) {
     console.log(o);
   }
@@ -1110,7 +1097,7 @@ function log(o) {
  * @param {any} callback
  */
 function getStoredSettings(callback) {
-  var getting = browser.storage.local.get();
+  const getting = browser.storage.local.get();
   getting.then((storedSettings) => {
     if (typeof callback === "function") {
       callback(storedSettings);
@@ -1135,7 +1122,7 @@ function parseInteger(val) {
  * @returns {*} Value or default value of preference.
  */
 function getPref(param) {
-  let defaultValue = weh.prefs.$specs[param].defaultValue;
+  const { defaultValue } = weh.prefs.$specs[param];
   let value = weh.prefs[param];
   if (value === undefined) {
     value = defaultValue;
@@ -1164,7 +1151,7 @@ function sortIfAuto() {
  * Adjust the sort criteria of the bookmark sorter.
  */
 function adjustSortCriteria() {
-  let differentFolderOrder =
+  const differentFolderOrder =
     getPref("folder_sort_order") !== getPref("bookmark_sort_order");
 
   bookmarkSorter.setCriteria(
@@ -1185,8 +1172,8 @@ function adjustSortCriteria() {
 function registerPrefListeners() {
   weh.prefs.on("auto_sort", sortIfAuto);
 
-  let preferences = ["folder_sort_order", "bookmark_sort_order"];
-  for (let preference of preferences) {
+  const preferences = ["folder_sort_order", "bookmark_sort_order"];
+  for (const preference of preferences) {
     weh.prefs.on(preference, sortIfAuto);
   }
 
@@ -1209,14 +1196,14 @@ function registerUserEvents() {
     openSettings: () => {
       weh.ui.open("settings", {
         type: "tab",
-        url: "content/settings.html"
+        url: "content/settings.html",
       });
       weh.ui.close("main");
     },
     openConfigureFolders: () => {
       weh.ui.open("configure-folders", {
         type: "tab",
-        url: "content/configure-folders.html"
+        url: "content/configure-folders.html",
       });
       weh.ui.close("main");
     },
@@ -1243,11 +1230,11 @@ function registerUserEvents() {
       const texts = {
         recursiveText: weh._("recursive"),
         messageText: weh._("subfolders_recursively_excluded"),
-        loadingText: weh._("loading")
+        loadingText: weh._("loading"),
       };
-      var addImgUrl = chrome.extension.getURL("content/images/add.png");
-      var removeImgUrl = chrome.extension.getURL("content/images/remove.png");
-      getChildrenFolders(getRootId(), function (children) {
+      const addImgUrl = chrome.extension.getURL("content/images/add.png");
+      const removeImgUrl = chrome.extension.getURL("content/images/remove.png");
+      getChildrenFolders(getRootId(), (children) => {
         weh.rpc.call(
           "configure-folders",
           "root",
@@ -1259,10 +1246,10 @@ function registerUserEvents() {
       });
     },
     queryChildren: (parentId) => {
-      getChildrenFolders(parentId, function (children) {
+      getChildrenFolders(parentId, (children) => {
         weh.rpc.call("configure-folders", "children", parentId, children);
       });
-    }
+    },
   });
 }
 
@@ -1278,8 +1265,8 @@ function reverseBaseUrl(str) {
   }
 
   str = str.replace(/^\S+:\/\//, "");
-  let re = /^[^/]+$|^[^/]+/;
-  let m = re.exec(str);
+  const re = /^[^/]+$|^[^/]+/;
+  const m = re.exec(str);
 
   if (m !== null) {
     if (m.index === re.lastIndex) {
@@ -1387,17 +1374,17 @@ function getNodeType(node) {
  * @return {Array}
  */
 function getChildrenFolders(parentId, callback) {
-  chrome.bookmarks.getChildren(parentId, function (o) {
+  chrome.bookmarks.getChildren(parentId, (o) => {
     if (o !== undefined) {
-      let children = [];
-      for (let node of o) {
+      const children = [];
+      for (const node of o) {
         if (getNodeType(node) === "folder") {
           children.push({
             id: node.id,
             parentId: node.parentId,
             title: node.title,
             excluded: tags.hasDoNotSortAnnotation(node.id),
-            recursivelyExcluded: tags.hasRecursiveAnnotation(node.id)
+            recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
           });
         }
       }
@@ -1415,8 +1402,8 @@ function getChildrenFolders(parentId, callback) {
 
 log("main:begin");
 
-const DO_NOT_SORT = "donotsort",
-  RECURSIVE = "recursive";
+const DO_NOT_SORT = "donotsort";
+const RECURSIVE = "recursive";
 
 var weh = require("weh-background");
 weh.prefs.declare(require("default-prefs"));
@@ -1431,8 +1418,8 @@ getStoredSettings((settings) => {
   storedSettings = settings;
 
   // Get weh prefs
-  var wehPrefs = require("weh-prefs");
-  var prefs = storedSettings["weh-prefs"] || {};
+  const wehPrefs = require("weh-prefs");
+  const prefs = storedSettings["weh-prefs"] || {};
   wehPrefs.assign(prefs);
 
   // Listen for change to weh prefs
@@ -1441,7 +1428,7 @@ getStoredSettings((settings) => {
       storedSettings["weh-prefs"] = prefs;
       browser.storage.local.set(storedSettings);
       return wehPrefs.assign(prefs);
-    }
+    },
   });
 
   adjustSortCriteria();
