@@ -41,15 +41,15 @@ class Link extends React.Component {
 
 Link.propTypes = {
   messageCall: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
 };
 
 render(
   <div className="asb-popup">
     <div className="asb-toolbar">
-      <Link messageCall={"openSettings"} label={"settings"} />
-      <Link messageCall={"openConfigureFolders"} label={"configure_folders"} />
-      <Link messageCall={"sort"} label={"sort"} />
+      <Link messageCall="openSettings" label="settings" />
+      <Link messageCall="openConfigureFolders" label="configure_folders" />
+      <Link messageCall="sort" label="sort" />
     </div>
   </div>,
   document.getElementById("root")

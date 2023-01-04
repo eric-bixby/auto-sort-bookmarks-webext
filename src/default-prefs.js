@@ -16,25 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* global module */
-
-module.exports = [
+export default [
   {
     name: "auto_sort",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: "delay",
     type: "integer",
     defaultValue: 3,
     minimum: 3,
-    maximum: 255
+    maximum: 255,
   },
   {
     name: "case_insensitive",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: "sort_by",
@@ -48,13 +46,13 @@ module.exports = [
       "lastVisited",
       "accessCount",
       "revurl",
-      "hostname"
-    ]
+      "hostname",
+    ],
   },
   {
     name: "inverse",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: "then_sort_by",
@@ -69,37 +67,37 @@ module.exports = [
       "lastVisited",
       "accessCount",
       "revurl",
-      "hostname"
-    ]
+      "hostname",
+    ],
   },
   {
     name: "then_inverse",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: "folder_sort_by",
     type: "choice",
     defaultValue: "title",
-    choices: ["none", "title"]
+    choices: ["none", "title"],
   },
   {
     name: "folder_inverse",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
   },
   {
     name: "folder_sort_order",
     type: "integer",
     defaultValue: 1,
     minimum: 1,
-    maximum: 2
+    maximum: 2,
   },
   {
     name: "bookmark_sort_order",
     type: "integer",
     defaultValue: 2,
     minimum: 1,
-    maximum: 2
-  }
+    maximum: 2,
+  },
 ];

@@ -8,6 +8,11 @@
       "jsx": true,
       "modules": true,
       "experimentalObjectRestSpread": true
+    },
+    "babelOptions": {
+      "parserOpts": {
+        "plugins": ["jsx"]
+      }
     }
   },
   "plugins": ["prettier", "react"],
