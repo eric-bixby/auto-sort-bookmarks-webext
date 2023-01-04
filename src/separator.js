@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<!--
 /*
  * Copyright (C) 2014-2015  Boucher, Antoni <bouanto@zoho.com>
  * Copyright (C) 2016-2022  Eric Bixby <ebixby@yahoo.com>
@@ -17,15 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
--->
-<html class="weh-shf">
-  <head>
-    <link href="styles.css" type="text/css" rel="stylesheet" />
-    <meta charset="utf-8" />
-  </head>
 
-  <body>
-    <div id="root" class="weh-shf"></div>
-    <script src="settings.js"></script>
-  </body>
-</html>
+import Item from "./item";
+
+/**
+ * Separator class.
+ */
+export default class Separator extends Item {}

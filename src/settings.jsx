@@ -25,18 +25,18 @@ import {
   App as PrefsSettingsApp,
   WehParam,
   WehPrefsControls,
-  listenPrefs
+  listenPrefs,
 } from "react/weh-prefs-settings";
 import logger from "redux-logger";
 import WehHeader from "react/weh-header";
 
 import weh from "weh-content";
 
-let reducers = combineReducers({
-  prefs: prefsSettingsReducer
+const reducers = combineReducers({
+  prefs: prefsSettingsReducer,
 });
 
-let store = createStore(reducers, applyMiddleware(logger));
+const store = createStore(reducers, applyMiddleware(logger));
 
 listenPrefs(store);
 
@@ -66,30 +66,29 @@ function RenderControls() {
         <button
           type="button"
           onClick={this.props.cancel}
-          className={
-            "btn btn-default " + (this.props.flags.isModified ? "" : "disabled")
-          }
+          className={`btn btn-default ${
+            this.props.flags.isModified ? "" : "disabled"
+          }`}
         >
           {weh._("cancel")}
         </button>
         <button
           type="button"
           onClick={this.props.reset}
-          className={
-            "btn btn-warning " + (!this.props.flags.isDefault ? "" : "disabled")
-          }
+          className={`btn btn-warning ${
+            !this.props.flags.isDefault ? "" : "disabled"
+          }`}
         >
           {weh._("default")}
         </button>
         <button
           type="button"
           onClick={this.props.save}
-          className={
-            "btn btn-primary " +
-            (this.props.flags.isModified && this.props.flags.isValid
+          className={`btn btn-primary ${
+            this.props.flags.isModified && this.props.flags.isValid
               ? ""
-              : "disabled")
-          }
+              : "disabled"
+          }`}
         >
           {weh._("save")}
         </button>

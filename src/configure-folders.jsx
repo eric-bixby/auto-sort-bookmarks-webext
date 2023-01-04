@@ -23,18 +23,18 @@ import { applyMiddleware, createStore, combineReducers } from "redux";
 import {
   reducer as prefsSettingsReducer,
   App as PrefsSettingsApp,
-  listenPrefs
+  listenPrefs,
 } from "react/weh-prefs-settings";
 import logger from "redux-logger";
 import WehHeader from "react/weh-header";
 
 import weh from "weh-content";
 
-let reducers = combineReducers({
-  prefs: prefsSettingsReducer
+const reducers = combineReducers({
+  prefs: prefsSettingsReducer,
 });
 
-let store = createStore(reducers, applyMiddleware(logger));
+const store = createStore(reducers, applyMiddleware(logger));
 
 listenPrefs(store);
 
@@ -43,7 +43,7 @@ let loadingText = "";
 let messageText = "";
 let recursiveText = "";
 let removeIcon;
-let fetching = new Set();
+const fetching = new Set();
 
 /**
  * Send value.
@@ -55,12 +55,12 @@ let fetching = new Set();
  * @returns {Function}
  */
 function sendValue(type, folderID, checkbox, image) {
-  return function() {
+  return function () {
     if (type === "recursive" && image.getAttribute("data-state") === "remove") {
-      let children = document.querySelector("#folder-" + folderID);
+      const children = document.querySelector(`#folder-${folderID}`);
       children.style.display = "block";
     }
-    weh.rpc.call(type + "CheckboxChange", folderID, checkbox.checked);
+    weh.rpc.call(`${type}CheckboxChange`, folderID, checkbox.checked);
   };
 }
 
@@ -74,7 +74,7 @@ function sendValue(type, folderID, checkbox, image) {
  * @returns {Function}
  */
 function toggleChildren(parentID, image, children, recursiveCheckbox) {
-  return function() {
+  return function () {
     if (!fetching.has(parentID)) {
       if (image.getAttribute("data-state") === "add") {
         image.src = removeIcon;
@@ -86,7 +86,7 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
         }
 
         fetching.add(parentID);
-        setTimeout(function() {
+        setTimeout(() => {
           weh.rpc.call("queryChildren", parentID);
         }, 100);
       } else {
@@ -108,15 +108,15 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
  * @param list
  */
 function appendFolder(folder, list) {
-  let listItem = document.createElement("li");
+  const listItem = document.createElement("li");
 
-  let recursiveCheckbox = document.createElement("input");
-  let recursiveLabel = document.createElement("label");
+  const recursiveCheckbox = document.createElement("input");
+  const recursiveLabel = document.createElement("label");
 
-  let children = document.createElement("ul");
-  children.id = "folder-" + folder.id;
+  const children = document.createElement("ul");
+  children.id = `folder-${folder.id}`;
 
-  let icon = document.createElement("img");
+  const icon = document.createElement("img");
   icon.alt = "Expand/Collapse";
   icon.src = addIcon;
   icon.setAttribute("data-state", "add");
@@ -126,9 +126,9 @@ function appendFolder(folder, list) {
     false
   );
 
-  let checkbox = document.createElement("input");
+  const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
-  checkbox.id = "enable-" + folder.id;
+  checkbox.id = `enable-${folder.id}`;
   checkbox.checked = !folder.excluded;
   checkbox.addEventListener(
     "change",
@@ -137,7 +137,7 @@ function appendFolder(folder, list) {
   );
   checkbox.addEventListener(
     "change",
-    function() {
+    () => {
       // clear recursive checkbox when re-enabled
       if (checkbox.checked) {
         recursiveCheckbox.checked = false;
@@ -148,9 +148,9 @@ function appendFolder(folder, list) {
     false
   );
 
-  let label = document.createElement("label");
+  const label = document.createElement("label");
   label.textContent = folder.title;
-  label.htmlFor = "enable-" + folder.id;
+  label.htmlFor = `enable-${folder.id}`;
   label.className = "folder-title";
   label.addEventListener(
     "click",
@@ -159,7 +159,7 @@ function appendFolder(folder, list) {
   );
 
   recursiveCheckbox.type = "checkbox";
-  recursiveCheckbox.id = "recursive-" + folder.id;
+  recursiveCheckbox.id = `recursive-${folder.id}`;
   recursiveCheckbox.checked = folder.recursivelyExcluded;
   recursiveCheckbox.disabled = checkbox.checked;
   recursiveCheckbox.className = "recursive-checkbox";
@@ -170,11 +170,11 @@ function appendFolder(folder, list) {
   );
 
   recursiveLabel.textContent = recursiveText;
-  recursiveLabel.htmlFor = "recursive-" + folder.id;
+  recursiveLabel.htmlFor = `recursive-${folder.id}`;
   recursiveLabel.className = "recursive";
   recursiveLabel.disabled = checkbox.checked;
 
-  let message = document.createElement("p");
+  const message = document.createElement("p");
   message.textContent = messageText;
 
   listItem.appendChild(icon);
@@ -198,21 +198,21 @@ function appendFolders(folders, list) {
   while (list.firstChild) {
     list.removeChild(list.firstChild);
   }
-  for (let folder of folders) {
+  for (const folder of folders) {
     appendFolder(folder, list);
   }
 }
 
 weh.rpc.listen({
-  removeFolder: folderID => {
-    let folder = document.querySelector("#folder-" + folderID);
+  removeFolder: (folderID) => {
+    const folder = document.querySelector(`#folder-${folderID}`);
     if (folder) {
-      let parent = folder.parentNode;
+      const parent = folder.parentNode;
       parent.parentNode.removeChild(parent);
     }
   },
   children: (parentID, children) => {
-    let list = document.querySelector("#folder-" + parentID);
+    const list = document.querySelector(`#folder-${parentID}`);
     appendFolders(children, list);
     fetching.delete(parentID);
   },
@@ -224,10 +224,10 @@ weh.rpc.listen({
     addIcon = plusIcon;
     removeIcon = minusIcon;
 
-    let rootFoldersDoc = document.querySelector("#rootFolders");
+    const rootFoldersDoc = document.querySelector("#rootFolders");
 
     appendFolders(folders, rootFoldersDoc);
-  }
+  },
 });
 
 render(
