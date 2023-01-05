@@ -84,7 +84,7 @@ export default class ChangeHandler {
     if (this.sorter.getNodeType(removeInfo.node) === "separator") {
       this.sorter.sortIfAuto();
     } else if (this.sorter.getNodeType(removeInfo.node) === "folder") {
-      weh.rpc.call("configure-folders", "removeFolder", removeInfo.node.id);
+      AsbPrefs.removeFolder(id);
     }
   }
 
