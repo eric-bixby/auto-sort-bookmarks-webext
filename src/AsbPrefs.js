@@ -17,7 +17,7 @@
  */
 
 import tags from "./annotations";
-import Sorter from "./sorter";
+import Sorter from "./Sorter";
 
 const weh = require("weh-background");
 const wehPrefs = require("weh-prefs");
@@ -140,14 +140,14 @@ export default class AsbPrefs {
       openSettings: () => {
         this.weh.ui.open("settings", {
           type: "tab",
-          url: "content/settings.html",
+          url: "settings.html",
         });
         this.weh.ui.close("main");
       },
       openConfigureFolders: () => {
         this.weh.ui.open("configure-folders", {
           type: "tab",
-          url: "content/configure-folders.html",
+          url: "configure-folders.html",
         });
         this.weh.ui.close("main");
       },
@@ -176,10 +176,8 @@ export default class AsbPrefs {
           messageText: this.weh._("subfolders_recursively_excluded"),
           loadingText: this.weh._("loading"),
         };
-        const addImgUrl = chrome.extension.getURL("content/images/add.png");
-        const removeImgUrl = chrome.extension.getURL(
-          "content/images/remove.png"
-        );
+        const addImgUrl = chrome.extension.getURL("images/add.png");
+        const removeImgUrl = chrome.extension.getURL("images/remove.png");
         this.getChildrenFolders(this.getRootId(), (children) => {
           this.weh.rpc.call(
             "configure-folders",

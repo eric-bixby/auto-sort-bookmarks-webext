@@ -16,14 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// const Annotations = require("annotations");
-// const Sorter = require("sorter");
-import AsbUtil from "./asb-util";
+import Item from "./Item";
 
-AsbUtil.log("main:begin");
-
-// TODO: create instances
-// new Sorter();
-// new Annotations();
-
-AsbUtil.log("main:end");
+/**
+ * Separator class.
+ */
+export default class Separator extends Item {}

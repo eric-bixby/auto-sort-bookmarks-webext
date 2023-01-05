@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbUtil from "./asb-util";
+import AsbUtil from "./AsbUtil";
 
 /**
  * ChangeHandler class.
