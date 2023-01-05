@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbPrefs from "./asb-prefs";
-import Bookmark from "./bookmark";
-import ChangeHandler from "./change-handler";
-import Folder from "./folder";
-import Separator from "./separator";
+import AsbPrefs from "./AsbPrefs";
+import Bookmark from "./Bookmark";
+import ChangeHandler from "./ChangeHandler";
+import Folder from "./Folder";
+import Separator from "./Separator";
 
 /**
  * Sorter class.

@@ -17,7 +17,7 @@
   },
   "permissions": ["bookmarks", "history", "storage", "tabs"],
   "background": {
-    "scripts": ["auto-sort-bookmarks.js"]
+    "scripts": ["AutoSortBookmarks.js"]
   },
   "browser_action": {
     "default_icon": "images/icon.svg",

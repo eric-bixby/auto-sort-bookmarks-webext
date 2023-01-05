@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbPrefs from "./asb-prefs";
-import Bookmark from "./bookmark";
-import Sorter from "./sorter";
+import AsbPrefs from "./AsbPrefs";
+import Bookmark from "./Bookmark";
+import Sorter from "./Sorter";
 
 /**
  * Folder class.

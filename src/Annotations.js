@@ -23,7 +23,7 @@ const RECURSIVE = "recursive";
  * Annotations class.
  */
 export default class Annotations {
-  // TODO: get this from asb-prefs.js
+  // TODO: get this from AsbPrefs.js
   storedSettings = {};
 
   /**
