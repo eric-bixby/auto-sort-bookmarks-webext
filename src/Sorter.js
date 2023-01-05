@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Annotations from "./annotations";
 import AsbPrefs from "./AsbPrefs";
 import Bookmark from "./Bookmark";
 import ChangeHandler from "./ChangeHandler";
@@ -203,8 +204,8 @@ export default class Sorter {
               id: node.id,
               parentId: node.parentId,
               title: node.title,
-              excluded: tags.hasDoNotSortAnnotation(node.id),
-              recursivelyExcluded: tags.hasRecursiveAnnotation(node.id),
+              excluded: Annotations.hasDoNotSortAnnotation(node.id),
+              recursivelyExcluded: Annotations.hasRecursiveAnnotation(node.id),
             });
           }
         }
@@ -470,7 +471,7 @@ export default class Sorter {
       // Flatten array of arrays into array
       const mergedFolders = [].concat.apply([], folders);
 
-      tags.removeMissingFolders(mergedFolders);
+      Annotations.removeMissingFolders(mergedFolders);
       this.sortFolders(mergedFolders);
     });
   }
