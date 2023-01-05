@@ -52,6 +52,7 @@
       }
     ],
     "no-console": "off",
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "jsx-a11y/anchor-is-valid": 0
   }
 }
