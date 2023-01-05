@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import tags from "./annotations";
+import Annotations from "./Annotations";
 import Sorter from "./Sorter";
 
 const weh = require("weh-background");
@@ -157,17 +157,17 @@ export default class AsbPrefs {
       },
       sortCheckboxChange: (folderID, activated) => {
         if (activated) {
-          tags.removeDoNotSortAnnotation(folderID);
-          tags.removeRecursiveAnnotation(folderID);
+          Annotations.removeDoNotSortAnnotation(folderID);
+          Annotations.removeRecursiveAnnotation(folderID);
         } else {
-          tags.setDoNotSortAnnotation(folderID);
+          Annotations.setDoNotSortAnnotation(folderID);
         }
       },
       recursiveCheckboxChange: (folderID, activated) => {
         if (activated) {
-          tags.setRecursiveAnnotation(folderID);
+          Annotations.setRecursiveAnnotation(folderID);
         } else {
-          tags.removeRecursiveAnnotation(folderID);
+          Annotations.removeRecursiveAnnotation(folderID);
         }
       },
       queryRoot: () => {

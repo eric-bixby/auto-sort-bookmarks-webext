@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Annotations from "./annotations";
 import AsbPrefs from "./AsbPrefs";
 import Bookmark from "./Bookmark";
 import Sorter from "./Sorter";
@@ -47,8 +48,8 @@ export default class Folder extends Bookmark {
    */
   canBeSorted() {
     if (
-      tags.hasDoNotSortAnnotation(this.id) ||
-      tags.isRecursivelyExcluded(this.id)
+      Annotations.hasDoNotSortAnnotation(this.id) ||
+      Annotations.isRecursivelyExcluded(this.id)
     ) {
       return false;
     }
@@ -141,7 +142,7 @@ export default class Folder extends Bookmark {
             for (const node of o) {
               if (
                 getNodeType(node) === "folder" &&
-                !tags.isRecursivelyExcluded(node.id)
+                !Annotations.isRecursivelyExcluded(node.id)
               ) {
                 folder = createItemFromNode(node);
                 if (self.id === node.id) {
