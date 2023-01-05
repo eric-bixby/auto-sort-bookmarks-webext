@@ -16,12 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Annotations from "./annotations";
-import AsbPrefs from "./AsbPrefs";
-import Bookmark from "./Bookmark";
 import ChangeHandler from "./ChangeHandler";
-import Folder from "./Folder";
-import Separator from "./Separator";
 
 /**
  * Sorter class.
@@ -49,7 +44,7 @@ export default class Sorter {
     /**
      * Handle bookmark changes
      */
-    this.changeHandler = new ChangeHandler();
+    this.changeHandler = new ChangeHandler(this);
   }
 
   /**

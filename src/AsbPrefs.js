@@ -16,9 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Annotations from "./Annotations";
-import Sorter from "./Sorter";
-
 const weh = require("weh-background");
 const wehPrefs = require("weh-prefs");
 const defaults = require("./default-prefs").default;
@@ -200,5 +197,14 @@ export default class AsbPrefs {
         });
       },
     });
+  }
+
+  /**
+   * Send message that folder has been removed.
+   *
+   * @param {*} id ID of removed folder.
+   */
+  removeFolder(id) {
+    this.weh.rpc.call("configure-folders", "removeFolder", id);
   }
 }

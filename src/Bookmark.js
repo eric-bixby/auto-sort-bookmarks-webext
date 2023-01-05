@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbPrefs from "./AsbPrefs";
 import AsbUtil from "./AsbUtil";
 import Item from "./Item";
 

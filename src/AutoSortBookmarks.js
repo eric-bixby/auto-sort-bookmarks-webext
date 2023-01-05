@@ -16,14 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// const Annotations = require("./Annotations");
-// const Sorter = require("sorter");
 import AsbUtil from "./AsbUtil";
+import Sorter from "./Sorter";
 
 AsbUtil.log("main:begin");
-
-// TODO: create instances
-// new Sorter();
-// new Annotations();
-
+Sorter();
 AsbUtil.log("main:end");
