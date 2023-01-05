@@ -29,8 +29,8 @@ import {
 } from "react/weh-prefs-settings";
 import logger from "redux-logger";
 import WehHeader from "react/weh-header";
-
 import weh from "weh-content";
+import PropTypes from "prop-types";
 
 const reducers = combineReducers({
   prefs: prefsSettingsReducer,
@@ -50,7 +50,7 @@ function openConfigureFolders() {
 /**
  * Render controls.
  */
-function RenderControls() {
+function RenderControls({ cancel, reset, save, flags }) {
   return (
     <div className="btn-toolbar justify-content-between">
       <div className="btn-group pull-left">
@@ -65,29 +65,27 @@ function RenderControls() {
       <div className="btn-group pull-right">
         <button
           type="button"
-          onClick={this.props.cancel}
+          onClick={{ cancel }}
           className={`btn btn-default ${
-            this.props.flags.isModified ? "" : "disabled"
+            { flags }.isModified ? "" : "disabled"
           }`}
         >
           {weh._("cancel")}
         </button>
         <button
           type="button"
-          onClick={this.props.reset}
+          onClick={{ reset }}
           className={`btn btn-warning ${
-            !this.props.flags.isDefault ? "" : "disabled"
+            !{ flags }.isDefault ? "" : "disabled"
           }`}
         >
           {weh._("default")}
         </button>
         <button
           type="button"
-          onClick={this.props.save}
+          onClick={{ save }}
           className={`btn btn-primary ${
-            this.props.flags.isModified && this.props.flags.isValid
-              ? ""
-              : "disabled"
+            { flags }.isModified && { flags }.isValid ? "" : "disabled"
           }`}
         >
           {weh._("save")}
@@ -96,6 +94,16 @@ function RenderControls() {
     </div>
   );
 }
+
+RenderControls.propTypes = {
+  cancel: PropTypes.func.isRequired,
+  reset: PropTypes.func.isRequired,
+  save: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  flags: PropTypes.object.isRequired,
+};
+
+weh.setPageTitle(weh._("settings"));
 
 render(
   <Provider store={store}>
@@ -126,5 +134,3 @@ render(
   </Provider>,
   document.getElementById("root")
 );
-
-weh.setPageTitle(weh._("settings"));

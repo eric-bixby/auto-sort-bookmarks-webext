@@ -19,7 +19,6 @@
 import React from "react";
 import { render } from "react-dom";
 import PropTypes from "prop-types";
-
 import weh from "weh-content";
 
 class Link extends React.Component {
@@ -29,12 +28,16 @@ class Link extends React.Component {
   }
 
   handleClick() {
-    weh.rpc.call(this.props.messageCall);
+    const { messageCall } = this.props;
+    this.weh.rpc.call({ messageCall });
   }
 
   render() {
+    const { label } = this.props;
     return (
-      <button onClick={this.handleClick}>{weh._(this.props.label)}</button>
+      <button type="button" onClick={this.handleClick}>
+        {weh._({ label })}
+      </button>
     );
   }
 }

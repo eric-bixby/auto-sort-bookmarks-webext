@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* eslint-disable no-param-reassign */
+
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
@@ -27,7 +29,6 @@ import {
 } from "react/weh-prefs-settings";
 import logger from "redux-logger";
 import WehHeader from "react/weh-header";
-
 import weh from "weh-content";
 
 const reducers = combineReducers({
@@ -55,7 +56,7 @@ const fetching = new Set();
  * @returns {Function}
  */
 function sendValue(type, folderID, checkbox, image) {
-  return function () {
+  return function handleEvent() {
     if (type === "recursive" && image.getAttribute("data-state") === "remove") {
       const children = document.querySelector(`#folder-${folderID}`);
       children.style.display = "block";
@@ -74,7 +75,7 @@ function sendValue(type, folderID, checkbox, image) {
  * @returns {Function}
  */
 function toggleChildren(parentID, image, children, recursiveCheckbox) {
-  return function () {
+  return function handleEvent() {
     if (!fetching.has(parentID)) {
       if (image.getAttribute("data-state") === "add") {
         image.src = removeIcon;
@@ -198,9 +199,7 @@ function appendFolders(folders, list) {
   while (list.firstChild) {
     list.removeChild(list.firstChild);
   }
-  for (const folder of folders) {
-    appendFolder(folder, list);
-  }
+  folders.forEach((folder) => appendFolder(folder, list));
 }
 
 weh.rpc.listen({
