@@ -43,7 +43,7 @@ export default class Folder extends Bookmark {
   /**
    * Check if this folder can be sorted.
    *
-   * @return {boolean} Whether it can be sorted or not.
+   * @returns {boolean} Whether it can be sorted or not.
    */
   canBeSorted() {
     if (
@@ -58,7 +58,7 @@ export default class Folder extends Bookmark {
   /**
    * Check if this folder is the root folder.
    *
-   * @return {boolean} Whether this is a root folder or not.
+   * @returns {boolean} Whether this is a root folder or not.
    */
   isRoot() {
     return this.id === AsbPrefs.getRootId();
@@ -67,7 +67,7 @@ export default class Folder extends Bookmark {
   /**
    * Check if at least one children has moved.
    *
-   * @return {boolean} Whether at least one children has moved or not.
+   * @returns {boolean} Whether at least one children has moved or not.
    */
   hasMove() {
     for (let i = 0; i < this.children.length; i += 1) {
