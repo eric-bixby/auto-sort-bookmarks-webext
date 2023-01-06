@@ -14,6 +14,8 @@
     "prettier": "^2.8.1"
   },
   "dependencies": {
+    "@types/chrome": "0.0.206",
+    "@types/firefox-webext-browser": "^94.0.1",
     "prop-types": "^15.8.1"
   }
 }
