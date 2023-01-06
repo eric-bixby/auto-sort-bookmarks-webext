@@ -20,6 +20,9 @@ import Bookmark from "./Bookmark";
 import Folder from "./Folder";
 import Separator from "./Separator";
 
+/**
+ * Class for creating a Bookmark, Folder, or Separator from a BookmarkTreeNode.
+ */
 export default class NodeUtil {
   /**
    * Get the type of node.

@@ -20,7 +20,7 @@ const DO_NOT_SORT = "donotsort";
 const RECURSIVE = "recursive";
 
 /**
- * Annotations class.
+ * Class to manage bookmark annotations for folder sort exclusion.
  */
 export default class Annotations {
   // TODO: get this from AsbPrefs.js
@@ -48,8 +48,6 @@ export default class Annotations {
    *
    * @param {string} id The item ID.
    * @return {boolean} Whether the item has a recursive annotation.
-   *
-   * @param {any} id
    */
   hasRecursiveAnnotation(id) {
     if (

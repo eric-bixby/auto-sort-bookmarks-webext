@@ -22,6 +22,9 @@ const defaults = require("./default-prefs").default;
 
 // TODO: make this a singleton
 
+/**
+ * Class to manage add-on preferences.
+ */
 export default class AsbPrefs {
   constructor() {
     weh.prefs.declare(defaults);

@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Class for common functions.
+ */
 export default class AsbUtil {
   /**
    * If enabled, send message to console for debugging.
