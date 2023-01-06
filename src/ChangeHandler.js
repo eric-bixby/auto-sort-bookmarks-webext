@@ -19,7 +19,7 @@
 import AsbUtil from "./AsbUtil";
 
 /**
- * ChangeHandler class.
+ * Class for handling bookmark changes.
  */
 export default class ChangeHandler {
   /**

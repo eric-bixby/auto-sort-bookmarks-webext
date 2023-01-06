@@ -19,6 +19,9 @@
 import AsbUtil from "./AsbUtil";
 import Sorter from "./Sorter";
 
+/**
+ * Main entry-point for add-on.
+ */
 AsbUtil.log("main:begin");
 Sorter();
 AsbUtil.log("main:end");
