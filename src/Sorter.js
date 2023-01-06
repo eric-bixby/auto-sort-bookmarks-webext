@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AsbUtil from "./AsbUtil";
 import ChangeHandler from "./ChangeHandler";
+import NodeUtil from "./NodeUtil";
 
 /**
  * Sorter class.
@@ -45,18 +47,6 @@ export default class Sorter {
      * Handle bookmark changes
      */
     this.changeHandler = new ChangeHandler(this);
-  }
-
-  /**
-   * Get the rootId.
-   *
-   * @returns {string}
-   */
-  getRootId() {
-    if (AsbPrefs.isFirefox()) {
-      return "root________";
-    }
-    return "0";
   }
 
   /**
@@ -94,93 +84,6 @@ export default class Sorter {
     }
 
     return str;
-  }
-
-  /**
-   * Create an item from the `type`.
-   *
-   * @param {string} type The item type.
-   * @param {string} id The item ID.
-   * @param {int} index The item index.
-   * @param {string} parentId The parent ID.
-   * @param {string} title The item title.
-   * @param {string} url The item URL.
-   * @param {int} lastVisited The timestamp of the last visit.
-   * @param {int} accessCount The access count.
-   * @param {int} dateAdded The timestamp of the date added.
-   * @param {int} lastModified The timestamp of the last modified date.
-   * @return {*} The new item.
-   */
-  createItem(
-    type,
-    id,
-    index,
-    parentId,
-    title,
-    url,
-    lastVisited,
-    accessCount,
-    dateAdded,
-    lastModified
-  ) {
-    let item;
-
-    if (type === "bookmark") {
-      item = new Bookmark(
-        id,
-        index,
-        parentId,
-        title,
-        dateAdded,
-        lastModified,
-        url,
-        lastVisited,
-        accessCount
-      );
-    } else if (type === "folder") {
-      item = new Folder(id, index, parentId, title, dateAdded, lastModified);
-    } else if (type === "separator") {
-      item = new Separator(id, index, parentId);
-    }
-
-    return item;
-  }
-
-  /**
-   * Create an item from the `node` type.
-   *
-   * @param {bookmarks.BookmarkTreeNode} node The node item.
-   * @return {Item} The new item.
-   */
-  createItemFromNode(node) {
-    return createItem(
-      getNodeType(node),
-      node.id,
-      node.index,
-      node.parentId,
-      node.title,
-      node.url,
-      node.lastVisited,
-      node.accessCount,
-      node.dateAdded,
-      node.dateGroupModified
-    );
-  }
-
-  /**
-   * Get the type of node.
-   *
-   * @param {any} node
-   * @returns
-   */
-  getNodeType(node) {
-    let type = "bookmark";
-    if (typeof node.url === "undefined") {
-      type = "folder";
-    } else if (node.url === "data:") {
-      type = "separator";
-    }
-    return type;
   }
 
   /**
@@ -439,8 +342,8 @@ export default class Sorter {
   sortRootFolders(children) {
     const promiseAry = [];
 
-    for (const node of children) {
-      const folder = createItemFromNode(node);
+    children.forEach((node) => {
+      const folder = NodeUtil.createItemFromNode(node);
 
       const p = new Promise((resolve) => {
         const folders = [];
@@ -449,9 +352,7 @@ export default class Sorter {
           folders.push(folder);
 
           folder.getFolders((subfolders) => {
-            for (const f of subfolders) {
-              folders.push(f);
-            }
+            subfolders.forEach((f) => folders.push(f));
             resolve(folders);
           });
         } else {
@@ -460,7 +361,7 @@ export default class Sorter {
       });
 
       promiseAry.push(p);
-    }
+    });
 
     Promise.all(promiseAry).then((folders) => {
       // Flatten array of arrays into array
@@ -528,12 +429,12 @@ export default class Sorter {
     let length;
 
     // children is an array of arrays where a separator node is used to separate lists
-    for (let i = 0; i < folder.children.length; ++i) {
+    for (let i = 0; i < folder.children.length; i += 1) {
       // sort each array of nodes
       folder.children[i].sort(compare);
       // assign new index to each node
       length = folder.children[i].length;
-      for (let j = 0; j < length; ++j) {
+      for (let j = 0; j < length; j += 1) {
         folder.children[i][j].setIndex(j + delta);
       }
 
@@ -556,23 +457,23 @@ export default class Sorter {
     const self = this;
     const promiseAry = [];
 
-    for (const folder of folders) {
+    folders.forEach((folder) => {
       // create an array of promises
       const p = new Promise((resolve) => {
         self.sortAndSave(folder, resolve);
       });
 
       promiseAry.push(p);
-    }
+    });
 
     Promise.all(promiseAry).then(() => {
-      log("sort:end");
+      AsbUtil.log("sort:end");
       self.sorting = false;
       self.lastCheck = Date.now();
       // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
       setTimeout(
         () => {
-          changeHandler.createChangeListeners();
+          this.changeHandler.createChangeListeners();
         },
         3000,
         "Javascript"
@@ -633,8 +534,8 @@ export default class Sorter {
       } else {
         this.sorting = true;
         this.isWaiting = false;
-        changeHandler.removeChangeListeners();
-        log("sort:begin");
+        this.changeHandler.removeChangeListeners();
+        AsbUtil.log("sort:begin");
         this.sortAllBookmarks();
       }
     }
