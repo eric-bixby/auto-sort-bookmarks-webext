@@ -63,7 +63,7 @@ export default class Sorter {
    * Reverse the base of an URL to do a better sorting.
    *
    * @param str The URL to be reversed.
-   * @return {*} The reversed URL.
+   * @returns{*} The reversed URL.
    */
   reverseBaseUrl(str) {
     if (!str) {
@@ -90,7 +90,7 @@ export default class Sorter {
    * Get the children folders of a folder.
    *
    * @param {string} parentId The parent ID.
-   * @return {Array}
+   * @returns {Array}
    */
   getChildrenFolders(parentId, callback) {
     chrome.bookmarks.getChildren(parentId, (o) => {

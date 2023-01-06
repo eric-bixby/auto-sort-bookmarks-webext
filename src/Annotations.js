@@ -30,7 +30,7 @@ export default class Annotations {
    * Check if an item has a do not sort annotation.
    *
    * @param {string} id The item ID.
-   * @return {boolean} Whether the item has a do not sort annotation.
+   * @returns {boolean} Whether the item has a do not sort annotation.
    */
   hasDoNotSortAnnotation(id) {
     if (
@@ -47,7 +47,7 @@ export default class Annotations {
    * Check if an item has a recursive annotation.
    *
    * @param {string} id The item ID.
-   * @return {boolean} Whether the item has a recursive annotation.
+   * @returns {boolean} Whether the item has a recursive annotation.
    */
   hasRecursiveAnnotation(id) {
     if (
@@ -64,7 +64,7 @@ export default class Annotations {
    * Check if an item is recursively excluded.
    *
    * @param {string} id The item ID.
-   * @return {boolean} Whether the item is recursively excluded.
+   * @returns {boolean} Whether the item is recursively excluded.
    */
   isRecursivelyExcluded(id) {
     return this.hasDoNotSortAnnotation(id) && this.hasRecursiveAnnotation(id);

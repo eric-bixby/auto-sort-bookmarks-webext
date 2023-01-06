@@ -55,7 +55,7 @@ export default class NodeUtil {
    * @param {int} accessCount The access count.
    * @param {int} dateAdded The timestamp of the date added.
    * @param {int} lastModified The timestamp of the last modified date.
-   * @return {*} The new item.
+   * @returns {*} The new item.
    */
   static createItem(
     type,
@@ -96,7 +96,7 @@ export default class NodeUtil {
    * Create an item from the `node` type.
    *
    * @param {bookmarks.BookmarkTreeNode} node The node item.
-   * @return {Item} The new item.
+   * @returns {Item} The new item.
    */
   static createItemFromNode(node) {
     return NodeUtil.createItem(
