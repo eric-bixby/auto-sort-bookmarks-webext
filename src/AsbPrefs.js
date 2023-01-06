@@ -16,14 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BrowserUtil from "./BrowserUtil";
+
 const weh = require("weh-background");
 const wehPrefs = require("weh-prefs");
 const defaults = require("./default-prefs").default;
 
 // TODO: make this a singleton
+// TODO: add method to set callback ( setCriteria() )
+// TODO: add method to get "storedSettings"
 
 /**
  * Class to manage add-on preferences.
+ *
+ * This class is depended on by other class, so it is a singleton (single instance).
+ * Also, it has been refactored to prevent circular-dependency.  For example, it needs to call
+ * setCriteria() in the Sorter class, which depends on this class, so a callback is used instead.
  */
 export default class AsbPrefs {
   constructor() {
@@ -42,7 +50,7 @@ export default class AsbPrefs {
       weh.rpc.listen({
         prefsSet: function prefsSet(prefs2) {
           storedSettings["weh-prefs"] = prefs2;
-          browser.storage.local.set(storedSettings);
+          BrowserUtil.setLocalSettings(storedSettings);
           return wehPrefs.assign(prefs2);
         },
       });
@@ -68,7 +76,7 @@ export default class AsbPrefs {
    * @param {any} callback Function called to receive stored settings.
    */
   getStoredSettings(callback) {
-    const getting = this.browser.storage.local.get();
+    const getting = BrowserUtil.getLocalSettings();
     getting.then((storedSettings) => {
       if (typeof callback === "function") {
         callback(storedSettings);
@@ -176,8 +184,8 @@ export default class AsbPrefs {
           messageText: this.weh._("subfolders_recursively_excluded"),
           loadingText: this.weh._("loading"),
         };
-        const addImgUrl = chrome.extension.getURL("images/add.png");
-        const removeImgUrl = chrome.extension.getURL("images/remove.png");
+        const addImgUrl = BrowserUtil.getExtensionURL("images/add.png");
+        const removeImgUrl = BrowserUtil.getExtensionURL("images/remove.png");
         this.getChildrenFolders(this.getRootId(), (children) => {
           this.weh.rpc.call(
             "configure-folders",

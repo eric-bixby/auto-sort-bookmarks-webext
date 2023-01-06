@@ -18,6 +18,7 @@
 
 /* eslint-disable no-param-reassign */
 
+import BrowserUtil from "./BrowserUtil";
 import NodeUtil from "./NodeUtil";
 import Separator from "./Separator";
 
@@ -35,7 +36,7 @@ export default class FolderUtil {
     this.children = [[]];
     const self = this;
 
-    chrome.bookmarks.getChildren(this.id, (o) => {
+    BrowserUtil.getBookmarkChildren(this.id, (o) => {
       if (typeof o !== "undefined") {
         const promiseAry = [];
 
@@ -44,7 +45,7 @@ export default class FolderUtil {
             // history.getVisits() is faster than history.search() because
             // history.search() checks title and url, plus does not match url exactly, so it takes longer.
             // chrome expects a callback to be the second argument, while browser-api doesn't and returns promise.
-            const p = browser.history.getVisits({
+            const p = BrowserUtil.getHistoryVisits({
               url: node.url,
             });
             promiseAry.push(p);
@@ -94,7 +95,7 @@ export default class FolderUtil {
     this.folders = [];
     const self = this;
 
-    chrome.bookmarks.getSubTree(
+    BrowserUtil.getBookmarkSubTree(
       this.id,
       (function () {
         /**
