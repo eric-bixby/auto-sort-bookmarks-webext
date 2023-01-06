@@ -207,4 +207,16 @@ export default class AsbPrefs {
   removeFolder(id) {
     this.weh.rpc.call("configure-folders", "removeFolder", id);
   }
+
+  /**
+   * Get the rootId.
+   *
+   * @returns {string}
+   */
+  getRootId() {
+    if (this.isFirefox()) {
+      return "root________";
+    }
+    return "0";
+  }
 }

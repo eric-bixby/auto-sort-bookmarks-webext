@@ -16,7 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* eslint-disable no-param-reassign */
+
 import Bookmark from "./Bookmark";
+import NodeUtil from "./NodeUtil";
+import Separator from "./Separator";
 
 /**
  * Folder class.
@@ -67,8 +71,8 @@ export default class Folder extends Bookmark {
       if (typeof o !== "undefined") {
         const promiseAry = [];
 
-        for (const node of o) {
-          if (getNodeType(node) === "bookmark") {
+        o.forEach((node) => {
+          if (NodeUtil.getNodeType(node) === "bookmark") {
             // history.getVisits() is faster than history.search() because
             // history.search() checks title and url, plus does not match url exactly, so it takes longer.
             // chrome expects a callback to be the second argument, while browser-api doesn't and returns promise.
@@ -79,11 +83,11 @@ export default class Folder extends Bookmark {
           } else {
             promiseAry.push(Promise.resolve());
           }
-        }
+        });
 
         Promise.all(promiseAry).then((values) => {
           // populate nodes with visit information
-          for (let i = 0; i < values.length; i++) {
+          for (let i = 0; i < values.length; i += 1) {
             if (typeof values[i] !== "undefined" && values[i].length > 0) {
               o[i].accessCount = values[i].length;
               o[i].lastVisited = values[i][0].visitTime;
@@ -92,16 +96,16 @@ export default class Folder extends Bookmark {
 
           let index = 0;
 
-          for (const node of o) {
-            const item = createItemFromNode(node);
+          o.forEach((node) => {
+            const item = NodeUtil.createItemFromNode(node);
             if (item instanceof Separator) {
               // create sub-array to store nodes after separator
               self.children.push([]);
-              ++index;
+              index += 1;
             } else if (typeof item !== "undefined") {
               self.children[index].push(item);
             }
-          }
+          });
 
           if (typeof callback === "function") {
             callback(self, compare, resolve);
@@ -136,12 +140,12 @@ export default class Folder extends Bookmark {
             let folder;
             let isTop = false;
 
-            for (const node of o) {
+            o.forEach((node) => {
               if (
-                getNodeType(node) === "folder" &&
+                NodeUtil.getNodeType(node) === "folder" &&
                 !Annotations.isRecursivelyExcluded(node.id)
               ) {
-                folder = createItemFromNode(node);
+                folder = NodeUtil.createItemFromNode(node);
                 if (self.id === node.id) {
                   isTop = true;
                 }
@@ -149,7 +153,7 @@ export default class Folder extends Bookmark {
                 self.folders.push(folder);
                 getSubFolders(node.children);
               }
-            }
+            });
 
             // only return the complete list if this is the top iteration
             if (isTop && typeof callback === "function") {
@@ -177,9 +181,9 @@ export default class Folder extends Bookmark {
    * @return {boolean} Whether at least one children has moved or not.
    */
   hasMove() {
-    for (let i = 0; i < this.children.length; ++i) {
+    for (let i = 0; i < this.children.length; i += 1) {
       const { length } = this.children[i];
-      for (let j = 0; j < length; ++j) {
+      for (let j = 0; j < length; j += 1) {
         if (this.children[i][j].index !== this.children[i][j].oldIndex) {
           return true;
         }
@@ -196,9 +200,9 @@ export default class Folder extends Bookmark {
     if (this.hasMove()) {
       const promiseAry = [];
 
-      for (let i = 0; i < this.children.length; ++i) {
+      for (let i = 0; i < this.children.length; i += 1) {
         const { length } = this.children[i];
-        for (let j = 0; j < length; ++j) {
+        for (let j = 0; j < length; j += 1) {
           const p = this.children[i][j].saveIndex();
           promiseAry.push(p);
         }
