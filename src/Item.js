@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BrowserUtil from "./BrowserUtil";
+
 /**
  * Item class.
  */
@@ -40,7 +42,7 @@ export default class Item {
    * @memberof Item
    */
   saveIndex() {
-    return chrome.bookmarks.move(this.id, { index: this.index });
+    return BrowserUtil.moveBookmark(this.id, { index: this.index });
   }
 
   /**

@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BrowserUtil from "./BrowserUtil";
+
 const DO_NOT_SORT = "donotsort";
 const RECURSIVE = "recursive";
 
@@ -175,6 +177,6 @@ export default class Annotations {
    * Set the stored annotation.
    */
   setStoredSettings() {
-    browser.storage.local.set(this.storedSettings);
+    BrowserUtil.setLocalSettings(this.storedSettings);
   }
 }

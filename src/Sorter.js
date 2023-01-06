@@ -17,6 +17,7 @@
  */
 
 import AsbUtil from "./AsbUtil";
+import BrowserUtil from "./BrowserUtil";
 import ChangeHandler from "./ChangeHandler";
 import NodeUtil from "./NodeUtil";
 
@@ -93,7 +94,7 @@ export default class Sorter {
    * @returns {Array}
    */
   getChildrenFolders(parentId, callback) {
-    chrome.bookmarks.getChildren(parentId, (o) => {
+    BrowserUtil.getBookmarkChildren(parentId, (o) => {
       if (typeof o !== "undefined") {
         const children = [];
         for (const node of o) {

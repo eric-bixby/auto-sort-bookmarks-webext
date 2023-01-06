@@ -17,6 +17,7 @@
  */
 
 import AsbUtil from "./AsbUtil";
+import BrowserUtil from "./BrowserUtil";
 
 /**
  * Class for handling bookmark changes.
@@ -108,11 +109,11 @@ export default class ChangeHandler {
    * @memberof ChangeHandler
    */
   createChangeListeners() {
-    chrome.bookmarks.onChanged.addListener(this.handleChanged);
-    chrome.bookmarks.onCreated.addListener(this.handleCreated);
-    chrome.bookmarks.onMoved.addListener(this.handleMoved);
-    chrome.bookmarks.onRemoved.addListener(this.handleRemoved);
-    chrome.history.onVisited.addListener(this.handleVisited);
+    BrowserUtil.addBookmarkChangedListener(this.handleChanged);
+    BrowserUtil.addBookmarkCreatedListener(this.handleCreated);
+    BrowserUtil.addBookmarkMovedListener(this.handleMoved);
+    BrowserUtil.addBookmarkRemovedListener(this.handleRemoved);
+    BrowserUtil.addHistoryVistedListener(this.handleVisited);
     AsbUtil.log("added listeners");
   }
 
@@ -122,11 +123,11 @@ export default class ChangeHandler {
    * @memberof ChangeHandler
    */
   removeChangeListeners() {
-    chrome.bookmarks.onChanged.removeListener(this.handleChanged);
-    chrome.bookmarks.onCreated.removeListener(this.handleCreated);
-    chrome.bookmarks.onMoved.removeListener(this.handleMoved);
-    chrome.bookmarks.onRemoved.removeListener(this.handleRemoved);
-    chrome.history.onVisited.removeListener(this.handleVisited);
+    BrowserUtil.removeBookmarkChangedListener(this.handleChanged);
+    BrowserUtil.removeBookmarkCreatedListener(this.handleCreated);
+    BrowserUtil.removeBookmarkMovedListener(this.handleMoved);
+    BrowserUtil.removeBookmarkRemovedListener(this.handleRemoved);
+    BrowserUtil.removeHistoryVistedListener(this.handleVisited);
     AsbUtil.log("removed listeners");
   }
 }
