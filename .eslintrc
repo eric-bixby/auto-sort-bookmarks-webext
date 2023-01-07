@@ -19,7 +19,6 @@
   "env": {
     "browser": true,
     "es6": true,
-    "chrome": true,
     "webextensions": true,
     "amd": true
   },

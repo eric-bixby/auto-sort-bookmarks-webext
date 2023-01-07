@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* global chrome, browser */
-
 /**
  * Class for browser specific API calls.
  */
@@ -148,7 +146,7 @@ export default class BrowserUtil {
    * @param destination Bookmark destination.
    * @returns The `move` method provides its result via callback or returned as a `Promise` (MV3 only).
    */
-  static moveBookmark() {
+  static moveBookmark(id, destination) {
     return chrome.bookmarks.move(id, destination);
   }
 
