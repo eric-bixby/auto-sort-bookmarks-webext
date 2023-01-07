@@ -334,8 +334,8 @@ export default class Sorter {
     });
 
     Promise.all(promiseAry).then((folders) => {
-      // Flatten array of arrays into array
-      const mergedFolders = [].concat.apply([], folders);
+      // Flatten array of arrays into single array using spread operator (...)
+      const mergedFolders = [].concat(...folders);
 
       Annotations.removeMissingFolders(mergedFolders);
       this.sortFolders(mergedFolders);
