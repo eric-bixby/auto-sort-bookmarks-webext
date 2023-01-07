@@ -39,7 +39,7 @@ export default class AsbPrefs {
 
     let storedSettings = {};
 
-    this.getStoredSettings((settings) => {
+    AsbPrefs.getStoredSettings((settings) => {
       storedSettings = settings;
 
       // Get weh prefs
@@ -75,7 +75,7 @@ export default class AsbPrefs {
    *
    * @param {any} callback Function called to receive stored settings.
    */
-  getStoredSettings(callback) {
+  static getStoredSettings(callback) {
     const getting = BrowserUtil.getLocalSettings();
     getting.then((storedSettings) => {
       if (typeof callback === "function") {
@@ -186,7 +186,7 @@ export default class AsbPrefs {
         };
         const addImgUrl = BrowserUtil.getExtensionURL("images/add.png");
         const removeImgUrl = BrowserUtil.getExtensionURL("images/remove.png");
-        this.getChildrenFolders(this.getRootId(), (children) => {
+        Sorter.getChildrenFolders(this.getRootId(), (children) => {
           this.weh.rpc.call(
             "configure-folders",
             "root",
@@ -198,7 +198,7 @@ export default class AsbPrefs {
         });
       },
       queryChildren: (parentId) => {
-        this.getChildrenFolders(parentId, (children) => {
+        Sorter.getChildrenFolders(parentId, (children) => {
           this.weh.rpc.call(
             "configure-folders",
             "children",

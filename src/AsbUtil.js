@@ -28,4 +28,31 @@ export default class AsbUtil {
   static log(o) {
     console.log(o);
   }
+
+  /**
+   * Reverse the base of an URL for better sorting.
+   *
+   * @param str The URL to be reversed.
+   * @returns {*} The reversed URL.
+   */
+  static reverseBaseUrl(str) {
+    if (!str) {
+      return "";
+    }
+
+    let retVal = str.replace(/^\S+:\/\//, "");
+    const re = /^[^/]+$|^[^/]+/;
+    const m = re.exec(retVal);
+
+    if (m !== null) {
+      if (m.index === re.lastIndex) {
+        re.lastIndex += 1;
+      }
+
+      // Replace the found string by it's reversion
+      retVal = retVal.replace(m[0], m[0].split(".").reverse().join("."));
+    }
+
+    return retVal;
+  }
 }

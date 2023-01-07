@@ -16,9 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* eslint-disable no-param-reassign */
+
 import AsbUtil from "./AsbUtil";
 import BrowserUtil from "./BrowserUtil";
 import ChangeHandler from "./ChangeHandler";
+import Folder from "./Folder";
 import NodeUtil from "./NodeUtil";
 
 /**
@@ -51,54 +54,17 @@ export default class Sorter {
   }
 
   /**
-   * Convert a string to an integer.
-   *
-   * @param {string} val String value to convert.
-   * @returns {number}
-   */
-  parseInteger(val) {
-    return parseInt(val, 10);
-  }
-
-  /**
-   * Reverse the base of an URL to do a better sorting.
-   *
-   * @param str The URL to be reversed.
-   * @returns{*} The reversed URL.
-   */
-  reverseBaseUrl(str) {
-    if (!str) {
-      return "";
-    }
-
-    str = str.replace(/^\S+:\/\//, "");
-    const re = /^[^/]+$|^[^/]+/;
-    const m = re.exec(str);
-
-    if (m !== null) {
-      if (m.index === re.lastIndex) {
-        re.lastIndex++;
-      }
-
-      // Replace the found string by it's reversion
-      str = str.replace(m[0], m[0].split(".").reverse().join("."));
-    }
-
-    return str;
-  }
-
-  /**
    * Get the children folders of a folder.
    *
    * @param {string} parentId The parent ID.
    * @returns {Array}
    */
-  getChildrenFolders(parentId, callback) {
+  static getChildrenFolders(parentId, callback) {
     BrowserUtil.getBookmarkChildren(parentId, (o) => {
       if (typeof o !== "undefined") {
         const children = [];
-        for (const node of o) {
-          if (getNodeType(node) === "folder") {
+        o.forEach((node) => {
+          if (NodeUtil.getNodeType(node) === "folder") {
             children.push({
               id: node.id,
               parentId: node.parentId,
@@ -107,7 +73,7 @@ export default class Sorter {
               recursivelyExcluded: Annotations.hasRecursiveAnnotation(node.id),
             });
           }
-        }
+        });
 
         if (typeof callback === "function") {
           callback(children);
@@ -139,6 +105,7 @@ export default class Sorter {
 
         return 1;
       }
+
       if (bookmark2.corrupted) {
         return -1;
       }
@@ -146,6 +113,8 @@ export default class Sorter {
       if (bookmark1.order !== bookmark2.order) {
         return bookmark1.order - bookmark2.order;
       }
+
+      return 0;
     }
 
     /**
@@ -157,8 +126,8 @@ export default class Sorter {
      */
     function addReverseUrls(bookmark1, bookmark2, criteria) {
       if (criteria === "revurl") {
-        bookmark1.revurl = reverseBaseUrl(bookmark1.url);
-        bookmark2.revurl = reverseBaseUrl(bookmark2.url);
+        bookmark1.revurl = AsbUtil.reverseBaseUrl(bookmark1.url);
+        bookmark2.revurl = AsbUtil.reverseBaseUrl(bookmark2.url);
       }
     }
 
@@ -192,7 +161,7 @@ export default class Sorter {
         Sorter.prototype.firstSortCriteria
       ) !== -1
     ) {
-      firstComparator = function (bookmark1, bookmark2) {
+      firstComparator = function compare(bookmark1, bookmark2) {
         addReverseUrls(
           bookmark1,
           bookmark2,
@@ -209,7 +178,7 @@ export default class Sorter {
       };
     } else {
       // sort numerically: dateAdded, lastModified, accessCount, lastVisited
-      firstComparator = function (bookmark1, bookmark2) {
+      firstComparator = function compare(bookmark1, bookmark2) {
         return (
           (bookmark1[Sorter.prototype.firstSortCriteria] -
             bookmark2[Sorter.prototype.firstSortCriteria]) *
@@ -228,7 +197,7 @@ export default class Sorter {
           Sorter.prototype.secondSortCriteria
         ) !== -1
       ) {
-        secondComparator = function (bookmark1, bookmark2) {
+        secondComparator = function compare(bookmark1, bookmark2) {
           addReverseUrls(
             bookmark1,
             bookmark2,
@@ -249,7 +218,7 @@ export default class Sorter {
         };
       } else {
         // sort numerically: dateAdded, lastModified, accessCount, lastVisited
-        secondComparator = function (bookmark1, bookmark2) {
+        secondComparator = function compare(bookmark1, bookmark2) {
           return (
             (bookmark1[Sorter.prototype.secondSortCriteria] -
               bookmark2[Sorter.prototype.secondSortCriteria]) *
@@ -259,13 +228,13 @@ export default class Sorter {
       }
     } else {
       // no sorting
-      secondComparator = function () {
+      secondComparator = function compare() {
         return 0;
       };
     }
 
     // combine the first and second comparators
-    const itemComparator = function (bookmark1, bookmark2) {
+    const itemComparator = function compare(bookmark1, bookmark2) {
       return (
         firstComparator(bookmark1, bookmark2) ||
         secondComparator(bookmark1, bookmark2)
@@ -278,7 +247,7 @@ export default class Sorter {
         Sorter.prototype.folderSortCriteria !== "none"
       ) {
         // sort folders, then sort bookmarks
-        comparator = function (bookmark1, bookmark2) {
+        comparator = function compare(bookmark1, bookmark2) {
           if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
             if (["title"].indexOf(Sorter.prototype.folderSortCriteria) !== -1) {
               return (
@@ -302,7 +271,7 @@ export default class Sorter {
         };
       } else {
         // no sorting
-        comparator = function (bookmark1, bookmark2) {
+        comparator = function compare(bookmark1, bookmark2) {
           if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
             return 0;
           }
@@ -315,7 +284,7 @@ export default class Sorter {
       comparator = itemComparator;
     }
 
-    return function (bookmark1, bookmark2) {
+    return function compare(bookmark1, bookmark2) {
       const result = checkCorruptedAndOrder(bookmark1, bookmark2);
       if (typeof result === "undefined") {
         return comparator(bookmark1, bookmark2);
@@ -330,7 +299,7 @@ export default class Sorter {
    */
   sortAllBookmarks() {
     const self = this;
-    getChildrenFolders(this.getRootId(), (children) => {
+    Sorter.getChildrenFolders(this.getRootId(), (children) => {
       self.sortRootFolders(children);
     });
   }
@@ -414,7 +383,7 @@ export default class Sorter {
    */
   sortAndSave(folder, resolve) {
     if (folder.canBeSorted()) {
-      folder.getChildren(this.sortFolder, this.compare, resolve);
+      folder.getChildren(Sorter.sortFolder, this.compare, resolve);
     } else if (typeof resolve === "function") {
       resolve();
     }
@@ -425,7 +394,7 @@ export default class Sorter {
    *
    * @param {Folder} folder The folder to sort.
    */
-  sortFolder(folder, compare, resolve) {
+  static sortFolder(folder, compare, resolve) {
     let delta = 0;
     let length;
 
@@ -520,13 +489,13 @@ export default class Sorter {
       // wait for a period of no activity before sorting
       const now = Date.now();
       const diff = now - this.lastCheck;
-      const delay = this.parseInteger(getPref("delay")) * 1000;
+      const delay = parseInt(getPref("delay"), 10) * 1000;
       if (diff < delay) {
         this.isWaiting = true;
         const self = this;
         setTimeout(
           () => {
-            log("waiting one second for activity to stop");
+            AsbUtil.log("waiting one second for activity to stop");
             self.sortIfNoChanges();
           },
           1000,

@@ -97,7 +97,7 @@ export default class FolderUtil {
 
     BrowserUtil.getBookmarkSubTree(
       this.id,
-      (function () {
+      (function getFolders() {
         /**
          * Get sub folders. Defined locally so that it can be called recursively and not blow the stack.
          *
