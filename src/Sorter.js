@@ -87,7 +87,7 @@ export default class Sorter {
    *
    * @returns {*} The comparator.
    */
-  createCompare() {
+  static createCompare() {
     let comparator;
 
     /**
@@ -373,7 +373,7 @@ export default class Sorter {
     Sorter.prototype.folderSortCriteria = folderSortCriteria;
     Sorter.prototype.differentFolderOrder = differentFolderOrder;
     Sorter.prototype.caseInsensitive = caseInsensitive;
-    this.compare = this.createCompare();
+    this.compare = Sorter.createCompare();
   }
 
   /**
