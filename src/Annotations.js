@@ -25,8 +25,13 @@ const RECURSIVE = "recursive";
  * Class to manage bookmark annotations for folder sort exclusion.
  */
 export default class Annotations {
-  // TODO: get this from AsbPrefs.js
-  storedSettings = {};
+  /**
+   * Constructor.
+   */
+  constructor() {
+    // TODO: get this from AsbPrefs.js
+    this.storedSettings = {};
+  }
 
   /**
    * Check if an item has a do not sort annotation.
