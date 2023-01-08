@@ -23,5 +23,11 @@ import Sorter from "./Sorter";
  * Main entry-point for add-on.
  */
 AsbUtil.log("main:begin");
-Sorter();
+try {
+  // eslint-disable-next-line no-unused-vars
+  const sorter = new Sorter();
+  //sorter.sortIfAuto();
+} catch (error) {
+  console.error(error);
+}
 AsbUtil.log("main:end");
