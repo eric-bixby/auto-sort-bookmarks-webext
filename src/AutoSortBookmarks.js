@@ -26,7 +26,6 @@ AsbUtil.log("main:begin");
 try {
   // eslint-disable-next-line no-unused-vars
   const sorter = new Sorter();
-  //sorter.sortIfAuto();
 } catch (error) {
   console.error(error);
 }
