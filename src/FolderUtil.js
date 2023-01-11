@@ -134,4 +134,33 @@ export default class FolderUtil {
       })()
     );
   }
+
+  /**
+   * Get the children folders of a folder.
+   *
+   * @param {string} parentId The parent ID.
+   * @returns {Array}
+   */
+  static getChildrenFolders(parentId, callback) {
+    BrowserUtil.getBookmarkChildren(parentId, (o) => {
+      if (typeof o !== "undefined") {
+        const children = [];
+        o.forEach((node) => {
+          if (NodeUtil.getNodeType(node) === "folder") {
+            children.push({
+              id: node.id,
+              parentId: node.parentId,
+              title: node.title,
+              excluded: Annotations.hasDoNotSortAnnotation(node.id),
+              recursivelyExcluded: Annotations.hasRecursiveAnnotation(node.id),
+            });
+          }
+        });
+
+        if (typeof callback === "function") {
+          callback(children);
+        }
+      }
+    });
+  }
 }
