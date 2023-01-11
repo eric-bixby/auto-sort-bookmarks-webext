@@ -17,6 +17,7 @@
  */
 
 import BrowserUtil from "./BrowserUtil";
+import FolderUtil from "./FolderUtil";
 
 const weh = require("weh-background");
 const wehPrefs = require("weh-prefs");
@@ -186,7 +187,7 @@ export default class AsbPrefs {
         };
         const addImgUrl = BrowserUtil.getExtensionURL("images/add.png");
         const removeImgUrl = BrowserUtil.getExtensionURL("images/remove.png");
-        Sorter.getChildrenFolders(this.getRootId(), (children) => {
+        FolderUtil.getChildrenFolders(this.getRootId(), (children) => {
           this.weh.rpc.call(
             "configure-folders",
             "root",
@@ -198,7 +199,7 @@ export default class AsbPrefs {
         });
       },
       queryChildren: (parentId) => {
-        Sorter.getChildrenFolders(parentId, (children) => {
+        FolderUtil.getChildrenFolders(parentId, (children) => {
           this.weh.rpc.call(
             "configure-folders",
             "children",
