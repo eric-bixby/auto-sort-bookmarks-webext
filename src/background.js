@@ -16,15 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.asb-popup {
-  .asb-toolbar {
-    overflow: hidden;
-    padding: 8px;
-    background-color: #eee;
-    a {
-      display: inline;
-      cursor: pointer;
-      margin: 0 8px;
-    }
-  }
+// Main entry point for the add-on background script.
+AsbUtil.log("main:begin");
+try {
+  AsbPrefs.load(function () {
+    const sorter = new Sorter();
+    AsbPrefs.setSorter(sorter);
+    AsbPrefs.adjustSortCriteria();
+    AsbPrefs.registerPrefListeners();
+  });
+} catch (error) {
+  console.error(error);
 }
+AsbUtil.log("main:end");

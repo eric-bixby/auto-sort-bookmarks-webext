@@ -16,47 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Bookmark from "./Bookmark";
-import Folder from "./Folder";
-import Separator from "./Separator";
-
-/**
- * Class for creating a Bookmark, Folder, or Separator from a BookmarkTreeNode.
- */
-export default class NodeUtil {
-  /**
-   * Get the type of node.
-   *
-   * @param {bookmarks.BookmarkTreeNode} node Node to check.
-   * @returns Type of node.
-   */
+class NodeUtil {
   static getNodeType(node) {
-    let type = "bookmark";
-
     if (typeof node.url === "undefined") {
-      type = "folder";
-    } else if (node.url === "data:") {
-      type = "separator";
+      return "folder";
     }
-
-    return type;
+    if (node.url === "data:") {
+      return "separator";
+    }
+    return "bookmark";
   }
 
-  /**
-   * Create an item from the `type`.
-   *
-   * @param {string} type The item type.
-   * @param {string} id The item ID.
-   * @param {int} index The item index.
-   * @param {string} parentId The parent ID.
-   * @param {string} title The item title.
-   * @param {string} url The item URL.
-   * @param {int} lastVisited The timestamp of the last visit.
-   * @param {int} accessCount The access count.
-   * @param {int} dateAdded The timestamp of the date added.
-   * @param {int} lastModified The timestamp of the last modified date.
-   * @returns {*} The new item.
-   */
   static createItem(
     type,
     id,
@@ -69,10 +39,8 @@ export default class NodeUtil {
     dateAdded,
     lastModified
   ) {
-    let item;
-
     if (type === "bookmark") {
-      item = new Bookmark(
+      return new Bookmark(
         id,
         index,
         parentId,
@@ -84,20 +52,12 @@ export default class NodeUtil {
         accessCount
       );
     } else if (type === "folder") {
-      item = new Folder(id, index, parentId, title, dateAdded, lastModified);
+      return new Folder(id, index, parentId, title, dateAdded, lastModified);
     } else if (type === "separator") {
-      item = new Separator(id, index, parentId);
+      return new Separator(id, index, parentId);
     }
-
-    return item;
   }
 
-  /**
-   * Create an item from the `node` type.
-   *
-   * @param {bookmarks.BookmarkTreeNode} node The node item.
-   * @returns {Item} The new item.
-   */
   static createItemFromNode(node) {
     return NodeUtil.createItem(
       NodeUtil.getNodeType(node),

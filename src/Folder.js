@@ -16,35 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable no-param-reassign */
-
-import Bookmark from "./Bookmark";
-
-/**
- * Folder class.
- */
-export default class Folder extends Bookmark {
-  /**
-   * Get a folder.
-   *
-   * @param {string} id The folder identifier.
-   * @param {int} index The folder position.
-   * @param {string} parentId The folder parent identifier.
-   * @param {string} title The folder title.
-   * @param {int} dateAdded The timestamp of the date added.
-   * @param {int} lastModified The timestamp of the last modified date.
-   */
+class Folder extends Bookmark {
   constructor(id, index, parentId, title, dateAdded, lastModified) {
     super(id, index, parentId, title, dateAdded, lastModified);
-
     this.order = AsbPrefs.getPref("folder_sort_order");
   }
 
-  /**
-   * Check if this folder can be sorted.
-   *
-   * @returns {boolean} Whether it can be sorted or not.
-   */
   canBeSorted() {
     if (
       Annotations.hasDoNotSortAnnotation(this.id) ||
@@ -55,20 +32,10 @@ export default class Folder extends Bookmark {
     return !this.isRoot();
   }
 
-  /**
-   * Check if this folder is the root folder.
-   *
-   * @returns {boolean} Whether this is a root folder or not.
-   */
   isRoot() {
     return this.id === AsbPrefs.getRootId();
   }
 
-  /**
-   * Check if at least one children has moved.
-   *
-   * @returns {boolean} Whether at least one children has moved or not.
-   */
   hasMove() {
     for (let i = 0; i < this.children.length; i += 1) {
       const { length } = this.children[i];
@@ -78,13 +45,9 @@ export default class Folder extends Bookmark {
         }
       }
     }
-
     return false;
   }
 
-  /**
-   * Save the new children positions.
-   */
   save(resolve) {
     if (this.hasMove()) {
       const promiseAry = [];
@@ -92,8 +55,7 @@ export default class Folder extends Bookmark {
       for (let i = 0; i < this.children.length; i += 1) {
         const { length } = this.children[i];
         for (let j = 0; j < length; j += 1) {
-          const p = this.children[i][j].saveIndex();
-          promiseAry.push(p);
+          promiseAry.push(this.children[i][j].saveIndex());
         }
       }
 
@@ -105,5 +67,85 @@ export default class Folder extends Bookmark {
     } else if (typeof resolve === "function") {
       resolve();
     }
+  }
+
+  // Get immediate children, enriched with history visit data.
+  // Populates this.children as an array of arrays (split by separators).
+  getChildren(callback, compare, resolve) {
+    this.children = [[]];
+    const self = this;
+
+    BrowserUtil.getBookmarkChildren(this.id).then((o) => {
+      if (typeof o !== "undefined") {
+        const promiseAry = [];
+
+        o.forEach((node) => {
+          if (NodeUtil.getNodeType(node) === "bookmark") {
+            promiseAry.push(BrowserUtil.getHistoryVisits({ url: node.url }));
+          } else {
+            promiseAry.push(Promise.resolve());
+          }
+        });
+
+        Promise.all(promiseAry).then((values) => {
+          for (let i = 0; i < values.length; i += 1) {
+            if (typeof values[i] !== "undefined" && values[i].length > 0) {
+              o[i].accessCount = values[i].length;
+              o[i].lastVisited = values[i][0].visitTime;
+            }
+          }
+
+          let index = 0;
+
+          o.forEach((node) => {
+            const item = NodeUtil.createItemFromNode(node);
+            if (item instanceof Separator) {
+              self.children.push([]);
+              index += 1;
+            } else if (typeof item !== "undefined") {
+              self.children[index].push(item);
+            }
+          });
+
+          if (typeof callback === "function") {
+            callback(self, compare, resolve);
+          }
+        });
+      } else if (typeof resolve === "function") {
+        resolve();
+      }
+    });
+  }
+
+  // Get all descendant folders recursively (excluding recursively-excluded branches).
+  getFolders(callback) {
+    this.folders = [];
+    const self = this;
+
+    function getSubFolders(o) {
+      if (typeof o !== "undefined") {
+        let isTop = false;
+
+        o.forEach((node) => {
+          if (
+            NodeUtil.getNodeType(node) === "folder" &&
+            !Annotations.isRecursivelyExcluded(node.id)
+          ) {
+            const folder = NodeUtil.createItemFromNode(node);
+            if (self.id === node.id) {
+              isTop = true;
+            }
+            self.folders.push(folder);
+            getSubFolders(node.children);
+          }
+        });
+
+        if (isTop && typeof callback === "function") {
+          callback(self.folders);
+        }
+      }
+    }
+
+    BrowserUtil.getBookmarkSubTree(this.id).then(getSubFolders);
   }
 }

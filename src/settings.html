@@ -18,15 +18,104 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<html class="weh-shf">
+<html>
 
 <head>
-  <link href="styles.css" type="text/css" rel="stylesheet" />
   <meta charset="utf-8" />
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 1.2em;
+      margin-top: 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    td {
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    td:first-child {
+      white-space: nowrap;
+      font-weight: bold;
+      width: 220px;
+    }
+
+    .description {
+      font-size: 0.85em;
+      color: #555;
+      margin: 2px 0 0 0;
+    }
+
+    .btn-toolbar {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 640px;
+    }
+
+    button {
+      padding: 6px 14px;
+      margin-left: 4px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    #btn-configure-folders {
+      background: #fff;
+      border: 1px solid #aaa;
+    }
+
+    #btn-cancel {
+      background: #fff;
+      border: 1px solid #aaa;
+    }
+
+    #btn-reset {
+      background: #ff9400;
+      color: #fff;
+      border: 1px solid #ff9400;
+    }
+
+    #btn-save {
+      background: #0060df;
+      color: #fff;
+      border: 1px solid #0060df;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 
 <body>
-  <div id="root" class="weh-shf"></div>
+  <h1 id="page-title"></h1>
+  <table>
+    <tbody id="settings-rows"></tbody>
+  </table>
+  <div class="btn-toolbar">
+    <div>
+      <button type="button" id="btn-configure-folders"></button>
+    </div>
+    <div>
+      <button type="button" id="btn-cancel" disabled></button>
+      <button type="button" id="btn-reset"></button>
+      <button type="button" id="btn-save" disabled></button>
+    </div>
+  </div>
   <script src="settings.js"></script>
 </body>
 

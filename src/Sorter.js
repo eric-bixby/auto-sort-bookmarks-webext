@@ -16,58 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable no-param-reassign */
-
-import AsbUtil from "./AsbUtil";
-import ChangeHandler from "./ChangeHandler";
-import Folder from "./Folder";
-import FolderUtil from "./FolderUtil";
-import NodeUtil from "./NodeUtil";
-
-/**
- * Sorter class.
- */
-export default class Sorter {
-  /**
-   * Get a Sorter.
-   */
+class Sorter {
   constructor() {
-    /**
-     * Indicates if sorting is in progress.
-     */
     this.sorting = false;
-
-    /**
-     * Indicates if waiting for activity to stop.
-     */
     this.isWaiting = false;
-
-    /**
-     * Last time checked for change
-     */
     this.lastCheck = Date.now();
-
-    /**
-     * Handle bookmark changes
-     */
     this.changeHandler = new ChangeHandler(this);
   }
 
-  /**
-   * Sort all bookmarks.
-   */
   sortAllBookmarks() {
     const self = this;
-    FolderUtil.getChildrenFolders(this.getRootId(), (children) => {
+    FolderUtil.getChildrenFolders(AsbPrefs.getRootId(), (children) => {
       self.sortRootFolders(children);
     });
   }
 
-  /**
-   * Sort root folders.
-   *
-   * @param children
-   */
   sortRootFolders(children) {
     const promiseAry = [];
 
@@ -93,27 +56,12 @@ export default class Sorter {
     });
 
     Promise.all(promiseAry).then((folders) => {
-      // Flatten array of arrays into single array using spread operator (...)
       const mergedFolders = [].concat(...folders);
-
       Annotations.removeMissingFolders(mergedFolders);
       this.sortFolders(mergedFolders);
     });
   }
 
-  /**
-   * Set sort criteria.
-   *
-   * @param {any} firstSortCriteria
-   * @param {any} firstReverse
-   * @param {any} secondSortCriteria
-   * @param {any} secondReverse
-   * @param {any} folderSortCriteria
-   * @param {any} folderReverse
-   * @param {any} differentFolderOrder
-   * @param {any} caseInsensitive
-   * @memberof Sorter
-   */
   setCriteria(
     firstSortCriteria,
     firstReverse,
@@ -132,14 +80,9 @@ export default class Sorter {
     Sorter.prototype.folderSortCriteria = folderSortCriteria;
     Sorter.prototype.differentFolderOrder = differentFolderOrder;
     Sorter.prototype.caseInsensitive = caseInsensitive;
-    this.compare = Sorter.createCompare();
+    this.compare = Comparator.createCompare();
   }
 
-  /**
-   * Sort and save a folder.
-   *
-   * @param {Folder} folder The folder to sort and save.
-   */
   sortAndSave(folder, resolve) {
     if (folder.canBeSorted()) {
       folder.getChildren(Sorter.sortFolder, this.compare, resolve);
@@ -148,50 +91,32 @@ export default class Sorter {
     }
   }
 
-  /**
-   * Sort the `folder` children.
-   *
-   * @param {Folder} folder The folder to sort.
-   */
   static sortFolder(folder, compare, resolve) {
     let delta = 0;
     let length;
 
-    // children is an array of arrays where a separator node is used to separate lists
     for (let i = 0; i < folder.children.length; i += 1) {
-      // sort each array of nodes
       folder.children[i].sort(compare);
-      // assign new index to each node
       length = folder.children[i].length;
       for (let j = 0; j < length; j += 1) {
         folder.children[i][j].setIndex(j + delta);
       }
-
       delta += length + 1;
     }
 
-    // move nodes based on new index
     folder.save(resolve);
   }
 
-  /**
-   * Sort the `folders`.
-   *
-   * @param folders The folders to sort.
-   */
   sortFolders(folders) {
-    // convert single folder into array of folders
     folders = folders instanceof Folder ? [folders] : folders;
 
     const self = this;
     const promiseAry = [];
 
     folders.forEach((folder) => {
-      // create an array of promises
       const p = new Promise((resolve) => {
         self.sortAndSave(folder, resolve);
       });
-
       promiseAry.push(p);
     });
 
@@ -199,67 +124,45 @@ export default class Sorter {
       AsbUtil.log("sort:end");
       self.sorting = false;
       self.lastCheck = Date.now();
-      // wait for events caused by sorting to finish before listening again so the sorting is not triggered again
-      setTimeout(
-        () => {
-          this.changeHandler.createChangeListeners();
-        },
-        3000,
-        "Javascript"
-      );
+      // Wait for browser events triggered by the sort to settle before
+      // re-attaching change listeners, to avoid triggering another sort.
+      setTimeout(() => {
+        this.changeHandler.createChangeListeners();
+      }, 3000);
     });
   }
 
-  /**
-   * Sort all bookmarks.
-   */
   sortNow() {
     this.sortIfNotSorting();
   }
 
-  /**
-   * Sort if the auto sort option is on.
-   */
   sortIfAuto() {
-    if (AsbPref.getPref("auto_sort")) {
+    if (AsbPrefs.getPref("auto_sort")) {
       this.sortNow();
     }
   }
 
-  /**
-   * Sort if not already sorting.
-   */
   sortIfNotSorting() {
     if (!this.sorting) {
-      // restart clock every time there is an event triggered
       this.lastCheck = Date.now();
-      // if already waiting, then don't wait again or there will be multiple loops
       if (!this.isWaiting) {
         this.sortIfNoChanges();
       }
     }
   }
 
-  /**
-   * Sort if no recent changes.
-   */
   sortIfNoChanges() {
     if (!this.sorting) {
-      // wait for a period of no activity before sorting
       const now = Date.now();
       const diff = now - this.lastCheck;
-      const delay = parseInt(AsbPref.getPref("delay"), 10) * 1000;
+      const delay = parseInt(AsbPrefs.getPref("delay"), 10) * 1000;
       if (diff < delay) {
         this.isWaiting = true;
         const self = this;
-        setTimeout(
-          () => {
-            AsbUtil.log("waiting one second for activity to stop");
-            self.sortIfNoChanges();
-          },
-          1000,
-          "Javascript"
-        );
+        setTimeout(() => {
+          AsbUtil.log("waiting one second for activity to stop");
+          self.sortIfNoChanges();
+        }, 1000);
       } else {
         this.sorting = true;
         this.isWaiting = false;

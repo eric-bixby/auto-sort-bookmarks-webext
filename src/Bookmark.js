@@ -16,26 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbUtil from "./AsbUtil";
-import Item from "./Item";
-
-/**
- * Bookmark class.
- */
-export default class Bookmark extends Item {
-  /**
-   * Get a bookmark.
-   *
-   * @param {string} id The bookmark identifier.
-   * @param {int} index The bookmark position.
-   * @param {string} parentId The bookmark parent identifier.
-   * @param {string} title The bookmark title.
-   * @param {int} dateAdded The timestamp of the date added.
-   * @param {int} lastModified The timestamp of the last modified date.
-   * @param {string} url The item URL.
-   * @param {int} lastVisited The timestamp of the last visit.
-   * @param {int} accessCount The access count.
-   */
+class Bookmark extends Item {
   constructor(
     id,
     index,

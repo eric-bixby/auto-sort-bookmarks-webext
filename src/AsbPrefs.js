@@ -16,219 +16,213 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BrowserUtil from "./BrowserUtil";
-import FolderUtil from "./FolderUtil";
+// Singleton that manages preferences and handles all UI↔background messaging.
+// Replaces the weh framework (weh-background, weh-prefs, weh.rpc).
+const AsbPrefs = (function () {
+  const DEFAULTS = {
+    auto_sort: false,
+    delay: 3,
+    case_insensitive: false,
+    sort_by: "title",
+    inverse: false,
+    then_sort_by: "none",
+    then_inverse: false,
+    folder_sort_by: "title",
+    folder_inverse: false,
+    folder_sort_order: 1,
+    bookmark_sort_order: 2,
+  };
 
-const weh = require("weh-background");
-const wehPrefs = require("weh-prefs");
-const defaults = require("./default-prefs").default;
+  let prefs = Object.assign({}, DEFAULTS);
+  let sorterRef = null;
+  const listeners = {};
 
-// TODO: make this a singleton
-// TODO: add method to set callback ( setCriteria() )
-// TODO: add method to get "storedSettings"
+  function getPref(name) {
+    const val = prefs[name];
+    return val !== undefined ? val : DEFAULTS[name];
+  }
 
-/**
- * Class to manage add-on preferences.
- *
- * This class is depended on by other class, so it is a singleton (single instance).
- * Also, it has been refactored to prevent circular-dependency.  For example, it needs to call
- * setCriteria() in the Sorter class, which depends on this class, so a callback is used instead.
- */
-export default class AsbPrefs {
-  constructor() {
-    weh.prefs.declare(defaults);
+  function setPref(name, value) {
+    prefs[name] = value;
+    browser.storage.local.set({ prefs });
+    if (listeners[name]) {
+      listeners[name].forEach((cb) => cb(value));
+    }
+  }
 
-    let storedSettings = {};
+  function getAllPrefs() {
+    const result = {};
+    Object.keys(DEFAULTS).forEach((key) => {
+      result[key] = getPref(key);
+    });
+    return result;
+  }
 
-    AsbPrefs.getStoredSettings((settings) => {
-      storedSettings = settings;
+  function getRootId() {
+    return "root________";
+  }
 
-      // Get weh prefs
-      const prefs = storedSettings["weh-prefs"] || {};
-      wehPrefs.assign(prefs);
+  function setSorter(sorter) {
+    sorterRef = sorter;
+  }
 
-      // Listen for change to weh prefs
-      weh.rpc.listen({
-        prefsSet: function prefsSet(prefs2) {
-          storedSettings["weh-prefs"] = prefs2;
-          BrowserUtil.setLocalSettings(storedSettings);
-          return wehPrefs.assign(prefs2);
-        },
+  function adjustSortCriteria() {
+    if (!sorterRef) {
+      return;
+    }
+    sorterRef.setCriteria(
+      getPref("sort_by"),
+      getPref("inverse"),
+      getPref("then_sort_by"),
+      getPref("then_inverse"),
+      getPref("folder_sort_by"),
+      getPref("folder_inverse"),
+      getPref("folder_sort_order") !== getPref("bookmark_sort_order"),
+      getPref("case_insensitive")
+    );
+  }
+
+  function registerPrefListeners() {
+    // These prefs change sort criteria
+    const criteriaPrefs = [
+      "folder_sort_order",
+      "bookmark_sort_order",
+      "case_insensitive",
+      "sort_by",
+      "then_sort_by",
+      "folder_sort_by",
+      "inverse",
+      "then_inverse",
+      "folder_inverse",
+    ];
+    criteriaPrefs.forEach((name) => {
+      if (!listeners[name]) {
+        listeners[name] = [];
+      }
+      listeners[name].push(() => adjustSortCriteria());
+    });
+
+    // These prefs also trigger a sort
+    ["auto_sort", "folder_sort_order", "bookmark_sort_order"].forEach((name) => {
+      if (!listeners[name]) {
+        listeners[name] = [];
+      }
+      listeners[name].push(() => {
+        if (sorterRef) {
+          sorterRef.sortIfAuto();
+        }
       });
-
-      this.adjustSortCriteria();
-      this.registerUserEvents();
-      this.registerPrefListeners();
     });
   }
 
-  /**
-   * Determine if browser is Firefox or not.
-   *
-   * @returns {boolean}
-   */
-  isFirefox() {
-    return this.weh.browserType === "firefox";
+  function removeFolder(id) {
+    browser.tabs
+      .query({ url: browser.runtime.getURL("configure-folders.html") })
+      .then((tabs) => {
+        tabs.forEach((tab) => {
+          browser.tabs.sendMessage(tab.id, { action: "removeFolder", id });
+        });
+      });
   }
 
-  /**
-   * Get stored settings.
-   *
-   * @param {any} callback Function called to receive stored settings.
-   */
-  static getStoredSettings(callback) {
-    const getting = BrowserUtil.getLocalSettings();
-    getting.then((storedSettings) => {
+  function load(callback) {
+    browser.storage.local.get(null).then((items) => {
+      // Pass entire storage to Annotations so it can find donotsort/recursive keys
+      Annotations.init(items);
+
+      // Load saved prefs, falling back to defaults for any missing keys
+      if (items.prefs) {
+        prefs = Object.assign({}, DEFAULTS, items.prefs);
+      }
+
       if (typeof callback === "function") {
-        callback(storedSettings);
+        callback();
       }
     });
   }
 
-  /**
-   * Get current preference value or it's default value if not set.
-   *
-   * @param {string} param Name of preference.
-   * @returns {*} Value or default value of preference.
-   */
-  getPref(param) {
-    const { defaultValue } = weh.prefs.$specs[param];
-    let value = this.weh.prefs[param];
-    if (typeof value === "undefined") {
-      value = defaultValue;
+  // Handle messages from UI pages (popup, settings, configure-folders).
+  browser.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    // Async cases: must return true to keep the message channel open.
+    if (message.action === "queryRoot") {
+      const texts = {
+        recursiveText: browser.i18n.getMessage("recursive"),
+        messageText: browser.i18n.getMessage("subfolders_recursively_excluded"),
+        loadingText: browser.i18n.getMessage("loading"),
+      };
+      FolderUtil.getChildrenFolders(getRootId(), (children) => {
+        sendResponse({
+          folders: children,
+          addImgUrl: browser.runtime.getURL("images/add.png"),
+          removeImgUrl: browser.runtime.getURL("images/remove.png"),
+          texts,
+        });
+      });
+      return true;
     }
-    // log("pref " + param + " = " + value);
-    return value;
-  }
 
-  /**
-   * Adjust the sort criteria of the bookmark sorter.
-   */
-  adjustSortCriteria() {
-    const differentFolderOrder =
-      this.getPref("folder_sort_order") !== this.getPref("bookmark_sort_order");
-
-    Sorter.setCriteria(
-      this.getPref("sort_by"),
-      this.getPref("inverse"),
-      this.getPref("then_sort_by"),
-      this.getPref("then_inverse"),
-      this.getPref("folder_sort_by"),
-      this.getPref("folder_inverse"),
-      differentFolderOrder,
-      this.getPref("case_insensitive")
-    );
-  }
-
-  /**
-   * Register listeners for pref changes.
-   */
-  registerPrefListeners() {
-    this.weh.prefs.on("auto_sort", this.sortIfAuto);
-
-    // FIXME: do both things happen?
-    this.weh.prefs.on("folder_sort_order", this.sortIfAuto);
-    this.weh.prefs.on("bookmark_sort_order", this.sortIfAuto);
-    this.weh.prefs.on("folder_sort_order", this.adjustSortCriteria);
-    this.weh.prefs.on("bookmark_sort_order", this.adjustSortCriteria);
-
-    this.weh.prefs.on("case_insensitive", this.adjustSortCriteria);
-    this.weh.prefs.on("sort_by", this.adjustSortCriteria);
-    this.weh.prefs.on("then_sort_by", this.adjustSortCriteria);
-    this.weh.prefs.on("folder_sort_by", this.adjustSortCriteria);
-    this.weh.prefs.on("inverse", this.adjustSortCriteria);
-    this.weh.prefs.on("then_inverse", this.adjustSortCriteria);
-    this.weh.prefs.on("folder_inverse", this.adjustSortCriteria);
-  }
-
-  /**
-   * Register user events.
-   */
-  registerUserEvents() {
-    this.weh.rpc.listen({
-      openSettings: () => {
-        this.weh.ui.open("settings", {
-          type: "tab",
-          url: "settings.html",
-        });
-        this.weh.ui.close("main");
-      },
-      openConfigureFolders: () => {
-        this.weh.ui.open("configure-folders", {
-          type: "tab",
-          url: "configure-folders.html",
-        });
-        this.weh.ui.close("main");
-      },
-      sort: () => {
-        this.sortAllBookmarks();
-        this.weh.ui.close("main");
-      },
-      sortCheckboxChange: (folderID, activated) => {
-        if (activated) {
-          Annotations.removeDoNotSortAnnotation(folderID);
-          Annotations.removeRecursiveAnnotation(folderID);
-        } else {
-          Annotations.setDoNotSortAnnotation(folderID);
-        }
-      },
-      recursiveCheckboxChange: (folderID, activated) => {
-        if (activated) {
-          Annotations.setRecursiveAnnotation(folderID);
-        } else {
-          Annotations.removeRecursiveAnnotation(folderID);
-        }
-      },
-      queryRoot: () => {
-        const texts = {
-          recursiveText: this.weh._("recursive"),
-          messageText: this.weh._("subfolders_recursively_excluded"),
-          loadingText: this.weh._("loading"),
-        };
-        const addImgUrl = BrowserUtil.getExtensionURL("images/add.png");
-        const removeImgUrl = BrowserUtil.getExtensionURL("images/remove.png");
-        FolderUtil.getChildrenFolders(this.getRootId(), (children) => {
-          this.weh.rpc.call(
-            "configure-folders",
-            "root",
-            children,
-            addImgUrl,
-            removeImgUrl,
-            texts
-          );
-        });
-      },
-      queryChildren: (parentId) => {
-        FolderUtil.getChildrenFolders(parentId, (children) => {
-          this.weh.rpc.call(
-            "configure-folders",
-            "children",
-            parentId,
-            children
-          );
-        });
-      },
-    });
-  }
-
-  /**
-   * Send message that folder has been removed.
-   *
-   * @param {*} id ID of removed folder.
-   */
-  removeFolder(id) {
-    this.weh.rpc.call("configure-folders", "removeFolder", id);
-  }
-
-  /**
-   * Get the rootId.
-   *
-   * @returns {string}
-   */
-  getRootId() {
-    if (this.isFirefox()) {
-      return "root________";
+    if (message.action === "queryChildren") {
+      FolderUtil.getChildrenFolders(message.parentId, (children) => {
+        sendResponse({ children });
+      });
+      return true;
     }
-    return "0";
-  }
-}
+
+    // Synchronous cases
+    if (message.action === "getPrefs") {
+      sendResponse(getAllPrefs());
+    } else if (message.action === "setPrefs") {
+      Object.keys(message.prefs).forEach((key) => setPref(key, message.prefs[key]));
+      sendResponse({ success: true });
+    } else if (message.action === "resetPrefs") {
+      prefs = Object.assign({}, DEFAULTS);
+      browser.storage.local.set({ prefs });
+      Object.keys(DEFAULTS).forEach((key) => {
+        if (listeners[key]) {
+          listeners[key].forEach((cb) => cb(DEFAULTS[key]));
+        }
+      });
+      sendResponse(getAllPrefs());
+    } else if (message.action === "sort") {
+      if (sorterRef) {
+        sorterRef.sortNow();
+      }
+      sendResponse({ success: true });
+    } else if (message.action === "openSettings") {
+      browser.tabs.create({ url: browser.runtime.getURL("settings.html") });
+      sendResponse({ success: true });
+    } else if (message.action === "openConfigureFolders") {
+      browser.tabs.create({
+        url: browser.runtime.getURL("configure-folders.html"),
+      });
+      sendResponse({ success: true });
+    } else if (message.action === "sortCheckboxChange") {
+      if (message.activated) {
+        Annotations.removeDoNotSortAnnotation(message.folderId);
+        Annotations.removeRecursiveAnnotation(message.folderId);
+      } else {
+        Annotations.setDoNotSortAnnotation(message.folderId);
+      }
+      sendResponse({ success: true });
+    } else if (message.action === "recursiveCheckboxChange") {
+      if (message.activated) {
+        Annotations.setRecursiveAnnotation(message.folderId);
+      } else {
+        Annotations.removeRecursiveAnnotation(message.folderId);
+      }
+      sendResponse({ success: true });
+    }
+  });
+
+  return {
+    getPref,
+    setPref,
+    getAllPrefs,
+    getRootId,
+    setSorter,
+    adjustSortCriteria,
+    registerPrefListeners,
+    removeFolder,
+    load,
+  };
+})();

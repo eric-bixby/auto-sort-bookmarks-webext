@@ -18,14 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 -->
-<html class="weh-shf">
+<html>
 
 <head>
-  <link href="styles.css" type="text/css" rel="stylesheet" />
   <meta charset="utf-8" />
   <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 1.2em;
+      margin-top: 0;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 20px;
+    }
+
+    #rootFolders {
+      padding-left: 0;
+    }
+
     img {
       vertical-align: middle;
+      cursor: pointer;
     }
 
     label {
@@ -34,33 +54,36 @@
 
     label.folder-title {
       padding-right: 30px;
+      cursor: pointer;
     }
 
     label.recursive {
       font-weight: bold;
     }
 
-    .recursive-checkbox~p {
+    .recursive-checkbox ~ p {
       display: none;
       font-style: italic;
     }
 
-    .recursive-checkbox~ul {
+    .recursive-checkbox ~ ul {
       display: block;
     }
 
-    .recursive-checkbox:checked~p {
+    .recursive-checkbox:checked ~ p {
       display: block;
     }
 
-    .recursive-checkbox:checked~ul {
+    .recursive-checkbox:checked ~ ul {
       display: none !important;
     }
   </style>
 </head>
 
 <body>
-  <div id="root" class="weh-shf"></div>
+  <h1 id="page-title"></h1>
+  <p id="page-description"></p>
+  <ul id="rootFolders"></ul>
   <script src="configure-folders.js"></script>
 </body>
 

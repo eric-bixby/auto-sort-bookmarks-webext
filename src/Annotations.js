@@ -16,172 +16,88 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BrowserUtil from "./BrowserUtil";
+const Annotations = (function () {
+  const DO_NOT_SORT = "donotsort";
+  const RECURSIVE = "recursive";
 
-const DO_NOT_SORT = "donotsort";
-const RECURSIVE = "recursive";
+  let storedSettings = {};
 
-/**
- * Class to manage bookmark annotations for folder sort exclusion.
- */
-export default class Annotations {
-  /**
-   * Constructor.
-   */
-  constructor() {
-    // TODO: get this from AsbPrefs.js
-    this.storedSettings = {};
+  function setStoredSettings() {
+    BrowserUtil.setLocalSettings(storedSettings);
   }
 
-  /**
-   * Check if an item has a do not sort annotation.
-   *
-   * @param {string} id The item ID.
-   * @returns {boolean} Whether the item has a do not sort annotation.
-   */
-  hasDoNotSortAnnotation(id) {
-    if (
-      typeof this.storedSettings !== "undefined" &&
-      typeof this.storedSettings[DO_NOT_SORT] !== "undefined" &&
-      typeof this.storedSettings[DO_NOT_SORT][id] !== "undefined"
-    ) {
-      return this.storedSettings[DO_NOT_SORT][id];
-    }
-    return false;
-  }
+  return {
+    init(settings) {
+      storedSettings = settings || {};
+    },
 
-  /**
-   * Check if an item has a recursive annotation.
-   *
-   * @param {string} id The item ID.
-   * @returns {boolean} Whether the item has a recursive annotation.
-   */
-  hasRecursiveAnnotation(id) {
-    if (
-      typeof this.storedSettings !== "undefined" &&
-      typeof this.storedSettings[RECURSIVE] !== "undefined" &&
-      typeof this.storedSettings[RECURSIVE][id] !== "undefined"
-    ) {
-      return this.storedSettings[RECURSIVE][id];
-    }
-    return false;
-  }
+    hasDoNotSortAnnotation(id) {
+      return !!(
+        storedSettings[DO_NOT_SORT] &&
+        storedSettings[DO_NOT_SORT][id]
+      );
+    },
 
-  /**
-   * Check if an item is recursively excluded.
-   *
-   * @param {string} id The item ID.
-   * @returns {boolean} Whether the item is recursively excluded.
-   */
-  isRecursivelyExcluded(id) {
-    return this.hasDoNotSortAnnotation(id) && this.hasRecursiveAnnotation(id);
-  }
+    hasRecursiveAnnotation(id) {
+      return !!(
+        storedSettings[RECURSIVE] &&
+        storedSettings[RECURSIVE][id]
+      );
+    },
 
-  /**
-   * Remove an item annotation.
-   *
-   * @param {string} name The item name.
-   * @param {string} id The item ID.
-   */
-  removeItemAnnotation(name, id) {
-    if (
-      typeof this.storedSettings !== "undefined" &&
-      typeof this.storedSettings[name] !== "undefined" &&
-      typeof this.storedSettings[name][id] !== "undefined"
-    ) {
-      delete this.storedSettings[name][id];
-      this.setStoredSettings();
-    }
-  }
+    isRecursivelyExcluded(id) {
+      return this.hasDoNotSortAnnotation(id) && this.hasRecursiveAnnotation(id);
+    },
 
-  /**
-   * Remove folders that no longer exist.
-   *
-   * @param {array} folders The current existing folders.
-   */
-  removeMissingFolders(folders) {
-    this.removeMissingFoldersForItem(DO_NOT_SORT, folders);
-    this.removeMissingFoldersForItem(RECURSIVE, folders);
-  }
-
-  /**
-   * Remove folders that no longer exist.
-   *
-   * @param {string} name Name of storage item.
-   * @param {array} folders The current existing folders.
-   */
-  removeMissingFoldersForItem(name, folders) {
-    if (
-      typeof this.storedSettings !== "undefined" &&
-      typeof this.storedSettings[name] !== "undefined"
-    ) {
-      const ids = Object.keys(this.storedSettings[name]);
-      ids.forEach((id) => {
-        const found = folders.find((folder) => folder.id === id);
-        if (typeof found !== "undefined") {
-          this.removeItemAnnotation(name, id);
-        }
-      });
-    }
-  }
-
-  /**
-   * Remove the do not sort annotation on an item.
-   *
-   * @param {string} id The item ID.
-   */
-  removeDoNotSortAnnotation(id) {
-    this.removeItemAnnotation(DO_NOT_SORT, id);
-  }
-
-  /**
-   * Remove the recursive annotation on an item.
-   *
-   * @param {string} id The item ID.
-   */
-  removeRecursiveAnnotation(id) {
-    this.removeItemAnnotation(RECURSIVE, id);
-  }
-
-  /**
-   * Set an item annotation.
-   *
-   * @param {string} name The item name.
-   * @param {string} id The item ID.
-   * @param {string} value The item value.
-   */
-  setItemAnnotation(name, id, value) {
-    if (typeof this.storedSettings !== "undefined") {
-      if (typeof this.storedSettings[name] === "undefined") {
-        this.storedSettings[name] = {};
+    removeItemAnnotation(name, id) {
+      if (
+        storedSettings[name] &&
+        typeof storedSettings[name][id] !== "undefined"
+      ) {
+        delete storedSettings[name][id];
+        setStoredSettings();
       }
-      this.storedSettings[name][id] = value;
-      this.setStoredSettings();
-    }
-  }
+    },
 
-  /**
-   * Set the do not sort annotation on an item.
-   *
-   * @param {string} id The item ID.
-   */
-  setDoNotSortAnnotation(id) {
-    this.setItemAnnotation(DO_NOT_SORT, id, true);
-  }
+    removeMissingFolders(folders) {
+      this.removeMissingFoldersForItem(DO_NOT_SORT, folders);
+      this.removeMissingFoldersForItem(RECURSIVE, folders);
+    },
 
-  /**
-   * Set the recursive annotation on an item.
-   *
-   * @param {string} id The item ID.
-   */
-  setRecursiveAnnotation(id) {
-    this.setItemAnnotation(RECURSIVE, id, true);
-  }
+    removeMissingFoldersForItem(name, folders) {
+      if (storedSettings[name]) {
+        const ids = Object.keys(storedSettings[name]);
+        ids.forEach((id) => {
+          const found = folders.find((folder) => folder.id === id);
+          if (typeof found !== "undefined") {
+            this.removeItemAnnotation(name, id);
+          }
+        });
+      }
+    },
 
-  /**
-   * Set the stored annotation.
-   */
-  setStoredSettings() {
-    BrowserUtil.setLocalSettings(this.storedSettings);
-  }
-}
+    removeDoNotSortAnnotation(id) {
+      this.removeItemAnnotation(DO_NOT_SORT, id);
+    },
+
+    removeRecursiveAnnotation(id) {
+      this.removeItemAnnotation(RECURSIVE, id);
+    },
+
+    setItemAnnotation(name, id, value) {
+      if (!storedSettings[name]) {
+        storedSettings[name] = {};
+      }
+      storedSettings[name][id] = value;
+      setStoredSettings();
+    },
+
+    setDoNotSortAnnotation(id) {
+      this.setItemAnnotation(DO_NOT_SORT, id, true);
+    },
+
+    setRecursiveAnnotation(id) {
+      this.setItemAnnotation(RECURSIVE, id, true);
+    },
+  };
+})();
