@@ -16,41 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BrowserUtil from "./BrowserUtil";
-
-/**
- * Item class.
- */
-export default class Item {
-  /**
-   * Creates an instance of Item.
-   *
-   * @param {string} id
-   * @param {number} index
-   * @param {string} parentId
-   * @memberof Item
-   */
+class Item {
   constructor(id, index, parentId) {
     this.id = id;
     this.setIndex(index);
     this.parentId = parentId;
   }
 
-  /**
-   * Save the new index.
-   *
-   * @memberof Item
-   */
   saveIndex() {
     return BrowserUtil.moveBookmark(this.id, { index: this.index });
   }
 
-  /**
-   * Set the new index and save the old index.
-   *
-   * @param {int} index The new index.
-   * @memberof Item
-   */
   setIndex(index) {
     this.oldIndex = this.index || index;
     this.index = index;

@@ -3,7 +3,7 @@
   "name": "Auto-Sort Bookmarks",
   "description": "Sort bookmarks by multiple criteria.",
   "author": "Eric Bixby",
-  "version": "3.4.6beta1",
+  "version": "3.4.6",
   "default_locale": "en",
   "icons": {
     "48": "images/icon.svg",
@@ -17,16 +17,31 @@
   },
   "permissions": ["bookmarks", "history", "storage", "tabs"],
   "background": {
-    "scripts": ["AutoSortBookmarks.js"]
+    "scripts": [
+      "AsbUtil.js",
+      "BrowserUtil.js",
+      "Annotations.js",
+      "Item.js",
+      "Bookmark.js",
+      "Folder.js",
+      "Separator.js",
+      "NodeUtil.js",
+      "FolderUtil.js",
+      "Comparator.js",
+      "ChangeHandler.js",
+      "AsbPrefs.js",
+      "Sorter.js",
+      "background.js"
+    ]
   },
   "browser_action": {
     "default_icon": "images/icon.svg",
     "default_title": "Auto-Sort Bookmarks",
-    "default_popup": "popup.html?panel=main",
+    "default_popup": "popup.html",
     "browser_style": true
   },
   "options_ui": {
-    "page": "settings.html?panel=settings",
+    "page": "settings.html",
     "open_in_tab": true,
     "browser_style": true
   }

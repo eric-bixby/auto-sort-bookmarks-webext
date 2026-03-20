@@ -16,164 +16,71 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Class for browser specific API calls.
- */
-export default class BrowserUtil {
-  /**
-   * Converts a relative path within an extension install directory to a fully-qualified URL.
-   *
-   * @param {*} path A path to a resource within an extension expressed relative to its install directory.
-   */
+class BrowserUtil {
   static getExtensionURL(path) {
-    chrome.extension.getURL(path);
+    return browser.runtime.getURL(path);
   }
 
-  /**
-   * Registers an event listener callback to an event.
-   *
-   * @param callback Called when an event occurs.
-   */
   static addBookmarkChangedListener(callback) {
-    chrome.bookmarks.onChanged.addListener(callback);
+    browser.bookmarks.onChanged.addListener(callback);
   }
 
-  /**
-   * Registers an event listener callback to an event.
-   *
-   * @param callback Called when an event occurs.
-   */
   static addBookmarkCreatedListener(callback) {
-    chrome.bookmarks.onCreated.addListener(callback);
+    browser.bookmarks.onCreated.addListener(callback);
   }
 
-  /**
-   * Registers an event listener callback to an event.
-   *
-   * @param callback Called when an event occurs.
-   */
   static addBookmarkMovedListener(callback) {
-    chrome.bookmarks.onMoved.addListener(callback);
+    browser.bookmarks.onMoved.addListener(callback);
   }
 
-  /**
-   * Registers an event listener callback to an event.
-   *
-   * @param callback Called when an event occurs.
-   */
   static addBookmarkRemovedListener(callback) {
-    chrome.bookmarks.onRemoved.addListener(callback);
+    browser.bookmarks.onRemoved.addListener(callback);
   }
 
-  /**
-   * Registers an event listener callback to an event.
-   *
-   * @param callback Called when an event occurs.
-   */
   static addHistoryVistedListener(callback) {
-    chrome.history.onVisited.addListener(callback);
+    browser.history.onVisited.addListener(callback);
   }
 
-  /**
-   * Deregisters an event listener callback from an event.
-   *
-   * @param callback Listener that shall be unregistered.
-   */
   static removeBookmarkChangedListener(callback) {
-    chrome.bookmarks.onChanged.removeListener(callback);
+    browser.bookmarks.onChanged.removeListener(callback);
   }
 
-  /**
-   * Deregisters an event listener callback from an event.
-   *
-   * @param callback Listener that shall be unregistered.
-   */
   static removeBookmarkCreatedListener(callback) {
-    chrome.bookmarks.onCreated.removeListener(callback);
+    browser.bookmarks.onCreated.removeListener(callback);
   }
 
-  /**
-   * Deregisters an event listener callback from an event.
-   *
-   * @param callback Listener that shall be unregistered.
-   */
   static removeBookmarkMovedListener(callback) {
-    chrome.bookmarks.onMoved.removeListener(callback);
+    browser.bookmarks.onMoved.removeListener(callback);
   }
 
-  /**
-   * Deregisters an event listener callback from an event.
-   *
-   * @param callback Listener that shall be unregistered.
-   */
   static removeBookmarkRemovedListener(callback) {
-    chrome.bookmarks.onRemoved.removeListener(callback);
+    browser.bookmarks.onRemoved.removeListener(callback);
   }
 
-  /**
-   * Deregisters an event listener callback from an event.
-   *
-   * @param callback Listener that shall be unregistered.
-   */
   static removeHistoryVistedListener(callback) {
-    chrome.history.onVisited.removeListener(callback);
+    browser.history.onVisited.removeListener(callback);
   }
 
-  /**
-   * Retrieves the children of the specified BookmarkTreeNode id.
-   *
-   * @param id BookmarkTreeNode id.
-   * @param callback The callback parameter should be a function.
-   */
-  static getBookmarkChildren(id, callback) {
-    chrome.bookmarks.getChildren(id, callback);
+  static getBookmarkChildren(id) {
+    return browser.bookmarks.getChildren(id);
   }
 
-  /**
-   * Retrieves part of the Bookmarks hierarchy, starting at the specified node.
-   *
-   * @param id The ID of the root of the subtree to retrieve.
-   * @param callback The callback parameter should be a function.
-   */
-  static getBookmarkSubTree(id, callback) {
-    chrome.bookmarks.getSubTree(id, callback);
+  static getBookmarkSubTree(id) {
+    return browser.bookmarks.getSubTree(id);
   }
 
-  /**
-   * Moves the specified BookmarkTreeNode to the provided location.
-   *
-   * @param id BookmarkTreeNode id.
-   * @param destination Bookmark destination.
-   * @returns The `move` method provides its result via callback or returned as a `Promise` (MV3 only).
-   */
   static moveBookmark(id, destination) {
-    return chrome.bookmarks.move(id, destination);
+    return browser.bookmarks.move(id, destination);
   }
 
-  /**
-   * Sets multiple items in storage.
-   *
-   * @param items An object which gives each key/value pair to update storage with.
-   */
   static setLocalSettings(items) {
-    browser.storage.local.set(items);
+    return browser.storage.local.set(items);
   }
 
-  /**
-   * Gets one or more items from storage.
-   *
-   * @param keys A single key to get, list of keys to get, or a dictionary specifying default values.
-   */
   static getLocalSettings(keys) {
     return browser.storage.local.get(keys);
   }
 
-  /**
-   * Retrieves information about visits to a URL.
-   *
-   * @param details Details of item to retrieve.
-   * @returns A 'Promise'
-   */
   static getHistoryVisits(details) {
     return browser.history.getVisits(details);
   }

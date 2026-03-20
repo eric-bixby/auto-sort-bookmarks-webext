@@ -16,28 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export default class Comparator {
-  /**
-   * Create a bookmark comparator.
-   *
-   * @returns {*} The comparator.
-   */
+class Comparator {
   static createCompare() {
     let comparator;
 
-    /**
-     * Check for corrupted and order flags.
-     *
-     * @param bookmark1
-     * @param bookmark2
-     * @returns {number}
-     */
     function checkCorruptedAndOrder(bookmark1, bookmark2) {
       if (bookmark1.corrupted) {
         if (bookmark2.corrupted) {
           return 0;
         }
-
         return 1;
       }
 
@@ -52,13 +39,6 @@ export default class Comparator {
       return 0;
     }
 
-    /**
-     * Add reverse URLs.
-     *
-     * @param bookmark1
-     * @param bookmark2
-     * @param criteria
-     */
     function addReverseUrls(bookmark1, bookmark2, criteria) {
       if (criteria === "revurl") {
         bookmark1.revurl = AsbUtil.reverseBaseUrl(bookmark1.url);
@@ -66,13 +46,6 @@ export default class Comparator {
       }
     }
 
-    /**
-     * Add host names.
-     *
-     * @param bookmark1
-     * @param bookmark2
-     * @param criteria
-     */
     function addHostNames(bookmark1, bookmark2, criteria) {
       if (criteria === "hostname") {
         bookmark1.hostname = new URL(bookmark1.url).hostname;
@@ -97,11 +70,7 @@ export default class Comparator {
       ) !== -1
     ) {
       firstComparator = function compare(bookmark1, bookmark2) {
-        addReverseUrls(
-          bookmark1,
-          bookmark2,
-          Sorter.prototype.firstSortCriteria
-        );
+        addReverseUrls(bookmark1, bookmark2, Sorter.prototype.firstSortCriteria);
         addHostNames(bookmark1, bookmark2, Sorter.prototype.firstSortCriteria);
         return (
           bookmark1[Sorter.prototype.firstSortCriteria].localeCompare(
@@ -112,7 +81,6 @@ export default class Comparator {
         );
       };
     } else {
-      // sort numerically: dateAdded, lastModified, accessCount, lastVisited
       firstComparator = function compare(bookmark1, bookmark2) {
         return (
           (bookmark1[Sorter.prototype.firstSortCriteria] -
@@ -152,7 +120,6 @@ export default class Comparator {
           );
         };
       } else {
-        // sort numerically: dateAdded, lastModified, accessCount, lastVisited
         secondComparator = function compare(bookmark1, bookmark2) {
           return (
             (bookmark1[Sorter.prototype.secondSortCriteria] -
@@ -162,13 +129,11 @@ export default class Comparator {
         };
       }
     } else {
-      // no sorting
       secondComparator = function compare() {
         return 0;
       };
     }
 
-    // combine the first and second comparators
     const itemComparator = function compare(bookmark1, bookmark2) {
       return (
         firstComparator(bookmark1, bookmark2) ||
@@ -181,10 +146,11 @@ export default class Comparator {
         typeof Sorter.prototype.folderSortCriteria !== "undefined" &&
         Sorter.prototype.folderSortCriteria !== "none"
       ) {
-        // sort folders, then sort bookmarks
         comparator = function compare(bookmark1, bookmark2) {
           if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
-            if (["title"].indexOf(Sorter.prototype.folderSortCriteria) !== -1) {
+            if (
+              ["title"].indexOf(Sorter.prototype.folderSortCriteria) !== -1
+            ) {
               return (
                 bookmark1[Sorter.prototype.folderSortCriteria].localeCompare(
                   bookmark2[Sorter.prototype.folderSortCriteria],
@@ -193,29 +159,23 @@ export default class Comparator {
                 ) * Sorter.prototype.folderReverse
               );
             }
-
-            // numeric sort
             return (
               (bookmark1[Sorter.prototype.folderSortCriteria] -
                 bookmark2[Sorter.prototype.folderSortCriteria]) *
               Sorter.prototype.folderReverse
             );
           }
-
           return itemComparator(bookmark1, bookmark2);
         };
       } else {
-        // no sorting
         comparator = function compare(bookmark1, bookmark2) {
           if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
             return 0;
           }
-
           return itemComparator(bookmark1, bookmark2);
         };
       }
     } else {
-      // sort bookmarks and folders with same order
       comparator = itemComparator;
     }
 
@@ -224,7 +184,6 @@ export default class Comparator {
       if (typeof result === "undefined") {
         return comparator(bookmark1, bookmark2);
       }
-
       return result;
     };
   }

@@ -1,0 +1,161 @@
+{
+  "cancel": {
+    "message": "Annuler"
+  },
+  "configure_folders": {
+    "message": "Configurer les répertoires"
+  },
+  "default": {
+    "message": "Par défaut"
+  },
+  "folders_to_sort": {
+    "message": "Répertoires à trier:"
+  },
+  "loading": {
+    "message": "Chargement..."
+  },
+  "recursive": {
+    "message": "Récursif"
+  },
+  "save": {
+    "message": "Sauver"
+  },
+  "settings": {
+    "message": "Paramètres"
+  },
+  "sort": {
+    "message": "Trier"
+  },
+  "subfolders_recursively_excluded": {
+    "message": "Les sous-répertoires sont récursivement exclus."
+  },
+  "title": {
+    "message": "Trier les marque-pages automatiquement"
+  },
+  "uncheck_to_exclude_folder": {
+    "message": "Désélectionner les fichiers pour les exclure du tri."
+  },
+  "weh_prefs_description_auto_sort": {
+    "message": "Si ce choix est validé, le tri se fera lorsque que des marque-pages seront ajoutés, déplacés ou supprimés. Cela signifie que vous ne pourrez déplacer un marque-page dans le même répertoire, uniquement dans un répertoire distinct."
+  },
+  "weh_prefs_description_bookmark_sort_order": {
+    "message": "Spécifier l'ordre du tri des marque-pages. Valeur minimum 1 et maximum 2."
+  },
+  "weh_prefs_description_case_insensitive": {
+    "message": "Si ce choix est validé, les marque-pages seront triés sans distinction de la casse."
+  },
+  "weh_prefs_description_delay": {
+    "message": "Spécifier le temps (en secondes) d'inactivité avant de trier les marque-pages. Ceci s'applique aux tris automatiques et manuels. Valeur minimum 3 et maximum 255."
+  },
+  "weh_prefs_description_folder_inverse": {
+    "message": "Si ce choix est validé, l'ordre spécifié dans 'Trier les répertoires par' sera inversé."
+  },
+  "weh_prefs_description_folder_sort_by": {
+    "message": "Spécifier un critère de tri pour classer les répertoires."
+  },
+  "weh_prefs_description_folder_sort_order": {
+    "message": "Spécifier l'ordre de tri des répertoires. Valeur minimum 1 et maximum 2."
+  },
+  "weh_prefs_description_inverse": {
+    "message": "Si ce choix est validé, l'ordre spécifié dans 'Trier par' sera inversé."
+  },
+  "weh_prefs_description_sort_by": {
+    "message": "Spécifier le premier critère de tri pour classer les marque-pages."
+  },
+  "weh_prefs_description_then_inverse": {
+    "message": "Si ce choix est validé, l'ordre spécifié dans 'Puis trier par' sera inversé."
+  },
+  "weh_prefs_description_then_sort_by": {
+    "message": "Spécifier le second critère de choix pour trier les marque-pages."
+  },
+  "weh_prefs_folder_sort_by_option_none": {
+    "message": "Aucun"
+  },
+  "weh_prefs_folder_sort_by_option_title": {
+    "message": "Titre"
+  },
+  "weh_prefs_label_auto_sort": {
+    "message": "Tri-automatique:"
+  },
+  "weh_prefs_label_bookmark_sort_order": {
+    "message": "Ordre de tri des marque-pages:"
+  },
+  "weh_prefs_label_case_insensitive": {
+    "message": "Insensible à la casse:"
+  },
+  "weh_prefs_label_delay": {
+    "message": "Temps d'inactivité:"
+  },
+  "weh_prefs_label_folder_inverse": {
+    "message": "Inverser l'ordre des répertoires:"
+  },
+  "weh_prefs_label_folder_sort_by": {
+    "message": "Trier les répertoires par:"
+  },
+  "weh_prefs_label_folder_sort_order": {
+    "message": "Ordre de tri des répertoires:"
+  },
+  "weh_prefs_label_inverse": {
+    "message": "Inverser l'ordre:"
+  },
+  "weh_prefs_label_sort_by": {
+    "message": "Trier par:"
+  },
+  "weh_prefs_label_then_inverse": {
+    "message": "Inverser le second critère de tri:"
+  },
+  "weh_prefs_label_then_sort_by": {
+    "message": "Puis trier par:"
+  },
+  "weh_prefs_sort_by_option_accessCount": {
+    "message": "Nombre d'accès"
+  },
+  "weh_prefs_sort_by_option_dateAdded": {
+    "message": "Date ajoutée"
+  },
+  "weh_prefs_sort_by_option_hostname": {
+    "message": "Nom d'hôte"
+  },
+  "weh_prefs_sort_by_option_lastModified": {
+    "message": "Derniers modifiés"
+  },
+  "weh_prefs_sort_by_option_lastVisited": {
+    "message": "Derniers visités"
+  },
+  "weh_prefs_sort_by_option_revurl": {
+    "message": "Inverser l'URL"
+  },
+  "weh_prefs_sort_by_option_title": {
+    "message": "Titre"
+  },
+  "weh_prefs_sort_by_option_url": {
+    "message": "URL"
+  },
+  "weh_prefs_then_sort_by_option_accessCount": {
+    "message": "Nombre d'accès"
+  },
+  "weh_prefs_then_sort_by_option_dateAdded": {
+    "message": "Date ajoutée"
+  },
+  "weh_prefs_then_sort_by_option_hostname": {
+    "message": "Nom d'hôte"
+  },
+  "weh_prefs_then_sort_by_option_lastModified": {
+    "message": "Derniers modifiés"
+  },
+  "weh_prefs_then_sort_by_option_lastVisited": {
+    "message": "Derniers visités"
+  },
+  "weh_prefs_then_sort_by_option_none": {
+    "message": "Aucun"
+  },
+  "weh_prefs_then_sort_by_option_revurl": {
+    "message": "Inverser l'URL"
+  },
+  "weh_prefs_then_sort_by_option_title": {
+    "message": "Titre"
+  },
+  "weh_prefs_then_sort_by_option_url": {
+    "message": "URL"
+  }
+}

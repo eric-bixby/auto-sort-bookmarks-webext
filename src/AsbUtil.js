@@ -16,25 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Class for common functions.
- */
-export default class AsbUtil {
-  /**
-   * If enabled, send message to console for debugging.
-   *
-   * @param {*} o Message to display on console.
-   */
+class AsbUtil {
   static log(o) {
     console.log(o);
   }
 
-  /**
-   * Reverse the base of an URL for better sorting.
-   *
-   * @param str The URL to be reversed.
-   * @returns {*} The reversed URL.
-   */
   static reverseBaseUrl(str) {
     if (!str) {
       return "";
@@ -48,8 +34,6 @@ export default class AsbUtil {
       if (m.index === re.lastIndex) {
         re.lastIndex += 1;
       }
-
-      // Replace the found string by it's reversion
       retVal = retVal.replace(m[0], m[0].split(".").reverse().join("."));
     }
 

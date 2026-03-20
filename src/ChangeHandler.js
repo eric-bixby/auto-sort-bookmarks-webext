@@ -16,85 +16,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbUtil from "./AsbUtil";
-import BrowserUtil from "./BrowserUtil";
-
-/**
- * Class for handling bookmark changes.
- */
-export default class ChangeHandler {
-  /**
-   * Creates an instance of ChangeHandler.
-   *
-   * @memberof ChangeHandler
-   */
+class ChangeHandler {
   constructor(sorter) {
     this.sorter = sorter;
+
+    // Bind handlers so 'this' is preserved when used as event listener callbacks.
+    this.handleChanged = this.handleChanged.bind(this);
+    this.handleCreated = this.handleCreated.bind(this);
+    this.handleMoved = this.handleMoved.bind(this);
+    this.handleRemoved = this.handleRemoved.bind(this);
+    this.handleVisited = this.handleVisited.bind(this);
+
     this.createChangeListeners();
   }
 
-  /**
-   * Changed event handler.
-   *
-   * @param {any} id
-   * @param {any} changeInfo
-   * @memberof ChangeHandler
-   */
   handleChanged(id, changeInfo) {
     AsbUtil.log(`onChanged: ${id}`);
     AsbUtil.log(changeInfo);
     this.sorter.sortIfAuto();
   }
 
-  /**
-   * Created event handler.
-   *
-   * @param {any} id
-   * @param {any} bookmark
-   * @memberof ChangeHandler
-   */
   handleCreated(id, bookmark) {
     AsbUtil.log(`onCreated: ${id}`);
     AsbUtil.log(bookmark);
     this.sorter.sortIfAuto();
   }
 
-  /**
-   * Moved event handler.
-   *
-   * @param {any} id
-   * @param {any} moveInfo
-   * @memberof ChangeHandler
-   */
   handleMoved(id, moveInfo) {
     AsbUtil.log(`onMoved: ${id}`);
     AsbUtil.log(moveInfo);
     this.sorter.sortIfAuto();
   }
 
-  /**
-   * Removed event handler.
-   *
-   * @param {any} id
-   * @param {any} removeInfo
-   * @memberof ChangeHandler
-   */
   handleRemoved(id, removeInfo) {
     AsbUtil.log(`onRemoved: ${id}`);
     AsbUtil.log(removeInfo);
-    if (this.sorter.getNodeType(removeInfo.node) === "separator") {
+    if (NodeUtil.getNodeType(removeInfo.node) === "separator") {
       this.sorter.sortIfAuto();
-    } else if (this.sorter.getNodeType(removeInfo.node) === "folder") {
+    } else if (NodeUtil.getNodeType(removeInfo.node) === "folder") {
       AsbPrefs.removeFolder(id);
     }
   }
 
-  /**
-   * Visited event handler.
-   *
-   * @param {any} historyItem
-   * @memberof ChangeHandler
-   */
   handleVisited(historyItem) {
     AsbUtil.log("onVisited");
     AsbUtil.log(historyItem);
@@ -103,11 +66,6 @@ export default class ChangeHandler {
     }
   }
 
-  /**
-   * Add listeners.
-   *
-   * @memberof ChangeHandler
-   */
   createChangeListeners() {
     BrowserUtil.addBookmarkChangedListener(this.handleChanged);
     BrowserUtil.addBookmarkCreatedListener(this.handleCreated);
@@ -117,11 +75,6 @@ export default class ChangeHandler {
     AsbUtil.log("added listeners");
   }
 
-  /**
-   * Remove listeners.
-   *
-   * @memberof ChangeHandler
-   */
   removeChangeListeners() {
     BrowserUtil.removeBookmarkChangedListener(this.handleChanged);
     BrowserUtil.removeBookmarkCreatedListener(this.handleCreated);

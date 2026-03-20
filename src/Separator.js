@@ -16,9 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Item from "./Item";
-
-/**
- * Separator class.
- */
-export default class Separator extends Item {}
+class Separator extends Item {}

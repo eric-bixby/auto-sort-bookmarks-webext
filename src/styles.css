@@ -16,17 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import AsbUtil from "./AsbUtil";
-import Sorter from "./Sorter";
-
-/**
- * Main entry-point for add-on.
- */
-AsbUtil.log("main:begin");
-try {
-  // eslint-disable-next-line no-unused-vars
-  const sorter = new Sorter();
-} catch (error) {
-  console.error(error);
+.asb-popup .asb-toolbar {
+  overflow: hidden;
+  padding: 8px;
+  background-color: #eee;
 }
-AsbUtil.log("main:end");
+
+.asb-popup .asb-toolbar button {
+  display: inline-block;
+  cursor: pointer;
+  margin: 0 4px;
+}
