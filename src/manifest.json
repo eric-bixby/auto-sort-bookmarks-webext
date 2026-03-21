@@ -38,11 +38,11 @@
     "default_icon": "images/icon.svg",
     "default_title": "Auto-Sort Bookmarks",
     "default_popup": "popup.html",
-    "browser_style": true
+    "browser_style": false
   },
   "options_ui": {
     "page": "settings.html",
     "open_in_tab": true,
-    "browser_style": true
+    "browser_style": false
   }
 }
