@@ -16,20 +16,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Creates the sorter, which orchestrates bookmark sorting across all folders.
-// Returns { sortIfAuto, sortNow, setCriteria }.
+/**
+ * @typedef {Object} Sorter
+ * @property {function(): void}                sortIfAuto   - Schedules a sort only when auto-sort is enabled.
+ * @property {function(): void}                sortNow      - Schedules a sort unconditionally.
+ * @property {function(SortCriteria): void}    setCriteria  - Rebuilds the comparator from new criteria.
+ */
+
+/**
+ * Creates the sorter, which orchestrates bookmark sorting across all folders.
+ *
+ * **Sort lifecycle**
+ * 1. A bookmark or history event fires → {@link ChangeHandler} calls `sortIfAuto`.
+ * 2. `sortIfAuto` calls `scheduleSort`, which debounces using the configured delay.
+ * 3. After the delay elapses with no further activity, change listeners are removed
+ *    and `sortAllBookmarks` runs.
+ * 4. Each sortable folder's children are fetched, enriched with history data,
+ *    sorted, and saved back via `browser.bookmarks.move`.
+ * 5. Three seconds after sorting completes (allowing browser events to settle),
+ *    change listeners are re-attached.
+ *
+ * @returns {Sorter}
+ */
 function createSorter() {
+  /** @type {boolean} True while a sort is in progress; prevents re-entrant sorts. */
   let sorting = false;
+
+  /** @type {number|null} Handle for the pending debounce timer. */
   let debounceTimer = null;
+
+  /** @type {function|null} The active comparator, built from the current {@link SortCriteria}. */
   let compare = null;
 
+  /**
+   * Collects all sortable folders in the bookmark tree and sorts each one.
+   * Cleans up stale annotations for any folders that no longer exist.
+   * @returns {Promise<void>}
+   */
   async function sortAllBookmarks() {
     const rootChildren = await browser.bookmarks.getChildren(AsbPrefs.getRootId());
     if (!rootChildren) {
       return;
     }
 
-    // Collect all sortable folders across the entire tree.
+    // Collect every sortable folder across the entire tree in parallel.
     const folderGroups = await Promise.all(
       rootChildren
         .filter(
@@ -45,6 +75,17 @@ function createSorter() {
     await Promise.all(allFolders.map((folder) => sortAndSave(folder)));
   }
 
+  /**
+   * Sorts the children of a single folder and saves any changed positions.
+   *
+   * Children are split into groups by separators. Within each group items are
+   * sorted using the current comparator, then assigned contiguous indices
+   * starting after the previous group's separator. Only items whose index
+   * actually changed are moved.
+   *
+   * @param {FolderItem} folder - The folder to sort.
+   * @returns {Promise<void>}
+   */
   async function sortAndSave(folder) {
     if (!FolderUtil.canBeSorted(folder)) {
       return;
@@ -52,21 +93,26 @@ function createSorter() {
 
     const groups = await FolderUtil.getChildrenWithHistory(folder.id);
 
-    // Sort each group and assign new indices, accounting for separator gaps.
+    // Sort each separator-delimited group and assign new indices.
+    // delta tracks the running offset so that index assignments skip over
+    // the separator between groups (+1 per separator).
     let delta = 0;
     for (const group of groups) {
       group.sort(compare);
       group.forEach((item, j) => {
         item.index = j + delta;
       });
-      delta += group.length + 1; // +1 for the separator after each group
+      delta += group.length + 1; // +1 accounts for the separator after each group
     }
 
     await FolderUtil.saveOrder(groups);
   }
 
-  // Debounced sort: resets the timer on each call, runs after the configured
-  // delay has elapsed with no further activity.
+  /**
+   * Schedules a sort after the configured inactivity delay.
+   * Each call resets the timer, so rapid successive events coalesce into
+   * a single sort run (debounce pattern).
+   */
   function scheduleSort() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(async () => {
@@ -79,23 +125,38 @@ function createSorter() {
       await sortAllBookmarks();
       AsbUtil.log("sort:end");
       sorting = false;
-      // Wait for browser events triggered by the sort to settle before
-      // re-attaching listeners, to avoid immediately triggering another sort.
+      // Delay re-attaching listeners so that the browser events produced by
+      // the sort's own bookmark moves have time to settle.
       setTimeout(() => changeHandler.createChangeListeners(), 3000);
     }, AsbPrefs.getPref("delay") * 1000);
   }
 
+  /** @type {Sorter} */
   const sorter = {
+    /**
+     * Schedules a sort if the auto-sort preference is enabled.
+     * Called by {@link ChangeHandler} on every bookmark or history event.
+     */
     sortIfAuto() {
       if (AsbPrefs.getPref("auto_sort")) {
         scheduleSort();
       }
     },
 
+    /**
+     * Schedules a sort unconditionally, regardless of the auto-sort setting.
+     * Triggered by the "Sort Now" button in the popup.
+     */
     sortNow() {
       scheduleSort();
     },
 
+    /**
+     * Rebuilds the internal comparator from updated sort criteria.
+     * Called by {@link AsbPrefs.adjustSortCriteria} whenever a sort-related
+     * preference changes.
+     * @param {SortCriteria} criteria
+     */
     setCriteria(criteria) {
       compare = createCompare(criteria);
     },

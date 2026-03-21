@@ -16,9 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * A lightweight folder descriptor used by the configure-folders UI.
+ * This is a plain object, not a {@link FolderItem}.
+ * @typedef {Object} FolderDescriptor
+ * @property {string}  id                 - Bookmark folder ID.
+ * @property {string}  parentId           - ID of the containing folder.
+ * @property {string}  title              - Folder title.
+ * @property {boolean} excluded           - True if the do-not-sort flag is set.
+ * @property {boolean} recursivelyExcluded - True if the recursive-exclusion flag is set.
+ */
+
+/**
+ * Folder-related async helpers used by the sorter and the configure-folders UI.
+ * @namespace FolderUtil
+ */
 const FolderUtil = (function () {
-  // Returns plain folder descriptor objects for the direct children of parentId.
-  // Used by AsbPrefs to serve the configure-folders UI.
+  /**
+   * Returns {@link FolderDescriptor} objects for the direct folder children of `parentId`.
+   * Used by {@link AsbPrefs} to serve the configure-folders UI.
+   * @param {string} parentId - The bookmark folder ID whose children to query.
+   * @returns {Promise<FolderDescriptor[]>}
+   */
   async function getChildrenFolders(parentId) {
     const nodes = await browser.bookmarks.getChildren(parentId);
     if (!nodes) {
@@ -35,11 +54,20 @@ const FolderUtil = (function () {
       }));
   }
 
-  // Returns folder items for the given folder and all non-recursively-excluded descendants.
+  /**
+   * Returns {@link FolderItem} objects for `folderId` itself and all of its
+   * non-recursively-excluded descendant folders, in depth-first order.
+   * @param {string} folderId - The root folder ID to start from.
+   * @returns {Promise<FolderItem[]>}
+   */
   async function getDescendantFolders(folderId) {
     const subtree = await browser.bookmarks.getSubTree(folderId);
     const results = [];
 
+    /**
+     * Recursively collects sortable folder items from a subtree node.
+     * @param {browser.bookmarks.BookmarkTreeNode} node
+     */
     function collect(node) {
       if (Annotations.isRecursivelyExcluded(node.id)) {
         return;
@@ -58,7 +86,13 @@ const FolderUtil = (function () {
     return results;
   }
 
-  // Returns true if the folder should be sorted.
+  /**
+   * Returns true if the folder is eligible for sorting.
+   * A folder is ineligible if it has the do-not-sort annotation, is recursively
+   * excluded, or is the bookmark tree root.
+   * @param {FolderItem} folder
+   * @returns {boolean}
+   */
   function canBeSorted(folder) {
     return (
       !Annotations.hasDoNotSortAnnotation(folder.id) &&
@@ -67,15 +101,24 @@ const FolderUtil = (function () {
     );
   }
 
-  // Fetches direct children, enriches bookmarks with history data, and
-  // returns them as an array of groups split by separators.
+  /**
+   * Fetches the direct children of a folder, enriches bookmark nodes with
+   * history visit data, and returns them split into groups by separators.
+   *
+   * Each group is an array of {@link BookmarkItem} or {@link FolderItem} objects.
+   * A folder with no separators returns a single group; each separator starts
+   * a new group, and the separator itself is not included in any group.
+   *
+   * @param {string} folderId - The folder whose children to fetch.
+   * @returns {Promise<Array<Array<BookmarkItem|FolderItem>>>}
+   */
   async function getChildrenWithHistory(folderId) {
     const nodes = await browser.bookmarks.getChildren(folderId);
     if (!nodes) {
       return [[]];
     }
 
-    // Fetch history for each bookmark node in parallel.
+    // Fetch visit history for each bookmark node in parallel.
     const historyResults = await Promise.all(
       nodes.map((node) =>
         NodeUtil.getNodeType(node) === "bookmark"
@@ -91,7 +134,7 @@ const FolderUtil = (function () {
       }
     });
 
-    // Split items into groups separated by separators.
+    // Split items into groups divided by separators.
     const groups = [[]];
     for (const node of nodes) {
       const item = NodeUtil.createItemFromNode(node);
@@ -104,7 +147,12 @@ const FolderUtil = (function () {
     return groups;
   }
 
-  // Moves any items whose index changed from their original position.
+  /**
+   * Moves each item whose current `index` differs from its `oldIndex`.
+   * All moves are issued in parallel. Does nothing if no items changed position.
+   * @param {Array<Array<BookmarkItem|FolderItem>>} groups - The sorted child groups.
+   * @returns {Promise<void>}
+   */
   async function saveOrder(groups) {
     const hasMove = groups.some((group) =>
       group.some((item) => item.index !== item.oldIndex)

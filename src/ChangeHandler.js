@@ -16,24 +16,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Creates bookmark and history event listeners that trigger sorting.
-// Returns { createChangeListeners, removeChangeListeners }.
+/**
+ * @typedef {Object} ChangeHandler
+ * @property {function(): void} createChangeListeners - Registers all bookmark and history listeners.
+ * @property {function(): void} removeChangeListeners - Removes all bookmark and history listeners.
+ */
+
+/**
+ * Creates a change handler that listens for bookmark and history events and
+ * triggers sorting when they occur.
+ *
+ * Listeners are kept as named function references so they can be removed
+ * precisely without affecting other listeners on the same events.
+ *
+ * Special cases:
+ * - Removing a **separator** triggers a re-sort (index gaps need to be closed).
+ * - Removing a **folder** notifies any open settings tabs via {@link AsbPrefs.removeFolder}.
+ * - History visits from the extension's own pages (`moz-extension:`) are ignored.
+ *
+ * @param {Sorter} sorter - The sorter to invoke when a relevant change is detected.
+ * @returns {ChangeHandler}
+ */
 function createChangeHandler(sorter) {
+  /**
+   * @param {string} id - ID of the changed bookmark.
+   */
   function handleChanged(id) {
     AsbUtil.log(`onChanged: ${id}`);
     sorter.sortIfAuto();
   }
 
+  /**
+   * @param {string} id - ID of the newly created bookmark.
+   */
   function handleCreated(id) {
     AsbUtil.log(`onCreated: ${id}`);
     sorter.sortIfAuto();
   }
 
+  /**
+   * @param {string} id - ID of the moved bookmark.
+   */
   function handleMoved(id) {
     AsbUtil.log(`onMoved: ${id}`);
     sorter.sortIfAuto();
   }
 
+  /**
+   * @param {string} id         - ID of the removed node.
+   * @param {Object} removeInfo - Browser-provided removal info, including `removeInfo.node`.
+   */
   function handleRemoved(id, removeInfo) {
     AsbUtil.log(`onRemoved: ${id}`);
     const type = NodeUtil.getNodeType(removeInfo.node);
@@ -44,6 +76,9 @@ function createChangeHandler(sorter) {
     }
   }
 
+  /**
+   * @param {browser.history.HistoryItem} historyItem - The visited page record.
+   */
   function handleVisited(historyItem) {
     AsbUtil.log("onVisited");
     if (!historyItem.url.startsWith("moz-extension:")) {
@@ -52,6 +87,9 @@ function createChangeHandler(sorter) {
   }
 
   return {
+    /**
+     * Attaches all bookmark and history event listeners.
+     */
     createChangeListeners() {
       browser.bookmarks.onChanged.addListener(handleChanged);
       browser.bookmarks.onCreated.addListener(handleCreated);
@@ -61,6 +99,11 @@ function createChangeHandler(sorter) {
       AsbUtil.log("added listeners");
     },
 
+    /**
+     * Detaches all bookmark and history event listeners.
+     * Called before a sort begins to prevent the `browser.bookmarks.move`
+     * calls made during sorting from triggering another sort.
+     */
     removeChangeListeners() {
       browser.bookmarks.onChanged.removeListener(handleChanged);
       browser.bookmarks.onCreated.removeListener(handleCreated);

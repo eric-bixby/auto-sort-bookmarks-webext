@@ -16,6 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file background.js
+ * Extension entry point. Loads preferences and annotations from storage,
+ * creates the sorter, wires it to the preference system, and registers
+ * listeners so that bookmark and history events trigger automatic sorting.
+ */
+
 // Main entry point for the add-on background script.
 AsbUtil.log("main:begin");
 try {
