@@ -8,7 +8,7 @@ http://codereview.stackexchange.com/questions/101621/netscape-bookmark-file-gene
 Copyright (C) 2015  Boucher, Antoni <bouanto@zoho.com>
 
 Python version:
-Copyright (C) 2016-2022  Eric Bixby <ebixby@yahoo.com>
+Copyright (C) 2016-2026  Eric Bixby <ebixby@yahoo.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
