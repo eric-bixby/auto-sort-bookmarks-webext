@@ -55,3 +55,6 @@ const AsbUtil = {
     return retVal;
   },
 };
+
+// eslint-disable-next-line no-undef
+if (typeof module !== "undefined") module.exports = AsbUtil;
