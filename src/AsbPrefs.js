@@ -117,7 +117,7 @@ const AsbPrefs = (function () {
 
   function removeFolder(id) {
     browser.tabs
-      .query({ url: browser.runtime.getURL("configure-folders.html") })
+      .query({ url: browser.runtime.getURL("settings.html") })
       .then((tabs) => {
         tabs.forEach((tab) => {
           browser.tabs.sendMessage(tab.id, { action: "removeFolder", id });
@@ -141,7 +141,7 @@ const AsbPrefs = (function () {
     });
   }
 
-  // Handle messages from UI pages (popup, settings, configure-folders).
+  // Handle messages from UI pages (popup, settings).
   browser.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // Async cases: must return true to keep the message channel open.
     if (message.action === "queryRoot") {
@@ -190,11 +190,6 @@ const AsbPrefs = (function () {
       sendResponse({ success: true });
     } else if (message.action === "openSettings") {
       browser.tabs.create({ url: browser.runtime.getURL("settings.html") });
-      sendResponse({ success: true });
-    } else if (message.action === "openConfigureFolders") {
-      browser.tabs.create({
-        url: browser.runtime.getURL("configure-folders.html"),
-      });
       sendResponse({ success: true });
     } else if (message.action === "sortCheckboxChange") {
       if (message.activated) {
