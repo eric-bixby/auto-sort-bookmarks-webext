@@ -349,7 +349,7 @@ function showTab(tabName) {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 
-document.title = i18n("settings");
+document.title = i18n("settings") + " | " + i18n("title");
 document.getElementById("page-title").textContent = i18n("title");
 document.getElementById("page-version").textContent =
   "v" + browser.runtime.getManifest().version;

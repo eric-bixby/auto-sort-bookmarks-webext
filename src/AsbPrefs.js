@@ -195,7 +195,16 @@ const AsbPrefs = (function () {
       }
       sendResponse({ success: true });
     } else if (message.action === "openSettings") {
-      browser.tabs.create({ url: browser.runtime.getURL("settings.html") });
+      browser.tabs
+        .query({ url: browser.runtime.getURL("settings.html") })
+        .then((tabs) => {
+          if (tabs.length > 0) {
+            browser.tabs.update(tabs[0].id, { active: true });
+            browser.windows.update(tabs[0].windowId, { focused: true });
+          } else {
+            browser.tabs.create({ url: browser.runtime.getURL("settings.html") });
+          }
+        });
       sendResponse({ success: true });
     } else if (message.action === "sortCheckboxChange") {
       if (message.activated) {
