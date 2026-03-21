@@ -12,7 +12,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "sortbookmarks@bouanto",
-      "strict_min_version": "63.0"
+      "strict_min_version": "79.0"
     }
   },
   "permissions": ["bookmarks", "history", "storage", "tabs"],
