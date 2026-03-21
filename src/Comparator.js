@@ -35,8 +35,6 @@ class Comparator {
       if (bookmark1.order !== bookmark2.order) {
         return bookmark1.order - bookmark2.order;
       }
-
-      return 0;
     }
 
     function addReverseUrls(bookmark1, bookmark2, criteria) {
