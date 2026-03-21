@@ -16,173 +16,69 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Comparator {
-  static createCompare() {
-    let comparator;
+// Creates a comparator function from the given sort criteria.
+function createCompare(criteria) {
+  const {
+    sortBy,
+    inverse,
+    thenSortBy,
+    thenInverse,
+    folderSortBy,
+    folderInverse,
+    caseInsensitive,
+  } = criteria;
 
-    function checkCorruptedAndOrder(bookmark1, bookmark2) {
-      if (bookmark1.corrupted) {
-        if (bookmark2.corrupted) {
-          return 0;
-        }
-        return 1;
-      }
+  const compareOptions = {
+    caseFirst: "upper",
+    numeric: true,
+    sensitivity: caseInsensitive ? "base" : "case",
+  };
 
-      if (bookmark2.corrupted) {
-        return -1;
-      }
-
-      if (bookmark1.order !== bookmark2.order) {
-        return bookmark1.order - bookmark2.order;
-      }
+  function compareByField(a, b, field, reverse) {
+    const sign = reverse ? -1 : 1;
+    if (field === "revurl") {
+      a.revurl = AsbUtil.reverseBaseUrl(a.url);
+      b.revurl = AsbUtil.reverseBaseUrl(b.url);
+    } else if (field === "hostname") {
+      a.hostname = new URL(a.url).hostname;
+      b.hostname = new URL(b.url).hostname;
     }
-
-    function addReverseUrls(bookmark1, bookmark2, criteria) {
-      if (criteria === "revurl") {
-        bookmark1.revurl = AsbUtil.reverseBaseUrl(bookmark1.url);
-        bookmark2.revurl = AsbUtil.reverseBaseUrl(bookmark2.url);
-      }
+    if (["title", "url", "revurl", "hostname"].includes(field)) {
+      return a[field].localeCompare(b[field], undefined, compareOptions) * sign;
     }
-
-    function addHostNames(bookmark1, bookmark2, criteria) {
-      if (criteria === "hostname") {
-        bookmark1.hostname = new URL(bookmark1.url).hostname;
-        bookmark2.hostname = new URL(bookmark2.url).hostname;
-      }
-    }
-
-    const compareOptions = {
-      caseFirst: "upper",
-      numeric: true,
-      sensitivity: "case",
-    };
-
-    if (Sorter.prototype.caseInsensitive) {
-      compareOptions.sensitivity = "base";
-    }
-
-    let firstComparator;
-    if (
-      ["title", "url", "revurl", "hostname"].indexOf(
-        Sorter.prototype.firstSortCriteria
-      ) !== -1
-    ) {
-      firstComparator = function compare(bookmark1, bookmark2) {
-        addReverseUrls(bookmark1, bookmark2, Sorter.prototype.firstSortCriteria);
-        addHostNames(bookmark1, bookmark2, Sorter.prototype.firstSortCriteria);
-        return (
-          bookmark1[Sorter.prototype.firstSortCriteria].localeCompare(
-            bookmark2[Sorter.prototype.firstSortCriteria],
-            undefined,
-            compareOptions
-          ) * Sorter.prototype.firstReverse
-        );
-      };
-    } else {
-      firstComparator = function compare(bookmark1, bookmark2) {
-        return (
-          (bookmark1[Sorter.prototype.firstSortCriteria] -
-            bookmark2[Sorter.prototype.firstSortCriteria]) *
-          Sorter.prototype.firstReverse
-        );
-      };
-    }
-
-    let secondComparator;
-    if (
-      typeof Sorter.prototype.secondSortCriteria !== "undefined" &&
-      Sorter.prototype.secondSortCriteria !== "none"
-    ) {
-      if (
-        ["title", "url", "revurl", "hostname"].indexOf(
-          Sorter.prototype.secondSortCriteria
-        ) !== -1
-      ) {
-        secondComparator = function compare(bookmark1, bookmark2) {
-          addReverseUrls(
-            bookmark1,
-            bookmark2,
-            Sorter.prototype.secondSortCriteria
-          );
-          addHostNames(
-            bookmark1,
-            bookmark2,
-            Sorter.prototype.firstSortCriteria
-          );
-          return (
-            bookmark1[Sorter.prototype.secondSortCriteria].localeCompare(
-              bookmark2[Sorter.prototype.secondSortCriteria],
-              undefined,
-              compareOptions
-            ) * Sorter.prototype.secondReverse
-          );
-        };
-      } else {
-        secondComparator = function compare(bookmark1, bookmark2) {
-          return (
-            (bookmark1[Sorter.prototype.secondSortCriteria] -
-              bookmark2[Sorter.prototype.secondSortCriteria]) *
-            Sorter.prototype.secondReverse
-          );
-        };
-      }
-    } else {
-      secondComparator = function compare() {
-        return 0;
-      };
-    }
-
-    const itemComparator = function compare(bookmark1, bookmark2) {
-      return (
-        firstComparator(bookmark1, bookmark2) ||
-        secondComparator(bookmark1, bookmark2)
-      );
-    };
-
-    if (Sorter.prototype.differentFolderOrder) {
-      if (
-        typeof Sorter.prototype.folderSortCriteria !== "undefined" &&
-        Sorter.prototype.folderSortCriteria !== "none"
-      ) {
-        comparator = function compare(bookmark1, bookmark2) {
-          if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
-            if (
-              ["title"].indexOf(Sorter.prototype.folderSortCriteria) !== -1
-            ) {
-              return (
-                bookmark1[Sorter.prototype.folderSortCriteria].localeCompare(
-                  bookmark2[Sorter.prototype.folderSortCriteria],
-                  undefined,
-                  compareOptions
-                ) * Sorter.prototype.folderReverse
-              );
-            }
-            return (
-              (bookmark1[Sorter.prototype.folderSortCriteria] -
-                bookmark2[Sorter.prototype.folderSortCriteria]) *
-              Sorter.prototype.folderReverse
-            );
-          }
-          return itemComparator(bookmark1, bookmark2);
-        };
-      } else {
-        comparator = function compare(bookmark1, bookmark2) {
-          if (bookmark1 instanceof Folder && bookmark2 instanceof Folder) {
-            return 0;
-          }
-          return itemComparator(bookmark1, bookmark2);
-        };
-      }
-    } else {
-      comparator = itemComparator;
-    }
-
-    return function compare(bookmark1, bookmark2) {
-      const result = checkCorruptedAndOrder(bookmark1, bookmark2);
-      if (typeof result === "undefined") {
-        return comparator(bookmark1, bookmark2);
-      }
-      return result;
-    };
+    return (a[field] - b[field]) * sign;
   }
+
+  function compareBookmarks(a, b) {
+    const primary = compareByField(a, b, sortBy, inverse);
+    if (primary !== 0 || !thenSortBy || thenSortBy === "none") {
+      return primary;
+    }
+    return compareByField(a, b, thenSortBy, thenInverse);
+  }
+
+  function compareFolders(a, b) {
+    if (!folderSortBy || folderSortBy === "none") {
+      return 0;
+    }
+    return compareByField(a, b, folderSortBy, folderInverse);
+  }
+
+  return function compare(a, b) {
+    // Corrupted bookmarks sink to the bottom.
+    if (a.corrupted && b.corrupted) return 0;
+    if (a.corrupted) return 1;
+    if (b.corrupted) return -1;
+
+    // Separate folders from bookmarks based on their sort order.
+    if (a.order !== b.order) {
+      return a.order - b.order;
+    }
+
+    // Same type: use the appropriate comparator.
+    if (a.type === "folder") {
+      return compareFolders(a, b);
+    }
+    return compareBookmarks(a, b);
+  };
 }

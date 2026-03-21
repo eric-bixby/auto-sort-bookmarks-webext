@@ -77,16 +77,15 @@ const AsbPrefs = (function () {
     if (!sorterRef) {
       return;
     }
-    sorterRef.setCriteria(
-      getPref("sort_by"),
-      getPref("inverse"),
-      getPref("then_sort_by"),
-      getPref("then_inverse"),
-      getPref("folder_sort_by"),
-      getPref("folder_inverse"),
-      true,
-      getPref("case_insensitive")
-    );
+    sorterRef.setCriteria({
+      sortBy: getPref("sort_by"),
+      inverse: getPref("inverse"),
+      thenSortBy: getPref("then_sort_by"),
+      thenInverse: getPref("then_inverse"),
+      folderSortBy: getPref("folder_sort_by"),
+      folderInverse: getPref("folder_inverse"),
+      caseInsensitive: getPref("case_insensitive"),
+    });
   }
 
   function registerPrefListeners() {
@@ -156,9 +155,9 @@ const AsbPrefs = (function () {
         messageText: browser.i18n.getMessage("subfolders_recursively_excluded"),
         loadingText: browser.i18n.getMessage("loading"),
       };
-      FolderUtil.getChildrenFolders(getRootId(), (children) => {
+      FolderUtil.getChildrenFolders(getRootId()).then((folders) => {
         sendResponse({
-          folders: children,
+          folders,
           addImgUrl: browser.runtime.getURL("images/add.png"),
           removeImgUrl: browser.runtime.getURL("images/remove.png"),
           texts,
@@ -168,7 +167,7 @@ const AsbPrefs = (function () {
     }
 
     if (message.action === "queryChildren") {
-      FolderUtil.getChildrenFolders(message.parentId, (children) => {
+      FolderUtil.getChildrenFolders(message.parentId).then((children) => {
         sendResponse({ children });
       });
       return true;

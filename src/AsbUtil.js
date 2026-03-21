@@ -16,12 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class AsbUtil {
-  static log(o) {
+const AsbUtil = {
+  log(o) {
     console.log(o);
-  }
+  },
 
-  static reverseBaseUrl(str) {
+  reverseBaseUrl(str) {
     if (!str) {
       return "";
     }
@@ -38,5 +38,5 @@ class AsbUtil {
     }
 
     return retVal;
-  }
-}
+  },
+};
