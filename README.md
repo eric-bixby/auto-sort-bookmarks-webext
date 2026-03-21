@@ -35,11 +35,22 @@ Firefox add-on that sorts bookmarks by multiple criteria.
 
 ---
 
-## Linting
+## Development
 
-Validate the extension using [web-ext](https://github.com/mozilla/web-ext):
+### Setup
 
 ```sh
-npm install        # installs web-ext and other dev dependencies
-npx web-ext lint --source-dir src
+npm ci
+```
+
+### Testing
+
+```sh
+npm test
+```
+
+### Linting
+
+```sh
+npm run lint
 ```
