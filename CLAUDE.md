@@ -4,16 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## No build step required
 
-This is a plain vanilla WebExtension — no npm, no transpiler, no bundler. Load `src/` directly as a temporary extension in Firefox (`about:debugging` → "Load Temporary Add-on" → select `src/manifest.json`).
+This is a plain vanilla WebExtension — no transpiler, no bundler. Load `src/` directly as a temporary extension in Firefox (`about:debugging` → "Load Temporary Add-on" → select `src/manifest.json`).
 
-## Linting (optional)
+## Testing
 
 ```sh
-npm install   # installs eslint/prettier if desired
-npx eslint src/
+npm install       # installs jest and web-ext
+npm test          # run Jest unit tests
+npm run lint      # run web-ext lint
 ```
 
-No tests are defined in this project.
+Tests live in `tests/unit/`. A `browser` global mock is set up in `tests/setup/globals.js`. Each source file exports itself via a conditional `module.exports` shim at the bottom (no-op in the browser, required by Jest).
 
 ## Architecture
 
@@ -24,59 +25,61 @@ A Firefox WebExtension (Manifest V2) that auto-sorts bookmarks. All source lives
 Background scripts are listed explicitly in `manifest.json` and share one global scope. They must be ordered so every identifier is defined before it is used at runtime:
 
 ```
-AsbUtil → BrowserUtil → Annotations → Item → Bookmark → Folder → Separator
-→ NodeUtil → FolderUtil → Comparator → ChangeHandler → AsbPrefs → Sorter → background.js
+AsbUtil → Annotations → NodeUtil → FolderUtil → Comparator → ChangeHandler → AsbPrefs → Sorter → background.js
 ```
 
-Classes reference each other in method/constructor bodies (not at class-definition time), so forward references in method bodies are fine.
+Globals referenced inside function/method bodies (not at definition time) may appear later in the list.
 
 ### Data flow
 
 1. `background.js` calls `AsbPrefs.load()` → loads prefs + annotations from `browser.storage.local`
-2. Creates `new Sorter()` → which creates `ChangeHandler` and registers bookmark/history event listeners
+2. `createSorter()` creates the sorter, which internally creates a `ChangeHandler` and registers bookmark/history event listeners
 3. On a change event, `ChangeHandler` calls `sorter.sortIfAuto()`
-4. `Sorter` waits for inactivity (configurable delay), then removes listeners and calls `sortAllBookmarks()`
-5. `FolderUtil.getChildrenFolders` walks the tree; `Folder.getChildren` + `Folder.getFolders` fetch children recursively
-6. `Sorter.sortFolder` sorts each folder's children using the `Comparator.createCompare()` function
-7. `Folder.save()` calls `browser.bookmarks.move()` for each item whose index changed
-8. After 3 s (for browser events to settle), change listeners are re-added
+4. `Sorter` debounces using the configured delay, then removes listeners and calls `sortAllBookmarks()`
+5. `FolderUtil.getDescendantFolders` walks the tree depth-first, skipping recursively excluded folders
+6. Each folder's children are fetched, enriched with history data, split by separators, and sorted via `createCompare()`
+7. `FolderUtil.saveOrder()` calls `browser.bookmarks.move()` for each item whose index changed
+8. After 3 s (for browser events to settle), change listeners are re-attached
 
 ### Key modules (`src/`)
 
 | File | Role |
 |------|------|
-| `AsbPrefs.js` | Singleton: prefs storage, all `browser.runtime.onMessage` handling, messaging to UI pages |
-| `Annotations.js` | Singleton: per-folder "do not sort" / "recursive" exclusion flags stored in `browser.storage.local` |
-| `Sorter.js` | Orchestrates sorting: delay loop, folder recursion, listener management |
-| `Comparator.js` | Builds the compare function from `Sorter.prototype.*` sort-criteria properties |
-| `ChangeHandler.js` | Listens to `bookmarks.on*` and `history.onVisited`; routes events to Sorter |
-| `FolderUtil.js` | `getChildrenFolders(parentId, cb)` — returns plain folder objects for a given parent |
-| `Folder.js` | `getChildren()` and `getFolders()` live here (enriches nodes with history data) |
-| `BrowserUtil.js` | Thin wrappers around `browser.*` APIs; all bookmark/history/storage methods return Promises |
+| `AsbUtil.js` | Namespace object: `log()` and `reverseBaseUrl()` |
+| `Annotations.js` | Singleton IIFE: per-folder "do not sort" / "recursive" exclusion flags in `browser.storage.local` |
+| `NodeUtil.js` | IIFE: `getNodeType()` and `createItemFromNode()` — creates typed plain objects from browser nodes |
+| `FolderUtil.js` | IIFE: `getDescendantFolders`, `getChildrenFolders`, `canBeSorted`, `getChildrenWithHistory`, `saveOrder` |
+| `Comparator.js` | `createCompare(criteria)` — builds a comparator function from a `SortCriteria` object |
+| `ChangeHandler.js` | `createChangeHandler(sorter)` — attaches/detaches bookmark and history event listeners |
+| `AsbPrefs.js` | Singleton IIFE: preference storage, all `browser.runtime.onMessage` handling, messaging to UI |
+| `Sorter.js` | `createSorter()` — debounce logic, tree traversal, listener lifecycle |
+| `background.js` | Entry point: loads prefs, creates sorter, wires listeners |
 
-### Model hierarchy (`src/`)
-`Item` → `Bookmark` → `Folder` / `Separator`
+### Item types (`src/NodeUtil.js`)
 
-### Sort-criteria state
+All items are plain objects. `createItemFromNode(node)` returns one of:
+- `BookmarkItem` — has `type`, `id`, `index`, `oldIndex`, `parentId`, `title`, `url`, `dateAdded`, `lastModified`, `lastVisited`, `accessCount`, `order`, `corrupted`
+- `FolderItem` — has `type`, `id`, `index`, `oldIndex`, `parentId`, `title`, `dateAdded`, `lastModified`, `order`
+- `SeparatorItem` — has `type`, `id`, `index`, `oldIndex`, `parentId` only
 
-`Sorter.setCriteria(...)` stores criteria as properties on `Sorter.prototype` (e.g. `Sorter.prototype.firstSortCriteria`). `Comparator.createCompare()` reads those same prototype properties to build a fresh comparator closure. `AsbPrefs.adjustSortCriteria()` wires these together whenever preferences change.
+### Sort-criteria flow
+
+`AsbPrefs.adjustSortCriteria()` calls `sorter.setCriteria({...})` with a `SortCriteria` object whenever a sort-related preference changes. `setCriteria` calls `createCompare(criteria)` to build a fresh comparator closure.
 
 ### UI pages (`src/`)
 
-Three standalone HTML+JS pages — no framework:
+Two standalone HTML+JS pages — no framework:
 
 | Page | Communicates via |
 |------|-----------------|
 | `popup.html` + `popup.js` | `browser.runtime.sendMessage` → background |
-| `settings.html` + `settings.js` | `browser.runtime.sendMessage` → background |
-| `configure-folders.html` + `configure-folders.js` | `browser.runtime.sendMessage` → background; also receives `removeFolder` push from background via `browser.runtime.onMessage` |
+| `settings.html` + `settings.js` | `browser.runtime.sendMessage` → background; has two tabs: Settings and Configure Folders |
 
 ### Messaging contract (`browser.runtime.sendMessage`)
 
 | `action` | Direction | Description |
 |----------|-----------|-------------|
-| `openSettings` | UI→bg | Opens settings tab |
-| `openConfigureFolders` | UI→bg | Opens configure-folders tab |
+| `openSettings` | UI→bg | Focuses existing settings tab or opens a new one |
 | `sort` | UI→bg | Triggers an immediate sort |
 | `getPrefs` | UI→bg | Returns all current pref values |
 | `setPrefs` | UI→bg | Saves `{prefs: {...}}` to storage |
@@ -85,7 +88,7 @@ Three standalone HTML+JS pages — no framework:
 | `queryChildren` | UI→bg | Returns children of `{parentId}` |
 | `sortCheckboxChange` | UI→bg | Updates do-not-sort annotation for `{folderId, activated}` |
 | `recursiveCheckboxChange` | UI→bg | Updates recursive annotation for `{folderId, activated}` |
-| `removeFolder` | bg→UI | Pushed to configure-folders tab when a folder is deleted |
+| `removeFolder` | bg→UI | Pushed to settings tab when a folder is deleted |
 
 ### Storage layout (`browser.storage.local`)
 
@@ -95,9 +98,24 @@ Three standalone HTML+JS pages — no framework:
 | `donotsort` | `{folderId: true, ...}` — folders excluded from sorting |
 | `recursive` | `{folderId: true, ...}` — folders recursively excluded |
 
+### Preferences
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `auto_sort` | boolean | `false` | Sort automatically on bookmark changes |
+| `delay` | number | `3` | Inactivity delay in seconds before sorting |
+| `case_insensitive` | boolean | `false` | Ignore case when comparing titles/URLs |
+| `sort_by` | string | `"title"` | Primary sort field for bookmarks |
+| `inverse` | boolean | `false` | Reverse primary sort direction |
+| `then_sort_by` | string | `"none"` | Secondary sort field (`"none"` to disable) |
+| `then_inverse` | boolean | `false` | Reverse secondary sort direction |
+| `folder_sort_by` | string | `"title"` | Sort field for folders (`"none"` to preserve order) |
+| `folder_inverse` | boolean | `false` | Reverse folder sort direction |
+| `sort_folders_first` | boolean | `true` | Sort folders before bookmarks when true |
+
 ### i18n
 
-Locale strings live in `locales/<lang>/messages.json` (7 languages). Key patterns used:
-- `weh_prefs_label_{name}` — preference row label
-- `weh_prefs_description_{name}` — preference description
-- `weh_prefs_{pref}_option_{value}` — select option label
+Locale strings live in `src/_locales/<lang>/messages.json` (7 languages). Key patterns:
+- `prefs_label_{name}` — preference row label
+- `prefs_description_{name}` — preference description
+- `prefs_{pref}_option_{value}` — select option label
