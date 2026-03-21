@@ -6,8 +6,9 @@
 [<img src="https://img.shields.io/amo/users/auto-sort-bookmarks.svg">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmarks/statistics)
 [<img src="https://img.shields.io/github/release/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases)
 [<img src="https://img.shields.io/github/license/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/blob/master/LICENSE)
+[<img src="https://github.com/eric-bixby/auto-sort-bookmarks-webext/actions/workflows/ci.yml/badge.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/actions/workflows/ci.yml)
 
-Firefox add-on that sorts bookmarks by multiple criteria.
+Firefox add-on that sorts bookmarks by multiple criteria. Requires **Firefox 142 or later**.
 
 ---
 
@@ -37,11 +38,22 @@ Firefox add-on that sorts bookmarks by multiple criteria.
 
 ## Development
 
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v18 or later
+- Firefox 142 or later
+
 ### Setup
 
 ```sh
 npm ci
 ```
+
+### Load in Firefox
+
+1. Open `about:debugging` in Firefox
+2. Click **This Firefox** → **Load Temporary Add-on**
+3. Select `src/manifest.json`
 
 ### Testing
 
