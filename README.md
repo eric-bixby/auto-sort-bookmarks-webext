@@ -22,9 +22,8 @@ Firefox add-on that sorts bookmarks by multiple criteria.
 - **Inverse Second Order:** If this option is enabled, the order specified in 'Then Sort By' will be reversed.
 - **Sort Folder By:** Specifies sort criteria to sort folders.
 - **Inverse Folder Order:** If this option is enabled, the order specified in 'Sort Folder By' will be reversed.
-- **Folder Sort Order:** Specifies the folder sort order. A minimum value of 1 and a maximum of 2.
-- **Bookmark Sort Order:** Specifies the bookmark sort order. A minimum value of 1 and a maximum of 2.
-- **Configure Folders:** This button opens a new tab allowing you to exclude folders when sorting. If you uncheck the checkbox next to a folder, it won't be sorted, but the children folders will be sorted. If you want to exclude a folder recursively from being sorted, check the recursive checkbox.
+- **Sort Folders First:** If this option is enabled, folders are sorted before bookmarks. If unchecked, bookmarks are sorted before folders.
+- **Configure Folders:** The "Configure Folders" tab in Settings allows you to exclude folders from sorting. If you uncheck the checkbox next to a folder, it won't be sorted, but the children folders will be sorted. If you want to exclude a folder recursively from being sorted, check the recursive checkbox.
 
 **Backup your current bookmarks** in case you do not like the new bookmarks order. To restore bookmarks, use Firefox's Bookmark Manager (click on Bookmarks menu, select Show All Bookmarks, then click on "Z" icon, select Restore, and select restore point based on date/time).
 
@@ -33,3 +32,14 @@ Firefox add-on that sorts bookmarks by multiple criteria.
 ---
 
 **[Version History/Releases](https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases)**
+
+---
+
+## Linting
+
+Validate the extension using [web-ext](https://github.com/mozilla/web-ext):
+
+```sh
+npm install        # installs web-ext and other dev dependencies
+npx web-ext lint --source-dir src
+```
