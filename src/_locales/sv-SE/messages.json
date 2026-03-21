@@ -38,9 +38,6 @@
   "prefs_description_auto_sort": {
     "message": "Om det här alternativet är aktiverat kommer bormärkena att sorteras när de läggs till, ändras, flyttas eller tas bort. Detta betyder att du inte kan flytta ett bokmärke i samma mapp, om den inte flyttas över en avskiljare."
   },
-  "prefs_description_bookmark_sort_order": {
-    "message": "Specifies the bookmark sort order. Minimum value of 1 and maximum of 2."
-  },
   "prefs_description_case_insensitive": {
     "message": "Om det här alternativet är aktiverat kommer bokmärkena sorteras utan hänsyn till skiftläget."
   },
@@ -52,9 +49,6 @@
   },
   "prefs_description_folder_sort_by": {
     "message": "Anger sorteringskriterier för sortering av mappar."
-  },
-  "prefs_description_folder_sort_order": {
-    "message": "Anger mappsorteringsordningen. Minsta värdet av 1 och högsta av 2."
   },
   "prefs_description_inverse": {
     "message": "Om det här alternativet är aktiverat kommer sorteringsordningen i 'Sortera efter' att bli omvänd. Så ordningen kommer att bli fallande."
@@ -77,9 +71,6 @@
   "prefs_label_auto_sort": {
     "message": "Sortera automatiskt:"
   },
-  "prefs_label_bookmark_sort_order": {
-    "message": "Sorteringsordning av bokmärken:"
-  },
   "prefs_label_case_insensitive": {
     "message": "Skiftlägesokänsliga:"
   },
@@ -91,9 +82,6 @@
   },
   "prefs_label_folder_sort_by": {
     "message": "Sortera mapp efter:"
-  },
-  "prefs_label_folder_sort_order": {
-    "message": "Mappsorteringsordning:"
   },
   "prefs_label_inverse": {
     "message": "Omvänd ordning:"

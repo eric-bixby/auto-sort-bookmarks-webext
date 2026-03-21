@@ -66,20 +66,7 @@ const PREF_SCHEMA = [
     choices: ["none", "title"],
   },
   { name: "folder_inverse", type: "boolean", defaultValue: false },
-  {
-    name: "folder_sort_order",
-    type: "integer",
-    defaultValue: 1,
-    minimum: 1,
-    maximum: 2,
-  },
-  {
-    name: "bookmark_sort_order",
-    type: "integer",
-    defaultValue: 2,
-    minimum: 1,
-    maximum: 2,
-  },
+  { name: "sort_folders_first", type: "boolean", defaultValue: true },
 ];
 
 let originalPrefs = {};
@@ -364,6 +351,8 @@ function showTab(tabName) {
 
 document.title = i18n("settings");
 document.getElementById("page-title").textContent = i18n("title");
+document.getElementById("page-version").textContent =
+  "v" + browser.runtime.getManifest().version;
 document.getElementById("btn-tab-settings").textContent = i18n("settings");
 document.getElementById("btn-tab-configure-folders").textContent = i18n("configure_folders");
 document.getElementById("page-description").textContent = i18n("uncheck_to_exclude_folder");

@@ -50,6 +50,6 @@ class Bookmark extends Item {
     this.accessCount = accessCount || 0;
     this.dateAdded = dateAdded || 0;
     this.lastModified = lastModified || 0;
-    this.order = AsbPrefs.getPref("bookmark_sort_order");
+    this.order = AsbPrefs.getBookmarkOrder();
   }
 }
