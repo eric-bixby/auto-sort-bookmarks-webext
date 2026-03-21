@@ -22,8 +22,12 @@ const Annotations = (function () {
 
   let storedSettings = {};
 
-  function setStoredSettings() {
-    BrowserUtil.setLocalSettings(storedSettings);
+  // Only persist the annotation keys, never the prefs key.
+  function save() {
+    browser.storage.local.set({
+      [DO_NOT_SORT]: storedSettings[DO_NOT_SORT] || {},
+      [RECURSIVE]: storedSettings[RECURSIVE] || {},
+    });
   }
 
   return {
@@ -32,33 +36,27 @@ const Annotations = (function () {
     },
 
     hasDoNotSortAnnotation(id) {
-      return !!(
-        storedSettings[DO_NOT_SORT] &&
-        storedSettings[DO_NOT_SORT][id]
-      );
+      return !!(storedSettings[DO_NOT_SORT] && storedSettings[DO_NOT_SORT][id]);
     },
 
     hasRecursiveAnnotation(id) {
-      return !!(
-        storedSettings[RECURSIVE] &&
-        storedSettings[RECURSIVE][id]
-      );
+      return !!(storedSettings[RECURSIVE] && storedSettings[RECURSIVE][id]);
     },
 
+    // A folder is recursively excluded when both the do-not-sort and
+    // recursive flags are set, meaning it and all descendants are skipped.
     isRecursivelyExcluded(id) {
       return this.hasDoNotSortAnnotation(id) && this.hasRecursiveAnnotation(id);
     },
 
     removeItemAnnotation(name, id) {
-      if (
-        storedSettings[name] &&
-        typeof storedSettings[name][id] !== "undefined"
-      ) {
+      if (storedSettings[name] && typeof storedSettings[name][id] !== "undefined") {
         delete storedSettings[name][id];
-        setStoredSettings();
+        save();
       }
     },
 
+    // Remove annotations for folders that no longer exist.
     removeMissingFolders(folders) {
       this.removeMissingFoldersForItem(DO_NOT_SORT, folders);
       this.removeMissingFoldersForItem(RECURSIVE, folders);
@@ -66,10 +64,9 @@ const Annotations = (function () {
 
     removeMissingFoldersForItem(name, folders) {
       if (storedSettings[name]) {
-        const ids = Object.keys(storedSettings[name]);
-        ids.forEach((id) => {
+        Object.keys(storedSettings[name]).forEach((id) => {
           const found = folders.find((folder) => folder.id === id);
-          if (typeof found !== "undefined") {
+          if (typeof found === "undefined") {
             this.removeItemAnnotation(name, id);
           }
         });
@@ -89,7 +86,7 @@ const Annotations = (function () {
         storedSettings[name] = {};
       }
       storedSettings[name][id] = value;
-      setStoredSettings();
+      save();
     },
 
     setDoNotSortAnnotation(id) {

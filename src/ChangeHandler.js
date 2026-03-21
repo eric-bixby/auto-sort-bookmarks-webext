@@ -16,71 +16,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class ChangeHandler {
-  constructor(sorter) {
-    this.sorter = sorter;
-
-    // Bind handlers so 'this' is preserved when used as event listener callbacks.
-    this.handleChanged = this.handleChanged.bind(this);
-    this.handleCreated = this.handleCreated.bind(this);
-    this.handleMoved = this.handleMoved.bind(this);
-    this.handleRemoved = this.handleRemoved.bind(this);
-    this.handleVisited = this.handleVisited.bind(this);
-
-    this.createChangeListeners();
-  }
-
-  handleChanged(id, changeInfo) {
+// Creates bookmark and history event listeners that trigger sorting.
+// Returns { createChangeListeners, removeChangeListeners }.
+function createChangeHandler(sorter) {
+  function handleChanged(id) {
     AsbUtil.log(`onChanged: ${id}`);
-    AsbUtil.log(changeInfo);
-    this.sorter.sortIfAuto();
+    sorter.sortIfAuto();
   }
 
-  handleCreated(id, bookmark) {
+  function handleCreated(id) {
     AsbUtil.log(`onCreated: ${id}`);
-    AsbUtil.log(bookmark);
-    this.sorter.sortIfAuto();
+    sorter.sortIfAuto();
   }
 
-  handleMoved(id, moveInfo) {
+  function handleMoved(id) {
     AsbUtil.log(`onMoved: ${id}`);
-    AsbUtil.log(moveInfo);
-    this.sorter.sortIfAuto();
+    sorter.sortIfAuto();
   }
 
-  handleRemoved(id, removeInfo) {
+  function handleRemoved(id, removeInfo) {
     AsbUtil.log(`onRemoved: ${id}`);
-    AsbUtil.log(removeInfo);
-    if (NodeUtil.getNodeType(removeInfo.node) === "separator") {
-      this.sorter.sortIfAuto();
-    } else if (NodeUtil.getNodeType(removeInfo.node) === "folder") {
+    const type = NodeUtil.getNodeType(removeInfo.node);
+    if (type === "separator") {
+      sorter.sortIfAuto();
+    } else if (type === "folder") {
       AsbPrefs.removeFolder(id);
     }
   }
 
-  handleVisited(historyItem) {
+  function handleVisited(historyItem) {
     AsbUtil.log("onVisited");
-    AsbUtil.log(historyItem);
     if (!historyItem.url.startsWith("moz-extension:")) {
-      this.sorter.sortIfAuto();
+      sorter.sortIfAuto();
     }
   }
 
-  createChangeListeners() {
-    BrowserUtil.addBookmarkChangedListener(this.handleChanged);
-    BrowserUtil.addBookmarkCreatedListener(this.handleCreated);
-    BrowserUtil.addBookmarkMovedListener(this.handleMoved);
-    BrowserUtil.addBookmarkRemovedListener(this.handleRemoved);
-    BrowserUtil.addHistoryVistedListener(this.handleVisited);
-    AsbUtil.log("added listeners");
-  }
+  return {
+    createChangeListeners() {
+      browser.bookmarks.onChanged.addListener(handleChanged);
+      browser.bookmarks.onCreated.addListener(handleCreated);
+      browser.bookmarks.onMoved.addListener(handleMoved);
+      browser.bookmarks.onRemoved.addListener(handleRemoved);
+      browser.history.onVisited.addListener(handleVisited);
+      AsbUtil.log("added listeners");
+    },
 
-  removeChangeListeners() {
-    BrowserUtil.removeBookmarkChangedListener(this.handleChanged);
-    BrowserUtil.removeBookmarkCreatedListener(this.handleCreated);
-    BrowserUtil.removeBookmarkMovedListener(this.handleMoved);
-    BrowserUtil.removeBookmarkRemovedListener(this.handleRemoved);
-    BrowserUtil.removeHistoryVistedListener(this.handleVisited);
-    AsbUtil.log("removed listeners");
-  }
+    removeChangeListeners() {
+      browser.bookmarks.onChanged.removeListener(handleChanged);
+      browser.bookmarks.onCreated.removeListener(handleCreated);
+      browser.bookmarks.onMoved.removeListener(handleMoved);
+      browser.bookmarks.onRemoved.removeListener(handleRemoved);
+      browser.history.onVisited.removeListener(handleVisited);
+      AsbUtil.log("removed listeners");
+    },
+  };
 }

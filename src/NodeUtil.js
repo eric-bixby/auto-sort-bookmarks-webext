@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class NodeUtil {
-  static getNodeType(node) {
+const NodeUtil = (function () {
+  function getNodeType(node) {
     if (typeof node.url === "undefined") {
       return "folder";
     }
@@ -27,49 +27,54 @@ class NodeUtil {
     return "bookmark";
   }
 
-  static createItem(
-    type,
-    id,
-    index,
-    parentId,
-    title,
-    url,
-    lastVisited,
-    accessCount,
-    dateAdded,
-    lastModified
-  ) {
+  // Creates a plain item object from a browser bookmark node.
+  // History fields (lastVisited, accessCount) are optionally pre-enriched by the caller.
+  function createItemFromNode(node) {
+    const type = getNodeType(node);
+    const base = {
+      type,
+      id: node.id,
+      index: node.index,
+      oldIndex: node.index,
+      parentId: node.parentId,
+    };
+
     if (type === "bookmark") {
-      return new Bookmark(
-        id,
-        index,
-        parentId,
-        title,
-        dateAdded,
-        lastModified,
-        url,
-        lastVisited,
-        accessCount
-      );
-    } else if (type === "folder") {
-      return new Folder(id, index, parentId, title, dateAdded, lastModified);
-    } else if (type === "separator") {
-      return new Separator(id, index, parentId);
+      const corrupted =
+        node.title === null ||
+        node.dateAdded === null ||
+        node.lastModified === null ||
+        node.url === null;
+      if (corrupted) {
+        AsbUtil.log(
+          `ERROR: Corrupted bookmark found. ID: ${node.id} - Title: ${node.title} - URL: ${node.url}`
+        );
+      }
+      return {
+        ...base,
+        corrupted,
+        title: node.title || "",
+        url: node.url || "",
+        dateAdded: node.dateAdded || 0,
+        lastModified: node.lastModified || 0,
+        lastVisited: node.lastVisited || 0,
+        accessCount: node.accessCount || 0,
+        order: AsbPrefs.getBookmarkOrder(),
+      };
     }
+
+    if (type === "folder") {
+      return {
+        ...base,
+        title: node.title || "",
+        dateAdded: node.dateAdded || 0,
+        lastModified: node.dateGroupModified || 0,
+        order: AsbPrefs.getFolderOrder(),
+      };
+    }
+
+    return base; // separator
   }
 
-  static createItemFromNode(node) {
-    return NodeUtil.createItem(
-      NodeUtil.getNodeType(node),
-      node.id,
-      node.index,
-      node.parentId,
-      node.title,
-      node.url,
-      node.lastVisited,
-      node.accessCount,
-      node.dateAdded,
-      node.dateGroupModified
-    );
-  }
-}
+  return { getNodeType, createItemFromNode };
+})();

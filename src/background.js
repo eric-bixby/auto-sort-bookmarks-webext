@@ -20,7 +20,7 @@
 AsbUtil.log("main:begin");
 try {
   AsbPrefs.load(function () {
-    const sorter = new Sorter();
+    const sorter = createSorter();
     AsbPrefs.setSorter(sorter);
     AsbPrefs.adjustSortCriteria();
     AsbPrefs.registerPrefListeners();

@@ -19,12 +19,7 @@
   "background": {
     "scripts": [
       "AsbUtil.js",
-      "BrowserUtil.js",
       "Annotations.js",
-      "Item.js",
-      "Bookmark.js",
-      "Folder.js",
-      "Separator.js",
       "NodeUtil.js",
       "FolderUtil.js",
       "Comparator.js",

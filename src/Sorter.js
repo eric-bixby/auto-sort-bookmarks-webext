@@ -16,160 +16,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class Sorter {
-  constructor() {
-    this.sorting = false;
-    this.isWaiting = false;
-    this.lastCheck = Date.now();
-    this.changeHandler = new ChangeHandler(this);
-  }
+// Creates the sorter, which orchestrates bookmark sorting across all folders.
+// Returns { sortIfAuto, sortNow, setCriteria }.
+function createSorter() {
+  let sorting = false;
+  let debounceTimer = null;
+  let compare = null;
 
-  sortAllBookmarks() {
-    const self = this;
-    FolderUtil.getChildrenFolders(AsbPrefs.getRootId(), (children) => {
-      self.sortRootFolders(children);
-    });
-  }
-
-  sortRootFolders(children) {
-    const promiseAry = [];
-
-    children.forEach((node) => {
-      const folder = NodeUtil.createItemFromNode(node);
-
-      const p = new Promise((resolve) => {
-        const folders = [];
-
-        if (!node.recursivelyExcluded) {
-          folders.push(folder);
-
-          folder.getFolders((subfolders) => {
-            subfolders.forEach((f) => folders.push(f));
-            resolve(folders);
-          });
-        } else {
-          resolve(folders);
-        }
-      });
-
-      promiseAry.push(p);
-    });
-
-    Promise.all(promiseAry).then((folders) => {
-      const mergedFolders = [].concat(...folders);
-      Annotations.removeMissingFolders(mergedFolders);
-      this.sortFolders(mergedFolders);
-    });
-  }
-
-  setCriteria(
-    firstSortCriteria,
-    firstReverse,
-    secondSortCriteria,
-    secondReverse,
-    folderSortCriteria,
-    folderReverse,
-    differentFolderOrder,
-    caseInsensitive
-  ) {
-    Sorter.prototype.firstReverse = firstReverse ? -1 : 1;
-    Sorter.prototype.firstSortCriteria = firstSortCriteria;
-    Sorter.prototype.secondReverse = secondReverse ? -1 : 1;
-    Sorter.prototype.secondSortCriteria = secondSortCriteria;
-    Sorter.prototype.folderReverse = folderReverse ? -1 : 1;
-    Sorter.prototype.folderSortCriteria = folderSortCriteria;
-    Sorter.prototype.differentFolderOrder = differentFolderOrder;
-    Sorter.prototype.caseInsensitive = caseInsensitive;
-    this.compare = Comparator.createCompare();
-  }
-
-  sortAndSave(folder, resolve) {
-    if (folder.canBeSorted()) {
-      folder.getChildren(Sorter.sortFolder, this.compare, resolve);
-    } else if (typeof resolve === "function") {
-      resolve();
+  async function sortAllBookmarks() {
+    const rootChildren = await browser.bookmarks.getChildren(AsbPrefs.getRootId());
+    if (!rootChildren) {
+      return;
     }
+
+    // Collect all sortable folders across the entire tree.
+    const folderGroups = await Promise.all(
+      rootChildren
+        .filter(
+          (node) =>
+            NodeUtil.getNodeType(node) === "folder" &&
+            !Annotations.isRecursivelyExcluded(node.id)
+        )
+        .map((node) => FolderUtil.getDescendantFolders(node.id))
+    );
+
+    const allFolders = folderGroups.flat();
+    Annotations.removeMissingFolders(allFolders);
+    await Promise.all(allFolders.map((folder) => sortAndSave(folder)));
   }
 
-  static sortFolder(folder, compare, resolve) {
+  async function sortAndSave(folder) {
+    if (!FolderUtil.canBeSorted(folder)) {
+      return;
+    }
+
+    const groups = await FolderUtil.getChildrenWithHistory(folder.id);
+
+    // Sort each group and assign new indices, accounting for separator gaps.
     let delta = 0;
-    let length;
-
-    for (let i = 0; i < folder.children.length; i += 1) {
-      folder.children[i].sort(compare);
-      length = folder.children[i].length;
-      for (let j = 0; j < length; j += 1) {
-        folder.children[i][j].setIndex(j + delta);
-      }
-      delta += length + 1;
-    }
-
-    folder.save(resolve);
-  }
-
-  sortFolders(folders) {
-    folders = folders instanceof Folder ? [folders] : folders;
-
-    const self = this;
-    const promiseAry = [];
-
-    folders.forEach((folder) => {
-      const p = new Promise((resolve) => {
-        self.sortAndSave(folder, resolve);
+    for (const group of groups) {
+      group.sort(compare);
+      group.forEach((item, j) => {
+        item.index = j + delta;
       });
-      promiseAry.push(p);
-    });
+      delta += group.length + 1; // +1 for the separator after each group
+    }
 
-    Promise.all(promiseAry).then(() => {
+    await FolderUtil.saveOrder(groups);
+  }
+
+  // Debounced sort: resets the timer on each call, runs after the configured
+  // delay has elapsed with no further activity.
+  function scheduleSort() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(async () => {
+      if (sorting) {
+        return;
+      }
+      sorting = true;
+      changeHandler.removeChangeListeners();
+      AsbUtil.log("sort:begin");
+      await sortAllBookmarks();
       AsbUtil.log("sort:end");
-      self.sorting = false;
-      self.lastCheck = Date.now();
+      sorting = false;
       // Wait for browser events triggered by the sort to settle before
-      // re-attaching change listeners, to avoid triggering another sort.
-      setTimeout(() => {
-        this.changeHandler.createChangeListeners();
-      }, 3000);
-    });
+      // re-attaching listeners, to avoid immediately triggering another sort.
+      setTimeout(() => changeHandler.createChangeListeners(), 3000);
+    }, AsbPrefs.getPref("delay") * 1000);
   }
 
-  sortNow() {
-    this.sortIfNotSorting();
-  }
-
-  sortIfAuto() {
-    if (AsbPrefs.getPref("auto_sort")) {
-      this.sortNow();
-    }
-  }
-
-  sortIfNotSorting() {
-    if (!this.sorting) {
-      this.lastCheck = Date.now();
-      if (!this.isWaiting) {
-        this.sortIfNoChanges();
+  const sorter = {
+    sortIfAuto() {
+      if (AsbPrefs.getPref("auto_sort")) {
+        scheduleSort();
       }
-    }
-  }
+    },
 
-  sortIfNoChanges() {
-    if (!this.sorting) {
-      const now = Date.now();
-      const diff = now - this.lastCheck;
-      const delay = parseInt(AsbPrefs.getPref("delay"), 10) * 1000;
-      if (diff < delay) {
-        this.isWaiting = true;
-        const self = this;
-        setTimeout(() => {
-          AsbUtil.log("waiting one second for activity to stop");
-          self.sortIfNoChanges();
-        }, 1000);
-      } else {
-        this.sorting = true;
-        this.isWaiting = false;
-        this.changeHandler.removeChangeListeners();
-        AsbUtil.log("sort:begin");
-        this.sortAllBookmarks();
-      }
-    }
-  }
+    sortNow() {
+      scheduleSort();
+    },
+
+    setCriteria(criteria) {
+      compare = createCompare(criteria);
+    },
+  };
+
+  const changeHandler = createChangeHandler(sorter);
+  return sorter;
 }
