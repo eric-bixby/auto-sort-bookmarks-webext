@@ -38,9 +38,6 @@
   "prefs_description_auto_sort": {
     "message": "Si ce choix est validé, le tri se fera lorsque que des marque-pages seront ajoutés, déplacés ou supprimés. Cela signifie que vous ne pourrez déplacer un marque-page dans le même répertoire, uniquement dans un répertoire distinct."
   },
-  "prefs_description_bookmark_sort_order": {
-    "message": "Spécifier l'ordre du tri des marque-pages. Valeur minimum 1 et maximum 2."
-  },
   "prefs_description_case_insensitive": {
     "message": "Si ce choix est validé, les marque-pages seront triés sans distinction de la casse."
   },
@@ -52,9 +49,6 @@
   },
   "prefs_description_folder_sort_by": {
     "message": "Spécifier un critère de tri pour classer les répertoires."
-  },
-  "prefs_description_folder_sort_order": {
-    "message": "Spécifier l'ordre de tri des répertoires. Valeur minimum 1 et maximum 2."
   },
   "prefs_description_inverse": {
     "message": "Si ce choix est validé, l'ordre spécifié dans 'Trier par' sera inversé."
@@ -77,9 +71,6 @@
   "prefs_label_auto_sort": {
     "message": "Tri-automatique:"
   },
-  "prefs_label_bookmark_sort_order": {
-    "message": "Ordre de tri des marque-pages:"
-  },
   "prefs_label_case_insensitive": {
     "message": "Insensible à la casse:"
   },
@@ -91,9 +82,6 @@
   },
   "prefs_label_folder_sort_by": {
     "message": "Trier les répertoires par:"
-  },
-  "prefs_label_folder_sort_order": {
-    "message": "Ordre de tri des répertoires:"
   },
   "prefs_label_inverse": {
     "message": "Inverser l'ordre:"

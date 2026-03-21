@@ -38,9 +38,6 @@
   "prefs_description_auto_sort": {
     "message": "If this option is enabled, the bookmarks will be sorted when bookmarks are added, changed, moved or deleted. This means you cannot move any bookmarks in the same folder, unless it is moved over a separator."
   },
-  "prefs_description_bookmark_sort_order": {
-    "message": "Specifies the bookmark sort order. Minimum value of 1 and maximum of 2."
-  },
   "prefs_description_case_insensitive": {
     "message": "If this option is enabled, the bookmarks will be sorted without considering the letter case."
   },
@@ -52,9 +49,6 @@
   },
   "prefs_description_folder_sort_by": {
     "message": "Specifies a sort criteria to sort folders."
-  },
-  "prefs_description_folder_sort_order": {
-    "message": "Specifies the folder sort order. Minimum value of 1 and maximum of 2."
   },
   "prefs_description_inverse": {
     "message": "if this option is enabled, the order specified in 'Sort By' will be reversed. So the order will be descending."
@@ -77,9 +71,6 @@
   "prefs_label_auto_sort": {
     "message": "Auto-sort:"
   },
-  "prefs_label_bookmark_sort_order": {
-    "message": "Bookmark Sort Order:"
-  },
   "prefs_label_case_insensitive": {
     "message": "Case Insensitive:"
   },
@@ -91,9 +82,6 @@
   },
   "prefs_label_folder_sort_by": {
     "message": "Sort Folder By:"
-  },
-  "prefs_label_folder_sort_order": {
-    "message": "Folder Sort Order:"
   },
   "prefs_label_inverse": {
     "message": "Inverse Order:"

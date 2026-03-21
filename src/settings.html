@@ -29,9 +29,26 @@
       padding: 16px;
     }
 
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .page-header img {
+      width: 24px;
+      height: 24px;
+    }
+
     h1 {
       font-size: 1.2em;
-      margin-top: 0;
+      margin: 0;
+    }
+
+    .page-version {
+      font-size: 0.85em;
+      color: #555;
     }
 
     /* Settings tab */
@@ -164,7 +181,11 @@
 </head>
 
 <body>
-  <h1 id="page-title"></h1>
+  <div class="page-header">
+    <img id="page-icon" src="images/icon.svg" alt="" />
+    <h1 id="page-title"></h1>
+    <span class="page-version" id="page-version"></span>
+  </div>
 
   <div id="tab-settings" class="tab-content active">
     <table>

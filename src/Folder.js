@@ -19,7 +19,7 @@
 class Folder extends Bookmark {
   constructor(id, index, parentId, title, dateAdded, lastModified) {
     super(id, index, parentId, title, dateAdded, lastModified);
-    this.order = AsbPrefs.getPref("folder_sort_order");
+    this.order = AsbPrefs.getFolderOrder();
   }
 
   canBeSorted() {

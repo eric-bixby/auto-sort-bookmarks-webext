@@ -38,9 +38,6 @@
   "prefs_description_auto_sort": {
     "message": "Ist diese Option aktiviert, werden die Lesezeichen beim Hinzufügen, Ändern, Verschieben oder Löschen sortiert. D. h., Sie können keine Lesezeichen im selben Ordner verschieben, es sei denn, sie werden über ein Trennzeichen verschoben."
   },
-  "prefs_description_bookmark_sort_order": {
-    "message": "Legt die Lesezeichensortierreihenfolge fest. Mindestwert 1 und Höchstwert 2."
-  },
   "prefs_description_case_insensitive": {
     "message": "Wenn diese Option aktiviert ist, werden die Lesezeichen ohne Berücksichtigung der Groß-/Kleinschreibung sortiert."
   },
@@ -52,9 +49,6 @@
   },
   "prefs_description_folder_sort_by": {
     "message": "Gibt ein Sortierkriterium für die Ordnersortierung an."
-  },
-  "prefs_description_folder_sort_order": {
-    "message": "Gibt die Ordnersortierreihenfolge an. Mindestwert 1 und Höchstwert 2.."
   },
   "prefs_description_inverse": {
     "message": "Wenn diese Option aktiviert ist, wird die in 'Sortieren nach' angegebene Reihenfolge umgekehrt. Die Reihenfolge ist dann absteigend."
@@ -77,9 +71,6 @@
   "prefs_label_auto_sort": {
     "message": "Autom. sortieren:"
   },
-  "prefs_label_bookmark_sort_order": {
-    "message": "Lesezeichensortierreihenfolge:"
-  },
   "prefs_label_case_insensitive": {
     "message": "Groß-/Kleinschreibung egal:"
   },
@@ -91,9 +82,6 @@
   },
   "prefs_label_folder_sort_by": {
     "message": "Ordner sortieren nach:"
-  },
-  "prefs_label_folder_sort_order": {
-    "message": "Ordnersortierreihenfolge:"
   },
   "prefs_label_inverse": {
     "message": "Umgekehrte Reihenfolge:"

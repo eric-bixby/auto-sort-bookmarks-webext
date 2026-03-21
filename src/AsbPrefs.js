@@ -29,8 +29,7 @@ const AsbPrefs = (function () {
     then_inverse: false,
     folder_sort_by: "title",
     folder_inverse: false,
-    folder_sort_order: 1,
-    bookmark_sort_order: 2,
+    sort_folders_first: true,
   };
 
   let prefs = Object.assign({}, DEFAULTS);
@@ -58,6 +57,14 @@ const AsbPrefs = (function () {
     return result;
   }
 
+  function getFolderOrder() {
+    return getPref("sort_folders_first") ? 1 : 2;
+  }
+
+  function getBookmarkOrder() {
+    return getPref("sort_folders_first") ? 2 : 1;
+  }
+
   function getRootId() {
     return "root________";
   }
@@ -77,7 +84,7 @@ const AsbPrefs = (function () {
       getPref("then_inverse"),
       getPref("folder_sort_by"),
       getPref("folder_inverse"),
-      getPref("folder_sort_order") !== getPref("bookmark_sort_order"),
+      true,
       getPref("case_insensitive")
     );
   }
@@ -85,8 +92,7 @@ const AsbPrefs = (function () {
   function registerPrefListeners() {
     // These prefs change sort criteria
     const criteriaPrefs = [
-      "folder_sort_order",
-      "bookmark_sort_order",
+      "sort_folders_first",
       "case_insensitive",
       "sort_by",
       "then_sort_by",
@@ -103,7 +109,7 @@ const AsbPrefs = (function () {
     });
 
     // These prefs also trigger a sort
-    ["auto_sort", "folder_sort_order", "bookmark_sort_order"].forEach((name) => {
+    ["auto_sort", "sort_folders_first"].forEach((name) => {
       if (!listeners[name]) {
         listeners[name] = [];
       }
@@ -211,6 +217,8 @@ const AsbPrefs = (function () {
 
   return {
     getPref,
+    getFolderOrder,
+    getBookmarkOrder,
     setPref,
     getAllPrefs,
     getRootId,
