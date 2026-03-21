@@ -173,3 +173,6 @@ const Annotations = (function () {
     },
   };
 })();
+
+// eslint-disable-next-line no-undef
+if (typeof module !== "undefined") module.exports = Annotations;

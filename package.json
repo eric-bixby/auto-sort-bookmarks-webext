@@ -1,5 +1,10 @@
 {
+  "scripts": {
+    "test": "jest",
+    "lint": "web-ext lint --source-dir src"
+  },
   "devDependencies": {
+    "jest": "^30.3.0",
     "web-ext": "^10.0.0"
   }
 }

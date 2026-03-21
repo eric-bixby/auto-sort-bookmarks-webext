@@ -141,3 +141,6 @@ const NodeUtil = (function () {
 
   return { getNodeType, createItemFromNode };
 })();
+
+// eslint-disable-next-line no-undef
+if (typeof module !== "undefined") module.exports = NodeUtil;

@@ -165,3 +165,6 @@ function createSorter() {
   const changeHandler = createChangeHandler(sorter);
   return sorter;
 }
+
+// eslint-disable-next-line no-undef
+if (typeof module !== "undefined") module.exports = { createSorter };
