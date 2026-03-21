@@ -18,8 +18,6 @@
 
 document.getElementById("btn-settings").textContent =
   browser.i18n.getMessage("settings");
-document.getElementById("btn-configure-folders").textContent =
-  browser.i18n.getMessage("configure_folders");
 document.getElementById("btn-sort").textContent =
   browser.i18n.getMessage("sort");
 
@@ -27,13 +25,6 @@ document.getElementById("btn-settings").addEventListener("click", function () {
   browser.runtime.sendMessage({ action: "openSettings" });
   window.close();
 });
-
-document
-  .getElementById("btn-configure-folders")
-  .addEventListener("click", function () {
-    browser.runtime.sendMessage({ action: "openConfigureFolders" });
-    window.close();
-  });
 
 document.getElementById("btn-sort").addEventListener("click", function () {
   browser.runtime.sendMessage({ action: "sort" });

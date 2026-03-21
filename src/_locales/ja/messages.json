@@ -35,127 +35,127 @@
   "uncheck_to_exclude_folder": {
     "message": "並べ替え時に除外するフォルダのチェックを外します。"
   },
-  "weh_prefs_description_auto_sort": {
+  "prefs_description_auto_sort": {
     "message": "このオプションを有効にすると、ブックマークが追加、変更、移動、削除されたときにブックマークがソートされます。"
   },
-  "weh_prefs_description_bookmark_sort_order": {
+  "prefs_description_bookmark_sort_order": {
     "message": "ブックマークのソート順を指定します。最小値 1、最大値 2。"
   },
-  "weh_prefs_description_case_insensitive": {
+  "prefs_description_case_insensitive": {
     "message": "このオプションを有効にすると、大文字と小文字を区別せずにブックマークがソートされます。"
   },
-  "weh_prefs_description_delay": {
+  "prefs_description_delay": {
     "message": "ブックマークをソートする前に非アクティブの遅延時間を秒単位で指定します。これは自動ソートと手動ソートに適用されます。最小値は3、最大値は255です。ドラッグしてブックマークを移動する場合は、少なくとも45の値を使用することをお勧めします。"
   },
-  "weh_prefs_description_folder_inverse": {
+  "prefs_description_folder_inverse": {
     "message": "このオプションを有効にすると、[フォルダのソート順]で指定した順序が逆になります。"
   },
-  "weh_prefs_description_folder_sort_by": {
+  "prefs_description_folder_sort_by": {
     "message": "フォルダをソートするためのソート基準を指定します。"
   },
-  "weh_prefs_description_folder_sort_order": {
+  "prefs_description_folder_sort_order": {
     "message": "フォルダの並び順を指定します。 最小値 1、最大値 2。"
   },
-  "weh_prefs_description_inverse": {
+  "prefs_description_inverse": {
     "message": "このオプションを有効にすると、[並べ替え]で指定した順序が逆になります。そのため、順序は降順になります。"
   },
-  "weh_prefs_description_sort_by": {
+  "prefs_description_sort_by": {
     "message": "ブックマークをソートするための最初のソート基準を指定します。"
   },
-  "weh_prefs_description_then_inverse": {
+  "prefs_description_then_inverse": {
     "message": "このオプションを有効にすると、[ソート順]で指定した順序が逆になります。"
   },
-  "weh_prefs_description_then_sort_by": {
+  "prefs_description_then_sort_by": {
     "message": "ブックマークをソートするための第二のソート順ソート基準を指定します。"
   },
-  "weh_prefs_folder_sort_by_option_none": {
+  "prefs_folder_sort_by_option_none": {
     "message": "無し"
   },
-  "weh_prefs_folder_sort_by_option_title": {
+  "prefs_folder_sort_by_option_title": {
     "message": "タイトル"
   },
-  "weh_prefs_label_auto_sort": {
+  "prefs_label_auto_sort": {
     "message": "自動ソート："
   },
-  "weh_prefs_label_bookmark_sort_order": {
+  "prefs_label_bookmark_sort_order": {
     "message": "ブックマークのソート順："
   },
-  "weh_prefs_label_case_insensitive": {
+  "prefs_label_case_insensitive": {
     "message": "大文字と小文字を区別しない："
   },
-  "weh_prefs_label_delay": {
+  "prefs_label_delay": {
     "message": "ソートまでの遅延時間："
   },
-  "weh_prefs_label_folder_inverse": {
+  "prefs_label_folder_inverse": {
     "message": "フォルダの順序を逆にする："
   },
-  "weh_prefs_label_folder_sort_by": {
+  "prefs_label_folder_sort_by": {
     "message": "フォルダのソート順："
   },
-  "weh_prefs_label_folder_sort_order": {
+  "prefs_label_folder_sort_order": {
     "message": "フォルダの並び順："
   },
-  "weh_prefs_label_inverse": {
+  "prefs_label_inverse": {
     "message": "逆順："
   },
-  "weh_prefs_label_sort_by": {
+  "prefs_label_sort_by": {
     "message": "ソート順："
   },
-  "weh_prefs_label_then_inverse": {
+  "prefs_label_then_inverse": {
     "message": "2番目の順序を逆にする："
   },
-  "weh_prefs_label_then_sort_by": {
+  "prefs_label_then_sort_by": {
     "message": "第二のソート順："
   },
-  "weh_prefs_sort_by_option_accessCount": {
+  "prefs_sort_by_option_accessCount": {
     "message": "訪問回数"
   },
-  "weh_prefs_sort_by_option_dateAdded": {
+  "prefs_sort_by_option_dateAdded": {
     "message": "追加された日付"
   },
-  "weh_prefs_sort_by_option_hostname": {
+  "prefs_sort_by_option_hostname": {
     "message": "ホスト名"
   },
-  "weh_prefs_sort_by_option_lastModified": {
+  "prefs_sort_by_option_lastModified": {
     "message": "最終更新日時"
   },
-  "weh_prefs_sort_by_option_lastVisited": {
+  "prefs_sort_by_option_lastVisited": {
     "message": "最終訪問日時"
   },
-  "weh_prefs_sort_by_option_revurl": {
+  "prefs_sort_by_option_revurl": {
     "message": "URL の逆順"
   },
-  "weh_prefs_sort_by_option_title": {
+  "prefs_sort_by_option_title": {
     "message": "タイトル"
   },
-  "weh_prefs_sort_by_option_url": {
+  "prefs_sort_by_option_url": {
     "message": "URL"
   },
-  "weh_prefs_then_sort_by_option_accessCount": {
+  "prefs_then_sort_by_option_accessCount": {
     "message": "訪問回数"
   },
-  "weh_prefs_then_sort_by_option_dateAdded": {
+  "prefs_then_sort_by_option_dateAdded": {
     "message": "追加された日付"
   },
-  "weh_prefs_then_sort_by_option_hostname": {
+  "prefs_then_sort_by_option_hostname": {
     "message": "ホスト名"
   },
-  "weh_prefs_then_sort_by_option_lastModified": {
+  "prefs_then_sort_by_option_lastModified": {
     "message": "最終更新日時"
   },
-  "weh_prefs_then_sort_by_option_lastVisited": {
+  "prefs_then_sort_by_option_lastVisited": {
     "message": "最終訪問日時"
   },
-  "weh_prefs_then_sort_by_option_none": {
+  "prefs_then_sort_by_option_none": {
     "message": "無し"
   },
-  "weh_prefs_then_sort_by_option_revurl": {
+  "prefs_then_sort_by_option_revurl": {
     "message": "URL の逆順"
   },
-  "weh_prefs_then_sort_by_option_title": {
+  "prefs_then_sort_by_option_title": {
     "message": "タイトル"
   },
-  "weh_prefs_then_sort_by_option_url": {
+  "prefs_then_sort_by_option_url": {
     "message": "URL"
   }
 }
