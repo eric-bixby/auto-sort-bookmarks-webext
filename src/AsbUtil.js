@@ -16,11 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * General-purpose utility functions shared across the extension.
+ * @namespace AsbUtil
+ */
 const AsbUtil = {
+  /**
+   * Logs a value to the browser console.
+   * @param {*} o - The value to log.
+   */
   log(o) {
     console.log(o);
   },
 
+  /**
+   * Reverses the domain portion of a URL for use as a sort key.
+   * For example, "https://www.example.co.uk/path" becomes "uk.co.example.www/path".
+   * This groups URLs by top-level domain when sorted alphabetically.
+   * @param {string} str - The URL to transform.
+   * @returns {string} The URL with its domain segments reversed, or an empty string if falsy.
+   */
   reverseBaseUrl(str) {
     if (!str) {
       return "";
