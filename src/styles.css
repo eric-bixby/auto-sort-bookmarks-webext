@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+.asb-popup {
+  width: 200px;
+}
+
 .asb-popup .asb-toolbar {
   overflow: hidden;
   padding: 8px;
