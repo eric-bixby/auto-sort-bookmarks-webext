@@ -14,7 +14,11 @@ npm test          # run Jest unit tests
 npm run lint      # run web-ext lint
 ```
 
-Tests live in `tests/unit/`. A `browser` global mock is set up in `tests/setup/globals.js`. Each source file exports itself via a conditional `module.exports` shim at the bottom (no-op in the browser, required by Jest).
+Tests live in `tests/unit/`. Jest config is in `jest.config.js`. A `browser` global mock is set up in `tests/setup/globals.js` (mocks `browser.bookmarks`, `browser.history`, `browser.storage.local`, `browser.runtime`, `browser.tabs`, `browser.windows`, and `browser.i18n`). Each source file exports itself via a conditional `module.exports` shim at the bottom (no-op in the browser, required by Jest).
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs on pushes and PRs to `master`. It installs dependencies, runs `npm test`, and runs `npm run lint` on Node.js 24.
 
 ## Architecture
 
@@ -54,6 +58,8 @@ Globals referenced inside function/method bodies (not at definition time) may ap
 | `AsbPrefs.js` | Singleton IIFE: preference storage, all `browser.runtime.onMessage` handling, messaging to UI |
 | `Sorter.js` | `createSorter()` — debounce logic, tree traversal, listener lifecycle |
 | `background.js` | Entry point: loads prefs, creates sorter, wires listeners |
+| `styles.css` | Shared stylesheet for popup and settings pages |
+| `images/` | Extension icons (`icon.svg`, `add.png`, `remove.png`) |
 
 ### Item types (`src/NodeUtil.js`)
 
