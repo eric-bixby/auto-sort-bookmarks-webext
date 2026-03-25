@@ -226,6 +226,10 @@ function toggleChildren(parentID, image, children, recursiveCheckbox) {
           .then((response) => {
             appendFolders(response.children, children);
             fetching.delete(parentID);
+          })
+          .catch((error) => {
+            console.error("queryChildren failed:", error);
+            fetching.delete(parentID);
           });
       } else {
         image.src = addIcon;
@@ -336,14 +340,17 @@ function showTab(tabName) {
 
   if (!isSettings && !foldersLoaded) {
     foldersLoaded = true;
-    browser.runtime.sendMessage({ action: "queryRoot" }).then((response) => {
-      recursiveText = response.texts.recursiveText;
-      messageText = response.texts.messageText;
-      loadingText = response.texts.loadingText;
-      addIcon = response.addImgUrl;
-      removeIcon = response.removeImgUrl;
-      appendFolders(response.folders, document.getElementById("rootFolders"));
-    });
+    browser.runtime
+      .sendMessage({ action: "queryRoot" })
+      .then((response) => {
+        recursiveText = response.texts.recursiveText;
+        messageText = response.texts.messageText;
+        loadingText = response.texts.loadingText;
+        addIcon = response.addImgUrl;
+        removeIcon = response.removeImgUrl;
+        appendFolders(response.folders, document.getElementById("rootFolders"));
+      })
+      .catch((error) => console.error("queryRoot failed:", error));
   }
 }
 
@@ -368,17 +375,23 @@ document.getElementById("btn-cancel").addEventListener("click", function () {
 });
 
 document.getElementById("btn-reset").addEventListener("click", function () {
-  browser.runtime.sendMessage({ action: "resetPrefs" }).then((defaultPrefs) => {
-    renderForm(defaultPrefs);
-  });
+  browser.runtime
+    .sendMessage({ action: "resetPrefs" })
+    .then((defaultPrefs) => {
+      renderForm(defaultPrefs);
+    })
+    .catch((error) => console.error("resetPrefs failed:", error));
 });
 
 document.getElementById("btn-save").addEventListener("click", function () {
   const values = getFormValues();
-  browser.runtime.sendMessage({ action: "setPrefs", prefs: values }).then(() => {
-    originalPrefs = Object.assign({}, values);
-    updateButtons();
-  });
+  browser.runtime
+    .sendMessage({ action: "setPrefs", prefs: values })
+    .then(() => {
+      originalPrefs = Object.assign({}, values);
+      updateButtons();
+    })
+    .catch((error) => console.error("setPrefs failed:", error));
 });
 
 // Listen for removeFolder notifications pushed from the background script.
@@ -392,6 +405,9 @@ browser.runtime.onMessage.addListener(function (message) {
 });
 
 // Load current preferences from the background on page open.
-browser.runtime.sendMessage({ action: "getPrefs" }).then((prefs) => {
-  renderForm(prefs);
-});
+browser.runtime
+  .sendMessage({ action: "getPrefs" })
+  .then((prefs) => {
+    renderForm(prefs);
+  })
+  .catch((error) => console.error("getPrefs failed:", error));
