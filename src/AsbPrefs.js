@@ -200,7 +200,8 @@ const AsbPrefs = (function () {
         tabs.forEach((tab) => {
           browser.tabs.sendMessage(tab.id, { action: "removeFolder", id });
         });
-      });
+      })
+      .catch((error) => AsbUtil.log(`removeFolder failed: ${error}`));
   }
 
   /**
@@ -210,19 +211,22 @@ const AsbPrefs = (function () {
    * @param {function(): void} callback - Called after preferences and annotations are ready.
    */
   function load(callback) {
-    browser.storage.local.get(null).then((items) => {
-      // Pass entire storage to Annotations so it can find donotsort/recursive keys
-      Annotations.init(items);
+    browser.storage.local
+      .get(null)
+      .then((items) => {
+        // Pass entire storage to Annotations so it can find donotsort/recursive keys
+        Annotations.init(items);
 
-      // Load saved prefs, falling back to defaults for any missing keys
-      if (items.prefs) {
-        prefs = Object.assign({}, DEFAULTS, items.prefs);
-      }
+        // Load saved prefs, falling back to defaults for any missing keys
+        if (items.prefs) {
+          prefs = Object.assign({}, DEFAULTS, items.prefs);
+        }
 
-      if (typeof callback === "function") {
-        callback();
-      }
-    });
+        if (typeof callback === "function") {
+          callback();
+        }
+      })
+      .catch((error) => AsbUtil.log(`load failed: ${error}`));
   }
 
   // Handle messages from UI pages (popup, settings).
@@ -234,21 +238,25 @@ const AsbPrefs = (function () {
         messageText: browser.i18n.getMessage("subfolders_recursively_excluded"),
         loadingText: browser.i18n.getMessage("loading"),
       };
-      FolderUtil.getChildrenFolders(getRootId()).then((folders) => {
-        sendResponse({
-          folders,
-          addImgUrl: browser.runtime.getURL("images/add.png"),
-          removeImgUrl: browser.runtime.getURL("images/remove.png"),
-          texts,
-        });
-      });
+      FolderUtil.getChildrenFolders(getRootId())
+        .then((folders) => {
+          sendResponse({
+            folders,
+            addImgUrl: browser.runtime.getURL("images/add.png"),
+            removeImgUrl: browser.runtime.getURL("images/remove.png"),
+            texts,
+          });
+        })
+        .catch((error) => AsbUtil.log(`queryRoot failed: ${error}`));
       return true;
     }
 
     if (message.action === "queryChildren") {
-      FolderUtil.getChildrenFolders(message.parentId).then((children) => {
-        sendResponse({ children });
-      });
+      FolderUtil.getChildrenFolders(message.parentId)
+        .then((children) => {
+          sendResponse({ children });
+        })
+        .catch((error) => AsbUtil.log(`queryChildren failed: ${error}`));
       return true;
     }
 
@@ -282,7 +290,8 @@ const AsbPrefs = (function () {
           } else {
             browser.tabs.create({ url: browser.runtime.getURL("settings.html") });
           }
-        });
+        })
+        .catch((error) => AsbUtil.log(`openSettings failed: ${error}`));
       sendResponse({ success: true });
     } else if (message.action === "sortCheckboxChange") {
       if (message.activated) {
@@ -316,3 +325,6 @@ const AsbPrefs = (function () {
     load,
   };
 })();
+
+// eslint-disable-next-line no-undef
+if (typeof module !== "undefined") module.exports = AsbPrefs;
