@@ -76,8 +76,16 @@ function createCompare(criteria) {
       a.revurl = AsbUtil.reverseBaseUrl(a.url);
       b.revurl = AsbUtil.reverseBaseUrl(b.url);
     } else if (field === "hostname") {
-      a.hostname = new URL(a.url).hostname;
-      b.hostname = new URL(b.url).hostname;
+      try {
+        a.hostname = new URL(a.url).hostname;
+      } catch {
+        a.hostname = "";
+      }
+      try {
+        b.hostname = new URL(b.url).hostname;
+      } catch {
+        b.hostname = "";
+      }
     }
     if (["title", "url", "revurl", "hostname"].includes(field)) {
       return a[field].localeCompare(b[field], undefined, compareOptions) * sign;

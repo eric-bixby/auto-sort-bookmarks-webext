@@ -142,6 +142,20 @@ describe("createCompare — sort by hostname", () => {
     const b = bookmark({ url: "https://zeta.example.com" });
     expect(compare(a, b)).toBeLessThan(0);
   });
+
+  test("handles malformed URLs gracefully", () => {
+    const compare = createCompare({ ...baseCriteria, sortBy: "hostname" });
+    const a = bookmark({ url: "not-a-valid-url" });
+    const b = bookmark({ url: "https://example.com" });
+    expect(() => compare(a, b)).not.toThrow();
+  });
+
+  test("handles empty URL gracefully", () => {
+    const compare = createCompare({ ...baseCriteria, sortBy: "hostname" });
+    const a = bookmark({ url: "" });
+    const b = bookmark({ url: "https://example.com" });
+    expect(() => compare(a, b)).not.toThrow();
+  });
 });
 
 describe("createCompare — sort by numeric fields", () => {
