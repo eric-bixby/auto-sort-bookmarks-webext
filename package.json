@@ -1,7 +1,7 @@
 {
   "scripts": {
     "test": "jest",
-    "lint": "web-ext lint --source-dir src"
+    "lint": "addons-linter src"
   },
   "devDependencies": {
     "jest": "^30.3.0",
