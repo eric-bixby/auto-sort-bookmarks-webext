@@ -3,7 +3,7 @@
   "name": "Auto-Sort Bookmarks",
   "description": "Sort bookmarks by multiple criteria.",
   "author": "Eric Bixby",
-  "version": "3.4.6",
+  "version": "3.5",
   "default_locale": "en",
   "icons": {
     "48": "images/icon.svg",
