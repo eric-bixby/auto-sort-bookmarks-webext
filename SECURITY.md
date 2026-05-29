@@ -6,6 +6,7 @@ Versions of this project that are currently being supported with security update
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 3.5.x   | :white_check_mark: |
 | 3.4.x   | :white_check_mark: |
 | < 3.4   | :x:                |
 
