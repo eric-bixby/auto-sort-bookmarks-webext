@@ -26,14 +26,6 @@ Firefox add-on that sorts bookmarks by multiple criteria. Requires **Firefox 142
 - **Sort Folders First:** If this option is enabled, folders are sorted before bookmarks. If unchecked, bookmarks are sorted before folders.
 - **Configure Folders:** The "Configure Folders" tab in Settings allows you to exclude folders from sorting. If you uncheck the checkbox next to a folder, it won't be sorted, but the children folders will be sorted. If you want to exclude a folder recursively from being sorted, check the recursive checkbox.
 
-**Backup your current bookmarks** in case you do not like the new bookmarks order. To restore bookmarks, use Firefox's Bookmark Manager (click on Bookmarks menu, select Show All Bookmarks, then click on "Z" icon, select Restore, and select restore point based on date/time).
-
-**Reviewers:** Your constructive feedback is appreciated. However, if you need technical support, discover a bug, or have a feature request, then [write an issue](https://github.com/eric-bixby/auto-sort-bookmarks-webext/issues) on the support site.
-
----
-
-**[Version History/Releases](https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases)**
-
 ---
 
 ## Development
