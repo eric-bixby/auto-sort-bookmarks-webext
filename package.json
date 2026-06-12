@@ -6,5 +6,9 @@
   "devDependencies": {
     "jest": "^30.3.0",
     "web-ext": "^10.0.0"
+  },
+  "overrides": {
+    "test-exclude": "^8.0.0",
+    "encoding-sniffer": "^1.0.0"
   }
 }
