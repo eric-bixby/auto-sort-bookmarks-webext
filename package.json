@@ -10,5 +10,9 @@
   "overrides": {
     "test-exclude": "^8.0.0",
     "encoding-sniffer": "^1.0.0"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.12.2": true
   }
 }
