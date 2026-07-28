@@ -9,7 +9,13 @@
   },
   "overrides": {
     "test-exclude": "^8.0.0",
-    "encoding-sniffer": "^1.0.0"
+    "encoding-sniffer": "^1.0.0",
+    "adm-zip": "^0.6.0",
+    "brace-expansion": "^5.0.8",
+    "fast-uri": "^3.1.4",
+    "js-yaml": "^4.3.0",
+    "shell-quote": "^1.10.0",
+    "glob": "^13.0.6"
   },
   "allowScripts": {
     "fsevents@2.3.3": true,
