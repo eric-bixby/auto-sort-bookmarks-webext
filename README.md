@@ -5,7 +5,7 @@
 [<img src="https://img.shields.io/amo/stars/auto-sort-bookmarks.svg">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmarks/reviews/)
 [<img src="https://img.shields.io/amo/users/auto-sort-bookmarks.svg">](https://addons.mozilla.org/firefox/addon/auto-sort-bookmarks/statistics)
 [<img src="https://img.shields.io/github/release/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/releases)
-[<img src="https://img.shields.io/github/license/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/blob/master/LICENSE)
+[<img src="https://img.shields.io/github/license/eric-bixby/auto-sort-bookmarks-webext.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/blob/main/LICENSE)
 [<img src="https://github.com/eric-bixby/auto-sort-bookmarks-webext/actions/workflows/ci.yml/badge.svg">](https://github.com/eric-bixby/auto-sort-bookmarks-webext/actions/workflows/ci.yml)
 
 Firefox add-on that sorts bookmarks by multiple criteria. Requires **Firefox 142 or later**.

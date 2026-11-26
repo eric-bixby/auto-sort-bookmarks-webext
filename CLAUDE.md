@@ -18,7 +18,7 @@ Tests live in `tests/unit/`. Jest config is in `jest.config.js`. A `browser` glo
 
 ## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) runs on pushes and PRs to `master`. It installs dependencies, runs `npm test`, and runs `npm run lint` on Node.js 24.
+GitHub Actions (`.github/workflows/ci.yml`) runs on pushes and PRs to `main`. It installs dependencies, runs `npm test`, and runs `npm run lint` on Node.js 24.
 
 ## Architecture
 
